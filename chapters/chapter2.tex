@@ -1,0 +1,357 @@
+% =====================================================================
+%  Chapter 2 - Experimental Setup and Methodology
+% =====================================================================
+
+\chapter{Experimental Setup and Methodology}
+\label{ch:setup}
+
+This chapter describes the experimental framework on which the research work is built.
+It briefly covers the hardware platforms, the sensors, the software stack and the data
+used to design and evaluate the algorithms presented in the following chapters.
+
+Section~\ref{sec:av24} and Section~\ref{sec:eav24} introduce the two autonomous
+racecars: the Dallara AV-24, which races in the Indy Autonomous Challenge (IAC), and
+the Dallara EAV-24, which races in the Abu Dhabi Autonomous Racing League (A2RL).
+Section~\ref{sec:sensors} presents the working principle, the advantages and the
+limitations of the exteroceptive sensors (LiDARs, RaDARs and cameras) used for opponent
+tracking, together with the sensor configuration of the two vehicles. Section~\ref{sec:sw_arch} gives an overview of the
+main modules of the software architecture. Section~\ref{sec:datasets} describes the two
+datasets used for the analysis and Section~\ref{sec:gt} explains how the opponent ground
+truth is reconstructed.
+
+% =====================================================================
+\section{Dallara AV-24}
+\label{sec:av24}
+
+The Dallara AV-24 (Fig.~\ref{fig:av24}) is the official vehicle of the IAC and the
+second generation of racecars adopted by the series, introduced in 2024 as the successor
+of the AV-21. It is built by Dallara on the chassis of the Indy NXT, the open-wheel
+single-seater of the development series of IndyCar, and has been adapted to driverless
+operation while keeping the layout and the performance of the original car. The
+vehicle has been designed to compete on oval tracks.
+
+To enable autonomous operation, the cockpit hosts the on-board computer and the set of
+actuators that turns the commands of the control software into steering, throttle,
+brake and gear inputs to the vehicle, together with the power and network distribution
+that connects sensors, computer and actuators. The bodywork has been modified to carry
+the sensors, described in Section~\ref{sec:sens_av24}, and a radio link connects the
+car to the base station, which receives the telemetry and sends the race control
+signals. The main characteristics of the vehicle are collected in
+Table~\ref{tab:av24}.
+
+\begin{figure}[tb]
+    \centering
+    \figplaceholder{0.75\textwidth}{5cm}{Dallara AV-24 \TODO{photo}}
+    \caption{The Dallara AV-24. \TODO{location and date}}
+    \label{fig:av24}
+\end{figure}
+
+\begin{table}[tb]
+    \centering
+    \small
+    \begin{tabular}{p{0.3\textwidth}p{0.45\textwidth}}
+        \toprule
+        Item              & Specification \\
+        \midrule
+        Series            & \\
+        Base chassis      & \\
+        Power unit        & \\
+        Gearbox           & \\
+        Top speed         & \\
+        Mass              & \\
+        Length / width / height & \\
+        On-board computer & \\
+        \bottomrule
+    \end{tabular}
+    \caption{Main characteristics of the Dallara AV-24. \TODO{to be completed}}
+    \label{tab:av24}
+\end{table}
+
+% =====================================================================
+\section{Dallara EAV-24}
+\label{sec:eav24}
+
+The Dallara EAV-24 (Fig.~\ref{fig:eav24}) is the official vehicle of the A2RL. It is
+developed from the Dallara SF23, the single-seater of the Japanese Super Formula
+championship, and keeps its chassis and aerodynamic package.
+
+Unlike the AV-24, the EAV-24 is conceived for road circuits; therefore, the vehicle is
+designed for high performance in heavy braking, in slow and fast corners and, in
+general, in conditions of changing dynamics. The power unit is a turbocharged
+\SI{2.0}{l} four-cylinder engine delivering about \SI{550}{hp}, coupled with a
+longitudinal six-speed sequential gearbox, which brings the car to a top speed of about
+\SI{250}{km/h}.
+
+As on the AV-24, the cockpit hosts the on-board computer and the actuation system that
+executes the commands of the control software, and the bodywork carries the sensors
+described in Section~\ref{sec:sens_eav24}. The main characteristics are summarized in
+Table~\ref{tab:eav24}.
+
+\begin{figure}[tb]
+    \centering
+    \figplaceholder{0.75\textwidth}{5cm}{Dallara EAV-24 \TODO{photo}}
+    \caption{The Dallara EAV-24. \TODO{location and date}}
+    \label{fig:eav24}
+\end{figure}
+
+\begin{table}[tb]
+    \centering
+    \small
+    \begin{tabular}{p{0.3\textwidth}p{0.45\textwidth}}
+        \toprule
+        Item              & Specification \\
+        \midrule
+        Series            & \\
+        Base chassis      & \\
+        Power unit        & \\
+        Gearbox           & \\
+        Top speed         & \\
+        Mass              & \\
+        Length / width / height & \\
+        Wheelbase         & \\
+        On-board computer & \\
+        \bottomrule
+    \end{tabular}
+    \caption{Main characteristics of the Dallara EAV-24. \TODO{to be completed}}
+    \label{tab:eav24}
+\end{table}
+
+% =====================================================================
+\section{Sensors}
+\label{sec:sensors}
+
+This section describes the sensors mounted on the Dallara AV-24 and EAV-24. For each
+of them, the working principle, the main advantages and the main limitations are
+briefly described. Overall, the set of sensors allows a complete reconstruction of the
+environment around the vehicle, within the distances of interest for racing, and
+provides the reliable perception needed for autonomous driving.
+
+\subsection{LiDAR}
+\label{subsec:lidar}
+
+A LiDAR (Light Detection and Ranging) is an active sensor that emits laser pulses and
+measures the distance of the surfaces that reflect them from the time of flight of each
+pulse, $r = c\,\Delta t/2$. A scanning mechanism steers the beam in azimuth and
+elevation, and the high pulse repetition rate allows hundreds of thousands of points to
+be acquired every second. The output of each scan is
+a point cloud: a dense three-dimensional sampling of the surrounding surfaces, with
+centimetre-level range precision and an angular resolution of a few hundredths of a
+degree. From the point cloud the shape and the size of the objects around the vehicle
+can be reconstructed; in the perception module it is processed to extract the bounding
+boxes and the detections of the other vehicles (Section~\ref{sec:sw_arch}).
+
+The long-range LiDARs mounted on both vehicles operate at a wavelength of
+\SI{1550}{nm}, which allows a range of around \SI{80}{m}. Many units also allow the scan pattern to be configured, for instance by
+concentrating the scan lines in a region of interest around the horizon, where the
+other vehicles are expected.
+
+Due to the nature of its working principle, the quality of the measurements degrades in
+adverse weather, since rain, fog and the spray raised by other cars attenuate and
+scatter the laser beam. Moreover, the energy returned by a target decreases quickly
+with the distance and with the reflectivity of its surface, so that the working range
+is shorter than that of RaDAR technologies. Finally, a LiDAR measures positions only:
+the velocity of a target is not observed directly and has to be inferred from
+successive scans.
+
+\subsection{RaDAR}
+\label{subsec:radar}
+
+A RaDAR (Radio Detection and Ranging) is an active sensor that emits electromagnetic
+waves in the radio band and receives the echoes reflected by the targets. Automotive
+RaDARs are typically frequency-modulated continuous-wave (FMCW) sensors: the
+transmitted signal is a sequence of frequency ramps, and the frequency difference
+between the transmitted and the received signal is proportional to the range of the
+target. The direction of the target is obtained from the phase differences of the echo
+across the receiving antennas.
+
+The main strength of the RaDAR is the direct measurement of velocity. When the target
+moves with respect to the sensor, the phase of its echo changes from one ramp to the
+next by an amount proportional to the radial component of the relative velocity
+(Doppler effect):
+\begin{equation}
+    \Delta\varphi = \frac{4\pi}{\lambda}\,\dot\rho\,T_c
+    \quad\Longrightarrow\quad
+    \dot\rho = \frac{\lambda\,\Delta\varphi}{4\pi\,T_c},
+    \label{eq:doppler}
+\end{equation}
+where $\lambda$ is the wavelength of the carrier, $T_c$ the time between two consecutive
+ramps and $\Delta\varphi$ the phase difference of the echo between them; equivalently,
+the echo is shifted in frequency by $|f_D| = 2|\dot\rho|/\lambda$ (Doppler shift). The
+RaDAR therefore measures the \emph{range rate} $\dot\rho$, the rate of change of the
+distance between the two vehicles, within a single scan. This is a unique property
+among the sensors on board: LiDARs and cameras observe only positions, and the velocity
+of a target can be obtained from them only by differentiating successive measurements.
+The second strength is the range: radio waves are much less attenuated than light, so
+the RaDAR detects a vehicle at larger distances than the LiDAR and extends the distance
+at which an opponent is visible. For the same reason, it is also much less sensitive to
+adverse weather, and its operation is guaranteed both by day and by night.
+
+The quality of the position measurement, on the other hand, is lower than that of the
+LiDAR. The RaDAR does not reconstruct the three-dimensional shape of the target: the
+echoes come from a few points on the most reflective parts of the vehicle. In addition,
+the angular resolution is considerably coarser than that of LiDARs and cameras.
+
+\subsection{Cameras}
+\label{subsec:camera}
+
+Cameras are passive sensors that capture images of the scene at high resolution and
+frame rate. The richness of the information contained in the images, such as colour
+and texture, allows neural networks to detect and classify the surrounding objects
+reliably: for each vehicle in the field of view, the detector returns a bounding box in
+the image. The three-dimensional position of the vehicle is then reconstructed by
+fitting its bounding box, combining the information coming from multiple cameras with
+the knowledge of their calibration.
+
+The main limitation of this approach is the possible degradation of the depth
+reconstruction. Since the distance of the vehicle is extracted from the dimensions of
+its bounding box, small errors in the size or in the position of the box in the image
+translate into errors in the reconstructed depth, especially for distant targets.
+
+\subsection{Localization}
+\label{subsec:gnss}
+
+The ego vehicle localizes itself with RTK-GNSS receivers coupled with inertial
+measurement units, which provide position, attitude, velocity and acceleration in the
+map frame with centimetre-level position accuracy. The ego state is used by the
+perception pipelines to express the detections in the map frame and by the tracker to
+compensate the motion of the ego vehicle.
+
+\subsection{Dallara AV-24}
+\label{sec:sens_av24}
+
+The AV-24 is equipped with three Luminar Iris LiDARs, one facing forward and two on the
+sides, which cover the front and the lateral regions of the car. Two Continental RaDARs
+complete the perception of the surroundings: one on top of the cockpit, facing forward,
+and one below the rear wing, facing backward, which covers the region behind the car.
+Six Allied Vision Mako G319C cameras, arranged as a front stereo pair, two side cameras
+and two cameras on the roll hoop, provide visual coverage around the vehicle.
+Localization relies on a VectorNav VN-310 GNSS/INS and two NovAtel PwrPak7 receivers,
+connected to a set of GNSS antennas distributed on the car. The sensors are listed in
+Table~\ref{tab:sens_av24}, and their position on the car is shown in
+Fig.~\ref{fig:av24_layout}.
+
+\begin{table}[tb]
+    \centering
+    \small
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.41\textwidth}}
+        \toprule
+        Sensor       & Model & Units & Main specifications \\
+        \midrule
+        LiDAR        &       &       & \\
+        RaDAR        &       &       & \\
+        Camera       &       &       & \\
+        GNSS/INS     &       &       & \\
+        \bottomrule
+    \end{tabular}
+    \caption{Sensor configuration of the Dallara AV-24. \TODO{to be completed}}
+    \label{tab:sens_av24}
+\end{table}
+
+\begin{figure}[tb]
+    \centering
+    \figplaceholder{0.85\textwidth}{5.5cm}{Top view of the AV-24 with position and
+    horizontal FoV of the sensors \TODO{draw}}
+    \caption{Sensor layout of the Dallara AV-24.}
+    \label{fig:av24_layout}
+\end{figure}
+
+\subsection{Dallara EAV-24}
+\label{sec:sens_eav24}
+
+The EAV-24 is equipped with three Seyond Falcon K LiDARs, one facing forward and two
+on the sides of the car, and four ZF ProWave RaDARs, placed at the front, on the two
+sides and at the rear, which together provide full \SI{360}{\degree} coverage. Seven
+Leopard Imaging cameras complete the perception suite: two at the front, two on the
+sides and three at the rear. Localization relies
+on a dual-antenna VectorNav VN-310 RTK-GNSS/INS, which includes an inertial measurement
+unit, and on a Kistler SF~Motion optical sensor, which measures the longitudinal and
+lateral ground speed of the vehicle. Table~\ref{tab:sens_eav24} summarizes the
+configuration and Fig.~\ref{fig:eav24_layout} shows the position of the sensors.
+
+\begin{table}[tb]
+    \centering
+    \small
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.41\textwidth}}
+        \toprule
+        Sensor       & Model & Units & Main specifications \\
+        \midrule
+        LiDAR        &       &       & \\
+        RaDAR        &       &       & \\
+        Camera       &       &       & \\
+        GNSS/INS     &       &       & \\
+        Ground speed &       &       & \\
+        \bottomrule
+    \end{tabular}
+    \caption{Sensor configuration of the Dallara EAV-24. \TODO{to be completed}}
+    \label{tab:sens_eav24}
+\end{table}
+
+\begin{figure}[tb]
+    \centering
+    \figplaceholder{0.85\textwidth}{5.5cm}{Top view of the EAV-24 with position and
+    horizontal FoV of the sensors \TODO{draw}}
+    \caption{Sensor layout of the Dallara EAV-24.}
+    \label{fig:eav24_layout}
+\end{figure}
+
+% =====================================================================
+\section{Software Architecture}
+\label{sec:sw_arch}
+
+The autonomous driving software, shared by the two vehicles, is organized in four
+main modules: localization, perception, planning and control (Fig.~\ref{fig:sw_arch}).
+Each module runs continuously and exchanges data with the others, so that the
+information flows from the sensors to the actuators through a chain in which the
+output of one module is the input of the next.
+
+\begin{figure}[tb]
+    \centering
+    \figplaceholder{0.95\textwidth}{6cm}{Block diagram: sensors $\rightarrow$
+    perception (detection $\rightarrow$ target tracking) $\rightarrow$ planning
+    $\rightarrow$ control $\rightarrow$ actuators; localization feeding perception,
+    planning and control; track database feeding planning \TODO{draw}}
+    \caption{Main modules of the autonomous driving software and data exchanged between
+    them.}
+    \label{fig:sw_arch}
+\end{figure}
+
+\paragraph{Localization.} The localization module estimates the state of the ego
+vehicle, i.e.\ its position, heading, velocity and acceleration in the map frame, by
+fusing the measurements of the GNSS receivers, of the inertial units and of the
+proprioceptive sensors. Its output is used by the perception, planning and control
+modules.
+
+\paragraph{Perception.} The perception module turns the raw data of LiDARs, RaDARs and
+cameras into a description of the vehicles around the ego car. A first stage processes
+the data of each sensor separately: point clouds, RaDAR reflections and images are
+filtered, the points belonging to other vehicles are isolated and a list of
+\emph{detections} is produced, each one containing the position of a vehicle and, for
+the RaDAR, its range rate. The detections of the different sensors are then passed to
+the \emph{target tracking} module, which associates them over time with the vehicles
+already known, fuses the information coming from the different sensors and estimates
+the state of each opponent, including quantities that are not measured directly. The result is
+the list of the opponents with their estimated state, which is the output of perception towards planning. The target
+tracking module is the subject of this thesis and is described in detail in
+Chapter~\ref{ch:tracking}.
+
+\paragraph{Planning.} It receives the ego state from localization, the opponent list
+from perception and the information stored in a track database, which contains the
+boundaries of the track and a set of reference trajectories. Based on the presence of
+other vehicles and on the chosen strategy, i.e.\ following, overtaking or defending,
+the planning module decides the trajectory that the vehicle has to follow; the
+trajectory can also be selected by configuration. The output is a reference trajectory,
+i.e.\ a path with the associated speed profile, which is sent to control.
+
+\paragraph{Control.} It receives the reference trajectory from planning and the ego
+state from localization, and computes the commands for the actuators through two
+controllers: a longitudinal controller, which acts on throttle, brake and gear to track
+the reference speed, and a lateral controller, which computes the steering angle that
+keeps the vehicle on the reference path.
+
+% =====================================================================
+\section{Datasets}
+\label{sec:datasets}
+
+% =====================================================================
+\section{Ground Truth Reconstruction}
+\label{sec:gt}
