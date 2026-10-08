@@ -2,3 +2,27 @@
 \label{ch:adaptive_r}
 
 \TODO{}
+
+% ---------------------------------------------------------------------
+% Draft moved from Section 2.6 (Ground Truth Reconstruction): relative quantities,
+% to be introduced together with the measurement error in the relative frame.
+%
+% Let $\mathbf{p}_e = [x_e,\,y_e]^\top$, $\psi_e$ and $v_e$ be the position, heading and
+% speed of the ego vehicle, and $\mathbf{p}_o = [x_o,\,y_o]^\top$, $\psi_o$ and $v_o$
+% those of the opponent, all expressed in the map frame. The position of the opponent in
+% the ego frame and the relative heading are
+% \begin{equation}
+%     \begin{bmatrix} x_{rel} \\ y_{rel} \end{bmatrix}
+%     = \mathbf{R}(\psi_e)^{\top}\,(\mathbf{p}_o - \mathbf{p}_e),
+%     \qquad
+%     \psi_{rel} = \psi_o - \psi_e,
+% \end{equation}
+% where $\mathbf{R}(\psi_e)$ is the planar rotation matrix of angle $\psi_e$. The range
+% and the range rate, which are the quantities measured by the RaDAR, are computed as
+% \begin{equation}
+%     \rho = \|\mathbf{p}_o - \mathbf{p}_e\|,
+%     \qquad
+%     \dot\rho = \frac{(\mathbf{p}_o - \mathbf{p}_e)^{\top}(\mathbf{v}_o - \mathbf{v}_e)}{\rho},
+% \end{equation}
+% where the velocities are assumed to be aligned with the heading of each vehicle,
+% $\mathbf{v}_i = v_i\,[\cos\psi_i,\,\sin\psi_i]^\top$.

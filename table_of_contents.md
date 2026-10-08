@@ -29,7 +29,7 @@
 
 ## 4. Adaptive Measurement Noise Matrix
 - Theoretical formulation, estimator assumptions, closed-loop effect
-- Definition of the measurement error in the relative frame
+- Relative quantities (position in the ego frame, range, range rate) and definition of the measurement error in the relative frame
 - Deterministic compensation and Gaussian fitting
 - Temporal, cross-sensor and geometric correlations (PSD, ACF, LiDAR common mode)
 - Bias observability

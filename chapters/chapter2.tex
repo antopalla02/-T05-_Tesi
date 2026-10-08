@@ -216,83 +216,147 @@ map frame with centimetre-level position accuracy. The ego state is used by the
 perception pipelines to express the detections in the map frame and by the tracker to
 compensate the motion of the ego vehicle.
 
+\FloatBarrier
 \subsection{Dallara AV-24}
 \label{sec:sens_av24}
 
-The AV-24 is equipped with three Luminar Iris LiDARs, one facing forward and two on the
-sides, which cover the front and the lateral regions of the car. Two Continental RaDARs
-complete the perception of the surroundings: one on top of the cockpit, facing forward,
-and one below the rear wing, facing backward, which covers the region behind the car.
-Six Allied Vision Mako G319C cameras, arranged as a front stereo pair, two side cameras
-and two cameras on the roll hoop, provide visual coverage around the vehicle.
-Localization relies on a VectorNav VN-310 GNSS/INS and two NovAtel PwrPak7 receivers,
-connected to a set of GNSS antennas distributed on the car. The sensors are listed in
-Table~\ref{tab:sens_av24}, and their position on the car is shown in
-Fig.~\ref{fig:av24_layout}.
+The AV-24 mounts four Luminar Iris LiDARs: one at the front of the cockpit, facing
+forward, two on the sides of the cockpit, oriented at $\pm\SI{112.5}{\degree}$ with
+respect to the longitudinal axis, and one at the rear of the car, facing backward. The
+RaDAR coverage is provided by two units of different models: a Continental ARS548~RDI,
+mounted above the cockpit and facing forward, and a ZF FRGen21, mounted at the rear of
+the car and facing backward. Six Allied Vision Mako G319C cameras are arranged as a
+front stereo pair, two side cameras and two cameras on the roll hoop, facing forward
+and backward. Localization relies on a VectorNav VN-310 GNSS/INS and two NovAtel
+PwrPak7 receivers, connected to a set of GNSS antennas distributed on the car. The
+position of the sensors on the car is shown in Fig.~\ref{fig:av24_layout}.
 
-\begin{table}[tb]
+\begin{figure}[H]
     \centering
-    \small
-    \begin{tabular}{>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.41\textwidth}}
-        \toprule
-        Sensor       & Model & Units & Main specifications \\
-        \midrule
-        LiDAR        &       &       & \\
-        RaDAR        &       &       & \\
-        Camera       &       &       & \\
-        GNSS/INS     &       &       & \\
-        \bottomrule
-    \end{tabular}
-    \caption{Sensor configuration of the Dallara AV-24. \TODO{to be completed}}
-    \label{tab:sens_av24}
-\end{table}
-
-\begin{figure}[tb]
-    \centering
-    \figplaceholder{0.85\textwidth}{5.5cm}{Top view of the AV-24 with position and
-    horizontal FoV of the sensors \TODO{draw}}
-    \caption{Sensor layout of the Dallara AV-24.}
+    \includegraphics[width=\textwidth]{figures/ch2/av24_sensor_layout.pdf}
+    \caption{Position of the LiDARs, RaDARs and cameras on the Dallara AV-24 (top view).}
     \label{fig:av24_layout}
 \end{figure}
 
+The main characteristics of the LiDARs and of the RaDARs are reported in
+Table~\ref{tab:sens_av24}. At a distance of \SI{50}{m}, the horizontal resolution of the
+Iris corresponds to about \SI{10}{cm}, so that the rear of a vehicle, about \SI{2}{m}
+wide, is sampled by around twenty points on each scan line; the number of points
+decreases in inverse proportion to the distance. The maximum range of a LiDAR depends on
+the reflectivity of the target, since the returned energy decreases with it: the value
+in Table~\ref{tab:sens_av24} refers to a target with a reflectivity of 10\%. The two
+RaDARs provide a longer range
+and the direct measurement of the range rate, but their angular resolution, above one
+degree, corresponds at \SI{100}{m} to a lateral extent of 2 to \SI{3}{m}, comparable with
+the width of a vehicle.
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}}
+        \toprule
+                                         & LiDAR                        & Front RaDAR                     & Rear RaDAR \\
+        \midrule
+        Model                            & Luminar Iris                 & Continental ARS548 RDI          & ZF FRGen21 \\
+        Units                            & 4                            & 1                               & 1 \\
+        FoV (H $\times$ V)               & \SI{120}{\degree} $\times$ \SI{26}{\degree} & \SI{100}{\degree} $\times$ \SI{28}{\degree} (${<}\SI{100}{m}$) & \SI{90}{\degree} $\times$ \SI{30}{\degree} (\SI{150}{m}) \\
+        Angular resolution (H $\times$ V) & \SI{0.12}{\degree} $\times$ \SI{0.05}{\degree} & 1.2--\SI{1.68}{\degree} $\times$ \SI{2.3}{\degree} & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
+        Maximum range                    & \SI{200}{m}                  & \SI{300}{m}                     & \SI{350}{m} \\
+        Range resolution                 & \SI{2}{cm} (\SI{50}{m})      & \SI{0.22}{m}                    & 0.21--\SI{0.77}{m} \\
+        Update rate                      & \SI{10}{Hz}                  & \SI{20}{Hz}                     & \SI{16.7}{Hz} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Main characteristics of the LiDARs and RaDARs mounted on the Dallara AV-24.}
+    \label{tab:sens_av24}
+\end{table}
+
+The horizontal fields of view of the LiDARs and of the RaDARs are shown in
+Fig.~\ref{fig:av24_fov}. The four LiDARs, each covering \SI{120}{\degree}, together
+cover the whole horizontal plane around the vehicle. The RaDAR coverage, instead, is
+limited to two sectors, in front of and behind the car; on the sides of the vehicle,
+the opponent is observed only by the LiDARs and by the cameras.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/ch2/av24_fov.pdf}
+    \caption{Horizontal field of view of the LiDARs and RaDARs of the Dallara AV-24. The
+    angular extent of the sectors follows Table~\ref{tab:sens_av24}; their radius is not to
+    scale.}
+    \label{fig:av24_fov}
+\end{figure}
+
+\FloatBarrier
 \subsection{Dallara EAV-24}
 \label{sec:sens_eav24}
 
-The EAV-24 is equipped with three Seyond Falcon K LiDARs, one facing forward and two
-on the sides of the car, and four ZF ProWave RaDARs, placed at the front, on the two
-sides and at the rear, which together provide full \SI{360}{\degree} coverage. Seven
-Leopard Imaging cameras complete the perception suite: two at the front, two on the
-sides and three at the rear. Localization relies
-on a dual-antenna VectorNav VN-310 RTK-GNSS/INS, which includes an inertial measurement
-unit, and on a Kistler SF~Motion optical sensor, which measures the longitudinal and
-lateral ground speed of the vehicle. Table~\ref{tab:sens_eav24} summarizes the
-configuration and Fig.~\ref{fig:eav24_layout} shows the position of the sensors.
+The EAV-24 is equipped with three Innovusion Falcon Kinetic LiDARs, one at the front of
+the cockpit, facing forward, and two on the sides of the cockpit, oriented at
+$\pm\SI{120}{\degree}$ with respect to the longitudinal axis, and with four ZF FRGen21
+RaDARs, placed at the front, on the two sides and at the rear of the car. Seven Leopard
+Imaging cameras are mounted on the car: two at the front, two on the sides and three at
+the rear. Localization relies on a dual-antenna VectorNav VN-310 RTK-GNSS/INS, which
+includes an inertial measurement unit, and on a Kistler SF~Motion optical sensor, which
+measures the longitudinal and lateral ground speed of the vehicle. The position of the
+sensors on the car is shown in Fig.~\ref{fig:eav24_layout}.
 
-\begin{table}[tb]
+\begin{figure}[H]
     \centering
-    \small
-    \begin{tabular}{>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.41\textwidth}}
+    \includegraphics[width=\textwidth]{figures/ch2/eav24_sensor_layout.pdf}
+    \caption{Position of the LiDARs, RaDARs and cameras on the Dallara EAV-24 (top view).}
+    \label{fig:eav24_layout}
+\end{figure}
+
+The main characteristics of the LiDARs and of the RaDARs are reported in
+Table~\ref{tab:sens_eav24}. At a distance of \SI{50}{m}, the horizontal resolution of the
+Falcon Kinetic corresponds to about \SI{16}{cm}, so that a vehicle about \SI{2}{m} wide is
+sampled by around 13 points on each scan line; within a region of interest of
+\SI{40}{\degree} $\times$ \SI{4.8}{\degree}, whose position can be changed in real time,
+the resolution is doubled. As for any LiDAR, the maximum range depends on the
+reflectivity of the target, and the value in Table~\ref{tab:sens_eav24} refers to a
+target with a reflectivity of 10\%. The angular coverage of the FRGen21 RaDARs decreases with
+the distance of the target, from $\pm\SI{60}{\degree}$ in azimuth up to \SI{80}{m} to
+$\pm\SI{45}{\degree}$ up to \SI{150}{m}.
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}}
         \toprule
-        Sensor       & Model & Units & Main specifications \\
+                                         & LiDAR                        & RaDAR \\
         \midrule
-        LiDAR        &       &       & \\
-        RaDAR        &       &       & \\
-        Camera       &       &       & \\
-        GNSS/INS     &       &       & \\
-        Ground speed &       &       & \\
+        Model                            & Innovusion Falcon Kinetic    & ZF FRGen21 \\
+        Units                            & 3                            & 4 \\
+        FoV (H $\times$ V)               & \SI{120}{\degree} $\times$ \SI{25}{\degree} & \SI{90}{\degree} $\times$ \SI{30}{\degree} (\SI{150}{m}) \\
+        Angular resolution (H $\times$ V) & \SI{0.18}{\degree} $\times$ \SI{0.24}{\degree} & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
+        Maximum range                    & \SI{250}{m}                  & \SI{350}{m} \\
+        Range resolution                 & \SI{2}{cm} (\SI{50}{m})      & 0.21--\SI{0.77}{m} \\
+        Update rate                      & \SI{10}{Hz}                  & \SI{16.7}{Hz} \\
         \bottomrule
     \end{tabular}
-    \caption{Sensor configuration of the Dallara EAV-24. \TODO{to be completed}}
+    \caption{Main characteristics of the LiDARs and RaDARs mounted on the Dallara EAV-24.}
     \label{tab:sens_eav24}
 \end{table}
 
-\begin{figure}[tb]
+The horizontal fields of view of the LiDARs and of the RaDARs are shown in
+Fig.~\ref{fig:eav24_fov}. The three LiDARs, oriented at \SI{120}{\degree} from each
+other, nominally cover the whole horizontal plane. However, the rear wing occludes the
+field of view of the side LiDARs towards the back of the car, so that the region behind
+the vehicle is a blind spot for the LiDARs: when the opponent follows the ego vehicle,
+it is observed mainly by the rear RaDAR. The four RaDARs, instead, cover the
+whole horizontal plane around the vehicle.
+
+\begin{figure}[H]
     \centering
-    \figplaceholder{0.85\textwidth}{5.5cm}{Top view of the EAV-24 with position and
-    horizontal FoV of the sensors \TODO{draw}}
-    \caption{Sensor layout of the Dallara EAV-24.}
-    \label{fig:eav24_layout}
+    \includegraphics[width=0.8\textwidth]{figures/ch2/eav24_fov.pdf}
+    \caption{Horizontal field of view of the LiDARs and RaDARs of the Dallara EAV-24. The
+    angular extent of the sectors follows Table~\ref{tab:sens_eav24}; their radius is not
+    to scale, and the occlusion caused by the rear wing is not represented.}
+    \label{fig:eav24_fov}
 \end{figure}
+
+\FloatBarrier
 
 % =====================================================================
 \section{Software Architecture}
@@ -335,7 +399,7 @@ tracking module is the subject of this thesis and is described in detail in
 Chapter~\ref{ch:tracking}.
 
 \paragraph{Planning.} It receives the ego state from localization, the opponent list
-from perception and the information stored in a track database, which contains the
+from perception and the data of a track database, which contains the
 boundaries of the track and a set of reference trajectories. Based on the presence of
 other vehicles and on the chosen strategy, i.e.\ following, overtaking or defending,
 the planning module decides the trajectory that the vehicle has to follow; the
@@ -352,6 +416,184 @@ keeps the vehicle on the reference path.
 \section{Datasets}
 \label{sec:datasets}
 
+The analyses presented in this thesis are based on two on-track sessions recorded at
+the Imola circuit, on 26 July 2026 and on 3 August 2026, referred to in the following
+as session 0726 and session 0803. In both sessions the ego vehicle, a Dallara EAV-24,
+shared the track with a second EAV-24, operated by TUM Autonomous Motorsport in session
+0726 and by Kinetiz in session 0803. The opponent team provided the localization data
+used to reconstruct the opponent ground truth (Section~\ref{sec:gt}). The main
+characteristics of the two sessions are summarized in Table~\ref{tab:sessions}.
+
+\begin{table}[tb]
+    \centering
+    \small
+    \begin{tabular}{lcc}
+        \toprule
+                                                   & Session 0726            & Session 0803            \\
+        \midrule
+        Date                                       & 26/07/2026              & 03/08/2026              \\
+        Circuit                                    & Imola                   & Imola                   \\
+        Opponent                                   & TUM                     & Kinetiz                 \\
+        Distance covered by the opponent           & \SI{29.2}{km} (6 laps)  & \SI{43.3}{km} (9 laps)  \\
+        Opponent stationary                        & \SI{139}{s} (\SI{11}{\percent}) & \SI{74}{s} (\SI{4}{\percent}) \\
+        Opponent ahead of the ego vehicle          & \SI{72}{\percent}       & \SI{35}{\percent}       \\
+        Position swaps                             & 1                       & 7                       \\
+        Opponent detected by at least one sensor   & \SI{60}{\percent}       & \SI{57}{\percent}       \\
+        \bottomrule
+    \end{tabular}
+    \caption{Main characteristics of the two sessions.}
+    \label{tab:sessions}
+\end{table}
+
+\FloatBarrier
+
+\paragraph{Opponent dynamics.} Session 0726 begins with about \SI{500}{s} of runs at an
+almost constant speed of about \SI{90}{km/h}, followed by a series of stints at higher
+speed, up to \SI{160}{km/h}, separated by stops; overall, the opponent is stationary for
+\SI{139}{s}, i.e.\ \SI{11}{\percent} of the session. Session 0803 consists instead of
+continuous laps, in which braking and acceleration phases alternate along the whole
+session, and the opponent is stationary only for \SI{74}{s} (\SI{4}{\percent}). Table~\ref{tab:ds_dyn} reports the median and the 95th and 99th percentiles of the
+speed $v$ of the opponent, together with the 95th and 99th percentiles of its deceleration in braking ($-a_x$, for $a_x < 0$), of its acceleration in
+traction ($a_x$, for $a_x > 0$) and of the absolute value of its lateral acceleration
+$a_y = v\,\dot\psi$, computed over the samples in which it is moving
+($v > \SI{2}{m/s}$).
+
+\begin{table}[tb]
+    \centering
+    \small
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{lcccccc}
+        \toprule
+                                               & \multicolumn{3}{c}{Session 0726} & \multicolumn{3}{c}{Session 0803} \\
+        \cmidrule(lr){2-4}\cmidrule(lr){5-7}
+        Quantity                               & Median & 95th   & 99th    & Median & 95th   & 99th    \\
+        \midrule
+        Speed $v$ [km/h]                       & 89.5  & 150.4   & 161.7   & 91.1  & 137.1   & 154.1   \\
+        Braking deceleration $-a_x$ [m/s$^2$]  & --    & 9.4     & 12.4    & --    & 10.1    & 12.0    \\
+        Traction acceleration $a_x$ [m/s$^2$]  & --    & 7.9     & 9.5     & --    & 6.8     & 7.8     \\
+        Lateral acceleration $|a_y|$ [m/s$^2$] & --    & 10.8    & 13.5    & --    & 8.1     & 9.1     \\
+        \bottomrule
+    \end{tabular}
+    \caption{Median speed and 95th and 99th percentiles of speed and accelerations of the
+    opponent.}
+    \label{tab:ds_dyn}
+\end{table}
+
+\paragraph{Relative geometry.} The two sessions also differ in the relative position of
+the two vehicles. In session 0726 the opponent is ahead of the ego vehicle for most of
+the time (\SI{72}{\percent}), and the two cars swap position only once. In session 0803
+the ego vehicle leads for most of the session, the opponent being ahead only for
+\SI{35}{\percent} of the time, and the two cars swap position seven times at close
+range. Table~\ref{tab:ds_geom} reports the median and the 95th and 99th percentiles of
+the range $\rho$ and of the absolute value of the range rate $\dot\rho$, computed over the
+intervals in which the opponent is detected by at least one sensor, i.e.\ when the two
+vehicles are actually interacting. In both sessions the median range is about
+\SI{50}{m}, and the range rate is below about \SI{17}{m/s} for \SI{95}{\percent} of the
+time.
+
+\begin{table}[tb]
+    \centering
+    \small
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{lcccccc}
+        \toprule
+                                          & \multicolumn{3}{c}{Session 0726} & \multicolumn{3}{c}{Session 0803} \\
+        \cmidrule(lr){2-4}\cmidrule(lr){5-7}
+        Quantity                          & Median & 95th   & 99th    & Median & 95th   & 99th    \\
+        \midrule
+        Range $\rho$ [m]                  & 48.5   & 130.3  & 156.3   & 49.2   & 108.4  & 137.7   \\
+        Range rate $|\dot\rho|$ [m/s]     & 3.2    & 16.7   & 24.1    & 4.7    & 16.9   & 23.8    \\
+        \bottomrule
+    \end{tabular}
+    \caption{Median and 95th and 99th percentiles of range and absolute range rate between
+    the ego vehicle and the opponent, computed while the opponent is detected by at least
+    one sensor.}
+    \label{tab:ds_geom}
+\end{table}
+
+\FloatBarrier
+
+\paragraph{Sensor coverage.} Table~\ref{tab:sens_cov} reports, for each sensor, the
+number of detections associated with the opponent, the update rate and the distribution
+of the range at which the opponent is detected. A detection is associated with the
+opponent when its distance from the ground truth, evaluated at the acquisition time of
+the detection, is smaller than \SI{5}{m}. Fig.~\ref{fig:ds_pd} shows the detection rate in three range
+bands, defined as the fraction of \SI{0.1}{s} intervals in which at least one associated
+detection is available, computed separately for the intervals in which the opponent is
+ahead of and behind the ego vehicle. In the two sessions the camera pipeline processes
+only the images of the front cameras, so the detection rate of the camera is reported
+only for the opponent ahead.
+
+When the opponent is ahead, the distribution of the detections over the range shows
+that, within \SI{75}{m}, all the sensors detect the opponent consistently. As expected,
+beyond \SI{100}{m} the detection rate of the two LiDAR pipelines drops sharply, while
+that of the RaDAR and of the camera remains more consistent up to \SI{150}{m}. When the
+opponent is behind, the LiDAR detections are limited to the first range band, because of
+the blind spot caused by the rear wing (Section~\ref{sec:sens_eav24}), and the opponent
+is detected mainly by the RaDAR, which keeps a detection rate similar to or higher than
+the one obtained with the opponent ahead. Since in session 0803 the opponent is behind
+the ego vehicle for most of the time (Table~\ref{tab:sessions}), in this session the
+LiDARs provide fewer detections of the opponent, at shorter range
+(Table~\ref{tab:sens_cov}).
+
+\begin{table}[tb]
+    \centering
+    \small
+    \begin{tabular}{llccc}
+        \toprule
+        Session & Sensor              & Detections & Rate [Hz] & Range [m]: median / 95th / max \\
+        \midrule
+        0726    & LiDAR clustering    & 4711       & 10.0      & 40 / 86 / 123        \\
+                & LiDAR PointPillars  & 4968       & 10.0      & 41 / 101 / 123       \\
+                & RaDAR               & 7334       & 16.6      & 48 / 124 / 152       \\
+                & Camera              & 3548       & 10.0      & 54 / 141 / 193       \\
+        \midrule
+        0803    & LiDAR clustering    & 4025       & 10.0      & 35 / 74 / 126        \\
+                & LiDAR PointPillars  & 4973       & 10.0      & 39 / 67 / 123        \\
+                & RaDAR               & 12865      & 16.6      & 50 / 108 / 152       \\
+                & Camera              & 2574       & 10.0      & 39 / 94 / 189        \\
+        \bottomrule
+    \end{tabular}
+    \caption{Detections associated with the opponent for each sensor and session.}
+    \label{tab:sens_cov}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/ch2/dataset_detection_rate.pdf}
+    \caption{Detection rate of the opponent in three range bands for each sensor, with the
+    opponent ahead of (top) and behind (bottom) the ego vehicle. In the two sessions only
+    the front cameras are used by the camera pipeline.}
+    \label{fig:ds_pd}
+\end{figure}
+
+
+\FloatBarrier
+
 % =====================================================================
 \section{Ground Truth Reconstruction}
 \label{sec:gt}
+
+The evaluation of the measurements and of the target tracking algorithm requires the
+true state of the opponent at every instant. Only with this reference it is possible to
+quantify the error of the raw detections of each sensor and the error of the estimates
+produced by the filter, separately for each component of the state.
+
+The reference for the opponent state is the localization of the opponent vehicle
+itself. During the sessions, each team records the output of its own state estimation,
+based on RTK-GNSS receivers and inertial units, and shares it after the session. The
+data provided by the opponent contain, for each sample, the timestamp, the position and
+the heading of the vehicle, its longitudinal speed and, when available, its
+longitudinal acceleration, and they are converted into a common structure compatible
+with the logs of the ego vehicle. The conversion consists in expressing the position
+and the heading of the opponent in the map frame of the ego vehicle; in associating each sample of the opponent with the
+sample of the ego vehicle with the closest timestamp; and in low-pass filtering the raw
+inertial measurement of the longitudinal acceleration or, when it is not available, in
+deriving the acceleration from the speed.
+
+It is important to note that this reference is not exact: it is the output of the
+state estimation of the opponent, and it may therefore contain errors related to the
+quality of its localization. Since the errors of the sensors are computed with respect
+to this reference, the analyses of the measurement errors carried out in
+Chapter~\ref{ch:adaptive_r} are also affected by the accuracy of the ground truth, and part of what is observed as
+an error of the detections may originate from the reference itself.

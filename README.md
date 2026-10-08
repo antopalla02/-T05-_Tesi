@@ -5,4 +5,5 @@
 - `table_of_contents.md` – draft outline of the thesis
 - `macros.tex` – common macros (`\TODO`, `\figplaceholder`)
 - `chapters/` – one file per chapter (`chapter1.tex` … `chapter8.tex`)
-- `scripts/` – scripts that generate figures and statistics
+- `figures/` – figures, one folder per chapter
+- `scripts/` – scripts that generate figures and statistics (input CSV files in `data/`, not tracked)
