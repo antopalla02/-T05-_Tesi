@@ -26,3 +26,34 @@
 % \end{equation}
 % where the velocities are assumed to be aligned with the heading of each vehicle,
 % $\mathbf{v}_i = v_i\,[\cos\psi_i,\,\sin\psi_i]^\top$.
+
+
+\FloatBarrier
+
+% =====================================================================
+\section{Ground Truth Reconstruction}
+\label{sec:gt}
+
+The evaluation of the measurements and of the target tracking algorithm requires the
+true state of the opponent at every instant. Only with this reference it is possible to
+quantify the error of the raw detections of each sensor and the error of the estimates
+produced by the filter, separately for each component of the state.
+
+The reference for the opponent state is the localization of the opponent vehicle
+itself. During the sessions, each team records the output of its own state estimation,
+based on RTK-GNSS receivers and inertial units, and shares it after the session. The
+data provided by the opponent contain, for each sample, the timestamp, the position and
+the heading of the vehicle, its longitudinal speed and, when available, its
+longitudinal acceleration, and they are converted into a common structure compatible
+with the logs of the ego vehicle. The conversion consists in expressing the position
+and the heading of the opponent in the map frame of the ego vehicle; in associating each sample of the opponent with the
+sample of the ego vehicle with the closest timestamp; and in low-pass filtering the raw
+inertial measurement of the longitudinal acceleration or, when it is not available, in
+deriving the acceleration from the speed.
+
+It is important to note that this reference is not exact: it is the output of the
+state estimation of the opponent, and it may therefore contain errors related to the
+quality of its localization. Since the errors of the sensors are computed with respect
+to this reference, the analyses of the measurement errors carried out in
+Chapter~\ref{ch:adaptive_r} are also affected by the accuracy of the ground truth, and part of what is observed as
+an error of the detections may originate from the reference itself.

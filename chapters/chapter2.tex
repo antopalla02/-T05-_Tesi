@@ -16,8 +16,7 @@ Section~\ref{sec:sensors} presents the working principle, the advantages and the
 limitations of the exteroceptive sensors (LiDARs, RaDARs and cameras) used for opponent
 tracking, together with the sensor configuration of the two vehicles. Section~\ref{sec:sw_arch} gives an overview of the
 main modules of the software architecture. Section~\ref{sec:datasets} describes the two
-datasets used for the analysis and Section~\ref{sec:gt} explains how the opponent ground
-truth is reconstructed.
+datasets used for the analysis, finally, Section~\ref{sec:gt} explains how the reference used to conduct all the analysis is reconstructed.
 
 % =====================================================================
 \section{Dallara AV-24}
@@ -77,10 +76,10 @@ championship, and keeps its chassis and aerodynamic package.
 
 Unlike the AV-24, the EAV-24 is conceived for road circuits; therefore, the vehicle is
 designed for high performance in heavy braking, in slow and fast corners and, in
-general, in conditions of changing dynamics. The power unit is a turbocharged
-\SI{2.0}{l} four-cylinder engine delivering about \SI{550}{hp}, coupled with a
+general, in more challenging dynamical conditions. The power unit is a turbocharged
+\SI{2.0}{l} four-cylinder engine delivering about \SI{550}{hp} , coupled with a
 longitudinal six-speed sequential gearbox, which brings the car to a top speed of about
-\SI{250}{km/h}.
+\SI{300}{km/h}.
 
 As on the AV-24, the cockpit hosts the on-board computer and the actuation system that
 executes the commands of the control software, and the bodywork carries the sensors
@@ -178,13 +177,11 @@ where $\lambda$ is the wavelength of the carrier, $T_c$ the time between two con
 ramps and $\Delta\varphi$ the phase difference of the echo between them; equivalently,
 the echo is shifted in frequency by $|f_D| = 2|\dot\rho|/\lambda$ (Doppler shift). The
 RaDAR therefore measures the \emph{range rate} $\dot\rho$, the rate of change of the
-distance between the two vehicles, within a single scan. This is a unique property
-among the sensors on board: LiDARs and cameras observe only positions, and the velocity
-of a target can be obtained from them only by differentiating successive measurements.
+distance between the two vehicles, within a single scan. 
 The second strength is the range: radio waves are much less attenuated than light, so
 the RaDAR detects a vehicle at larger distances than the LiDAR and extends the distance
 at which an opponent is visible. For the same reason, it is also much less sensitive to
-adverse weather, and its operation is guaranteed both by day and by night.
+adverse weather, and its operation is guaranteed both during day and night.
 
 The quality of the position measurement, on the other hand, is lower than that of the
 LiDAR. The RaDAR does not reconstruct the three-dimensional shape of the target: the
@@ -204,17 +201,15 @@ the knowledge of their calibration.
 
 The main limitation of this approach is the possible degradation of the depth
 reconstruction. Since the distance of the vehicle is extracted from the dimensions of
-its bounding box, small errors in the size or in the position of the box in the image
-translate into errors in the reconstructed depth, especially for distant targets.
+its bounding box, small errors in the size or in the position of the latter in the image
+translate into errors in the reconstructed distance, especially for farther targets.
 
 \subsection{Localization}
 \label{subsec:gnss}
 
 The ego vehicle localizes itself with RTK-GNSS receivers coupled with inertial
 measurement units, which provide position, attitude, velocity and acceleration in the
-map frame with centimetre-level position accuracy. The ego state is used by the
-perception pipelines to express the detections in the map frame and by the tracker to
-compensate the motion of the ego vehicle.
+map frame with centimetre-level position accuracy. 
 
 \FloatBarrier
 \subsection{Dallara AV-24}
@@ -240,15 +235,14 @@ position of the sensors on the car is shown in Fig.~\ref{fig:av24_layout}.
 
 The main characteristics of the LiDARs and of the RaDARs are reported in
 Table~\ref{tab:sens_av24}. At a distance of \SI{50}{m}, the horizontal resolution of the
-Iris corresponds to about \SI{10}{cm}, so that the rear of a vehicle, about \SI{2}{m}
+Iris LiDARs corresponds to about \SI{10}{cm}, so that the rear of a vehicle, about \SI{2}{m}
 wide, is sampled by around twenty points on each scan line; the number of points
 decreases in inverse proportion to the distance. The maximum range of a LiDAR depends on
-the reflectivity of the target, since the returned energy decreases with it: the value
-in Table~\ref{tab:sens_av24} refers to a target with a reflectivity of 10\%. The two
+the reflectivity of the target, since the returned energy decreases with it, as shown
+in Table~\ref{tab:sens_av24} a target with a reflectivity of 10\% is detected up to 200m. The two
 RaDARs provide a longer range
-and the direct measurement of the range rate, but their angular resolution, above one
-degree, corresponds at \SI{100}{m} to a lateral extent of 2 to \SI{3}{m}, comparable with
-the width of a vehicle.
+and the direct measurement of the range rate but with less angular resolution, i.e. at the same range the RaDARs provide less points.
+The values in the Table 2.3 refer to the best possible working conditions, in real scenarios, as shown in the following section (sec 2.5) , for example LiDARs provides measures at most up to 80-100m.
 
 \begin{table}[H]
     \centering
@@ -310,9 +304,7 @@ sensors on the car is shown in Fig.~\ref{fig:eav24_layout}.
 The main characteristics of the LiDARs and of the RaDARs are reported in
 Table~\ref{tab:sens_eav24}. At a distance of \SI{50}{m}, the horizontal resolution of the
 Falcon Kinetic corresponds to about \SI{16}{cm}, so that a vehicle about \SI{2}{m} wide is
-sampled by around 13 points on each scan line; within a region of interest of
-\SI{40}{\degree} $\times$ \SI{4.8}{\degree}, whose position can be changed in real time,
-the resolution is doubled. As for any LiDAR, the maximum range depends on the
+sampled by around 13 points on each scan line. As for any LiDAR, the maximum range depends on the
 reflectivity of the target, and the value in Table~\ref{tab:sens_eav24} refers to a
 target with a reflectivity of 10\%. The angular coverage of the FRGen21 RaDARs decreases with
 the distance of the target, from $\pm\SI{60}{\degree}$ in azimuth up to \SI{80}{m} to
@@ -568,32 +560,3 @@ LiDARs provide fewer detections of the opponent, at shorter range
 \end{figure}
 
 
-\FloatBarrier
-
-% =====================================================================
-\section{Ground Truth Reconstruction}
-\label{sec:gt}
-
-The evaluation of the measurements and of the target tracking algorithm requires the
-true state of the opponent at every instant. Only with this reference it is possible to
-quantify the error of the raw detections of each sensor and the error of the estimates
-produced by the filter, separately for each component of the state.
-
-The reference for the opponent state is the localization of the opponent vehicle
-itself. During the sessions, each team records the output of its own state estimation,
-based on RTK-GNSS receivers and inertial units, and shares it after the session. The
-data provided by the opponent contain, for each sample, the timestamp, the position and
-the heading of the vehicle, its longitudinal speed and, when available, its
-longitudinal acceleration, and they are converted into a common structure compatible
-with the logs of the ego vehicle. The conversion consists in expressing the position
-and the heading of the opponent in the map frame of the ego vehicle; in associating each sample of the opponent with the
-sample of the ego vehicle with the closest timestamp; and in low-pass filtering the raw
-inertial measurement of the longitudinal acceleration or, when it is not available, in
-deriving the acceleration from the speed.
-
-It is important to note that this reference is not exact: it is the output of the
-state estimation of the opponent, and it may therefore contain errors related to the
-quality of its localization. Since the errors of the sensors are computed with respect
-to this reference, the analyses of the measurement errors carried out in
-Chapter~\ref{ch:adaptive_r} are also affected by the accuracy of the ground truth, and part of what is observed as
-an error of the detections may originate from the reference itself.
