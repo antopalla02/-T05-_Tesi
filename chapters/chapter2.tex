@@ -38,33 +38,34 @@ car to the base station, which receives the telemetry and sends the race control
 signals. The main characteristics of the vehicle are collected in
 Table~\ref{tab:av24}.
 
-\begin{figure}[tb]
+\begin{figure}[H]
     \centering
-    \figplaceholder{0.75\textwidth}{5cm}{Dallara AV-24 \TODO{photo}}
-    \caption{The Dallara AV-24. \TODO{location and date}}
+    \includegraphics[width=0.85\textwidth]{figures/ch2/av24_laguna_seca.jpg}
+    \caption{Dallara AV-24 at Laguna Seca, August 2026.}
     \label{fig:av24}
 \end{figure}
 
-\begin{table}[tb]
+\begin{table}[H]
     \centering
     \small
     \begin{tabular}{p{0.3\textwidth}p{0.45\textwidth}}
         \toprule
         Item              & Specification \\
         \midrule
-        Series            & \\
-        Base chassis      & \\
-        Power unit        & \\
-        Gearbox           & \\
-        Top speed         & \\
-        Mass              & \\
-        Length / width / height & \\
-        On-board computer & \\
+        Series            & Indy Autonomous Challenge (IAC) \\
+        Engine            & 4 Piston Racing K20C, \SI{2.0}{l} turbocharged four-cylinder \\
+        Power             & \SI{488}{hp} \\
+        Gearbox           & Ricardo, six-speed sequential \\
+        Top speed         & over \SI{300}{km/h} \\
+        Mass              & \SI{748}{kg} \\
+        Length / width / height & \SI{4.88}{m} / \SI{1.93}{m} / \SI{1.16}{m} \\
         \bottomrule
     \end{tabular}
-    \caption{Main characteristics of the Dallara AV-24. \TODO{to be completed}}
+    \caption{Main characteristics of the Dallara AV-24.}
     \label{tab:av24}
 \end{table}
+
+\FloatBarrier
 
 % =====================================================================
 \section{Dallara EAV-24}
@@ -77,7 +78,8 @@ championship, and keeps its chassis and aerodynamic package.
 Unlike the AV-24, the EAV-24 is conceived for road circuits; therefore, the vehicle is
 designed for high performance in heavy braking, in slow and fast corners and, in
 general, in more challenging dynamical conditions. The power unit is a turbocharged
-\SI{2.0}{l} four-cylinder engine delivering about \SI{550}{hp} , coupled with a
+\SI{2.0}{l} four-cylinder engine delivering about \SI{450}{hp}, which can be raised
+temporarily to about \SI{550}{hp} with the push-to-pass, coupled with a
 longitudinal six-speed sequential gearbox, which brings the car to a top speed of about
 \SI{300}{km/h}.
 
@@ -86,34 +88,34 @@ executes the commands of the control software, and the bodywork carries the sens
 described in Section~\ref{sec:sens_eav24}. The main characteristics are summarized in
 Table~\ref{tab:eav24}.
 
-\begin{figure}[tb]
+\begin{figure}[H]
     \centering
-    \figplaceholder{0.75\textwidth}{5cm}{Dallara EAV-24 \TODO{photo}}
-    \caption{The Dallara EAV-24. \TODO{location and date}}
+    \includegraphics[width=0.85\textwidth]{figures/ch2/eav24_imola.jpg}
+    \caption{Dallara EAV-24 at Imola circuit, August 2026.}
     \label{fig:eav24}
 \end{figure}
 
-\begin{table}[tb]
+\begin{table}[H]
     \centering
     \small
     \begin{tabular}{p{0.3\textwidth}p{0.45\textwidth}}
         \toprule
         Item              & Specification \\
         \midrule
-        Series            & \\
-        Base chassis      & \\
-        Power unit        & \\
-        Gearbox           & \\
-        Top speed         & \\
-        Mass              & \\
-        Length / width / height & \\
-        Wheelbase         & \\
-        On-board computer & \\
+        Series            & Abu Dhabi Autonomous Racing League (A2RL) \\
+        Engine            & 4 Piston Racing K20C1, \SI{2.0}{l} turbocharged four-cylinder \\
+        Power             & \SI{450}{hp} (\SI{550}{hp} with push-to-pass) \\
+        Gearbox           & 3MO, six-speed sequential \\
+        Top speed         & about \SI{300}{km/h} \\
+        Mass              & \SI{742}{kg} \\
+        Length / width / height & \SI{5.24}{m} / \SI{1.93}{m} / \SI{0.97}{m} \\
         \bottomrule
     \end{tabular}
-    \caption{Main characteristics of the Dallara EAV-24. \TODO{to be completed}}
+    \caption{Main characteristics of the Dallara EAV-24.}
     \label{tab:eav24}
 \end{table}
+
+\FloatBarrier
 
 % =====================================================================
 \section{Sensors}
@@ -235,29 +237,46 @@ position of the sensors on the car is shown in Fig.~\ref{fig:av24_layout}.
 
 The main characteristics of the LiDARs and of the RaDARs are reported in
 Table~\ref{tab:sens_av24}. At a distance of \SI{50}{m}, the horizontal resolution of the
-Iris LiDARs corresponds to about \SI{10}{cm}, so that the rear of a vehicle, about \SI{2}{m}
-wide, is sampled by around twenty points on each scan line; the number of points
-decreases in inverse proportion to the distance. The maximum range of a LiDAR depends on
-the reflectivity of the target, since the returned energy decreases with it, as shown
-in Table~\ref{tab:sens_av24} a target with a reflectivity of 10\% is detected up to 200m. The two
-RaDARs provide a longer range
-and the direct measurement of the range rate but with less angular resolution, i.e. at the same range the RaDARs provide less points.
-The values in the Table 2.3 refer to the best possible working conditions, in real scenarios, as shown in the following section (sec 2.5) , for example LiDARs provides measures at most up to 80-100m.
+Iris LiDARs corresponds to about \SI{10}{cm}, so that the rear of a vehicle, about
+\SI{2}{m} wide, is sampled by around twenty points on each scan line; the number of
+points decreases in inverse proportion to the distance. The maximum range of a LiDAR
+depends on the reflectivity of the target, since the returned energy decreases with it:
+as shown in Table~\ref{tab:sens_av24}, a target with a reflectivity of 10\% is detected
+up to \SI{200}{m}.
+
+The two RaDARs provide a longer range and the direct measurement of the range rate. The
+Continental ARS548~RDI detects targets up to \SI{300}{m}, with a range resolution of
+\SI{0.22}{m}, within $\pm\SI{50}{\degree}$ in azimuth, and measures relative speeds
+between $-\SI{400}{km/h}$ (approaching targets) and $+\SI{200}{km/h}$, with a resolution
+of \SI{0.35}{km/h} (about \SI{0.1}{m/s}). The ZF FRGen21 operates in three range modes,
+which trade the maximum range for the range resolution: up to \SI{95}{m}, \SI{190}{m}
+and \SI{350}{m}, with a resolution of \SI{0.21}{m}, \SI{0.41}{m} and \SI{0.77}{m}
+respectively. It measures the range rate with a resolution of \SI{0.1}{m/s}, and its
+angular coverage decreases with the distance of the target, from $\pm\SI{60}{\degree}$
+in azimuth up to \SI{80}{m} to $\pm\SI{45}{\degree}$ up to \SI{150}{m}. The angular
+resolution of both RaDARs is coarser than that of the LiDARs, so that at the same range
+they provide fewer points on the target.
+
+The values in Table~\ref{tab:sens_av24} refer to the best working conditions. In real
+scenarios the detection range is shorter: as shown in Section~\ref{sec:datasets}, for
+example, the LiDARs provide measurements of the opponent at most up to 80--\SI{100}{m}.
 
 \begin{table}[H]
     \centering
     \footnotesize
     \setlength{\tabcolsep}{4pt}
-    \begin{tabular}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}}
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.26\textwidth}}
         \toprule
                                          & LiDAR                        & Front RaDAR                     & Rear RaDAR \\
         \midrule
         Model                            & Luminar Iris                 & Continental ARS548 RDI          & ZF FRGen21 \\
         Units                            & 4                            & 1                               & 1 \\
-        FoV (H $\times$ V)               & \SI{120}{\degree} $\times$ \SI{26}{\degree} & \SI{100}{\degree} $\times$ \SI{28}{\degree} (${<}\SI{100}{m}$) & \SI{90}{\degree} $\times$ \SI{30}{\degree} (\SI{150}{m}) \\
+        FoV (H $\times$ V)               & \SI{120}{\degree} $\times$ \SI{26}{\degree} & \SI{100}{\degree} $\times$ \SI{28}{\degree} (${<}\SI{100}{m}$) & \SI{120}{\degree} (\SI{80}{m}), \SI{90}{\degree} (\SI{150}{m}) $\times$ \SI{30}{\degree} \\
         Angular resolution (H $\times$ V) & \SI{0.12}{\degree} $\times$ \SI{0.05}{\degree} & 1.2--\SI{1.68}{\degree} $\times$ \SI{2.3}{\degree} & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
-        Maximum range                    & \SI{200}{m}                  & \SI{300}{m}                     & \SI{350}{m} \\
-        Range resolution                 & \SI{2}{cm} (\SI{50}{m})      & \SI{0.22}{m}                    & 0.21--\SI{0.77}{m} \\
+        Maximum range                    & \SI{200}{m} (10\% reflectivity) & \SI{300}{m}                  & \SI{95}{m} / \SI{190}{m} / \SI{350}{m} \\
+        Range resolution                 & \SI{2}{cm} (\SI{50}{m})      & \SI{0.22}{m}                    & \SI{0.21}{m} / \SI{0.41}{m} / \SI{0.77}{m} \\
+        Relative speed range             & --                           & $-400$ to $+\SI{200}{km/h}$     & -- \\
+        Range rate resolution            & --                           & \SI{0.35}{km/h} ($\approx$\SI{0.1}{m/s}) & \SI{0.1}{m/s} \\
         Update rate                      & \SI{10}{Hz}                  & \SI{20}{Hz}                     & \SI{16.7}{Hz} \\
         \bottomrule
     \end{tabular}
@@ -279,6 +298,29 @@ the opponent is observed only by the LiDARs and by the cameras.
     scale.}
     \label{fig:av24_fov}
 \end{figure}
+
+The six Allied Vision Mako G319C cameras are arranged as a front stereo pair, two side
+cameras oriented at $\pm\SI{100}{\degree}$ with respect to the longitudinal axis, and two
+cameras on the roll hoop facing forward and backward, so that together they cover the
+surroundings of the vehicle in every direction. Their main characteristics are reported
+in Table~\ref{tab:cam_av24}.
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.55\textwidth}}
+        \toprule
+        Model             & Allied Vision Mako G319C \\
+        Units             & 6 \\
+        Image sensor      & Sony IMX265 \\
+        Resolution        & $2064 \times 1544$ pixels \\
+        Maximum frame rate & \SI{37.6}{fps} \\
+        Arrangement       & front stereo pair (baseline \SI{0.36}{m}), two side cameras at $\pm\SI{100}{\degree}$, two roll hoop cameras (forward and backward) \\
+        \bottomrule
+    \end{tabular}
+    \caption{Main characteristics of the cameras mounted on the Dallara AV-24.}
+    \label{tab:cam_av24}
+\end{table}
 
 \FloatBarrier
 \subsection{Dallara EAV-24}
@@ -303,12 +345,19 @@ sensors on the car is shown in Fig.~\ref{fig:eav24_layout}.
 
 The main characteristics of the LiDARs and of the RaDARs are reported in
 Table~\ref{tab:sens_eav24}. At a distance of \SI{50}{m}, the horizontal resolution of the
-Falcon Kinetic corresponds to about \SI{16}{cm}, so that a vehicle about \SI{2}{m} wide is
+Falcon Kinetic LiDARs corresponds to about \SI{16}{cm}, so that a vehicle about \SI{2}{m} wide is
 sampled by around 13 points on each scan line. As for any LiDAR, the maximum range depends on the
 reflectivity of the target, and the value in Table~\ref{tab:sens_eav24} refers to a
-target with a reflectivity of 10\%. The angular coverage of the FRGen21 RaDARs decreases with
-the distance of the target, from $\pm\SI{60}{\degree}$ in azimuth up to \SI{80}{m} to
-$\pm\SI{45}{\degree}$ up to \SI{150}{m}.
+target with a reflectivity of 10\%.
+
+The four ZF FRGen21 RaDARs provide a longer range and the direct measurement of the range
+rate. They operate in three range modes, which trade the maximum range for the range
+resolution: up to \SI{95}{m}, \SI{190}{m} and \SI{350}{m}, with a resolution of
+\SI{0.21}{m}, \SI{0.41}{m} and \SI{0.77}{m} respectively. The range rate is measured
+with a resolution of \SI{0.1}{m/s}. The angular coverage decreases with the distance of
+the target, from $\pm\SI{60}{\degree}$ in azimuth up to \SI{80}{m} to
+$\pm\SI{45}{\degree}$ up to \SI{150}{m}, and the angular resolution, \SI{1.5}{\degree},
+is coarser than that of the LiDARs.
 
 \begin{table}[H]
     \centering
@@ -320,10 +369,11 @@ $\pm\SI{45}{\degree}$ up to \SI{150}{m}.
         \midrule
         Model                            & Innovusion Falcon Kinetic    & ZF FRGen21 \\
         Units                            & 3                            & 4 \\
-        FoV (H $\times$ V)               & \SI{120}{\degree} $\times$ \SI{25}{\degree} & \SI{90}{\degree} $\times$ \SI{30}{\degree} (\SI{150}{m}) \\
+        FoV (H $\times$ V)               & \SI{120}{\degree} $\times$ \SI{25}{\degree} & \SI{120}{\degree} (\SI{80}{m}), \SI{90}{\degree} (\SI{150}{m}) $\times$ \SI{30}{\degree} \\
         Angular resolution (H $\times$ V) & \SI{0.18}{\degree} $\times$ \SI{0.24}{\degree} & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
-        Maximum range                    & \SI{250}{m}                  & \SI{350}{m} \\
-        Range resolution                 & \SI{2}{cm} (\SI{50}{m})      & 0.21--\SI{0.77}{m} \\
+        Maximum range                    & \SI{250}{m} (10\% reflectivity) & \SI{95}{m} / \SI{190}{m} / \SI{350}{m} \\
+        Range resolution                 & \SI{2}{cm} (\SI{50}{m})      & \SI{0.21}{m} / \SI{0.41}{m} / \SI{0.77}{m} \\
+        Range rate resolution            & --                           & \SI{0.1}{m/s} \\
         Update rate                      & \SI{10}{Hz}                  & \SI{16.7}{Hz} \\
         \bottomrule
     \end{tabular}
@@ -348,6 +398,29 @@ whole horizontal plane around the vehicle.
     \label{fig:eav24_fov}
 \end{figure}
 
+The seven Leopard Imaging cameras are arranged as a front stereo pair, two cameras facing
+the sides of the vehicle and three cameras covering the region behind it, two on the roll
+hoop and one at the rear end of the car, so that together they cover the surroundings of
+the vehicle in every direction. Their main characteristics are reported in
+Table~\ref{tab:cam_eav24}.
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.55\textwidth}}
+        \toprule
+        Model             & Leopard Imaging \\
+        Units             & 7 \\
+        Image sensor      & Sony IMX728 \\
+        Resolution        & $3857 \times 2177$ pixels \\
+        Maximum frame rate & \SI{45}{fps} \\
+        Arrangement       & front stereo pair (baseline \SI{0.32}{m}), two side cameras, three rear cameras (two on the roll hoop, one at the rear end) \\
+        \bottomrule
+    \end{tabular}
+    \caption{Main characteristics of the cameras mounted on the Dallara EAV-24.}
+    \label{tab:cam_eav24}
+\end{table}
+
 \FloatBarrier
 
 % =====================================================================
@@ -359,17 +432,6 @@ main modules: localization, perception, planning and control (Fig.~\ref{fig:sw_a
 Each module runs continuously and exchanges data with the others, so that the
 information flows from the sensors to the actuators through a chain in which the
 output of one module is the input of the next.
-
-\begin{figure}[tb]
-    \centering
-    \figplaceholder{0.95\textwidth}{6cm}{Block diagram: sensors $\rightarrow$
-    perception (detection $\rightarrow$ target tracking) $\rightarrow$ planning
-    $\rightarrow$ control $\rightarrow$ actuators; localization feeding perception,
-    planning and control; track database feeding planning \TODO{draw}}
-    \caption{Main modules of the autonomous driving software and data exchanged between
-    them.}
-    \label{fig:sw_arch}
-\end{figure}
 
 \paragraph{Localization.} The localization module estimates the state of the ego
 vehicle, i.e.\ its position, heading, velocity and acceleration in the map frame, by
@@ -404,19 +466,40 @@ controllers: a longitudinal controller, which acts on throttle, brake and gear t
 the reference speed, and a lateral controller, which computes the steering angle that
 keeps the vehicle on the reference path.
 
+\begin{figure}[H]
+    \centering
+    \input{figures/ch2/tikz/sw_arch.tex}
+    \caption{Main modules of the autonomous driving software and data exchanged between
+    them.}
+    \label{fig:sw_arch}
+\end{figure}
+
+\FloatBarrier
+
 % =====================================================================
 \section{Datasets}
 \label{sec:datasets}
 
-The analyses presented in this thesis are based on two on-track sessions recorded at
-the Imola circuit, on 26 July 2026 and on 3 August 2026, referred to in the following
-as session 0726 and session 0803. In both sessions the ego vehicle, a Dallara EAV-24,
-shared the track with a second EAV-24, operated by TUM Autonomous Motorsport in session
-0726 and by Kinetiz in session 0803. The opponent team provided the localization data
-used to reconstruct the opponent ground truth (Section~\ref{sec:gt}). The main
-characteristics of the two sessions are summarized in Table~\ref{tab:sessions}.
+The analyses presented in this thesis are based on two on-track sessions, recorded on
+26 July 2026 and on 3 August 2026 and referred to in the following as session 0726 and
+session 0803. Both sessions took place on the same circuit, the Autodromo Internazionale
+Enzo e Dino Ferrari in Imola, a road course of about \SI{4.9}{km} that alternates long
+straights, fast corners and chicanes; its layout is shown in Fig.~\ref{fig:imola}. In
+both sessions the ego vehicle, a Dallara EAV-24, shared the track with a second EAV-24,
+operated by TUM Autonomous Motorsport in session 0726 and by Kinetiz in session 0803. The
+opponent team provided the localization data used to reconstruct the opponent ground
+truth (Section~\ref{sec:gt}).
 
-\begin{table}[tb]
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/ch2/imola_layout.png}
+    \caption{Imola circuit track layout.}
+    \label{fig:imola}
+\end{figure}
+
+The main characteristics of the two sessions are summarized in Table~\ref{tab:sessions}.
+
+\begin{table}[H]
     \centering
     \small
     \begin{tabular}{lcc}
@@ -552,7 +635,7 @@ LiDARs provide fewer detections of the opponent, at shorter range
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/ch2/dataset_detection_rate.pdf}
+    \includegraphics[width=0.75\textwidth]{figures/ch2/dataset_detection_rate.pdf}
     \caption{Detection rate of the opponent in three range bands for each sensor, with the
     opponent ahead of (top) and behind (bottom) the ego vehicle. In the two sessions only
     the front cameras are used by the camera pipeline.}
