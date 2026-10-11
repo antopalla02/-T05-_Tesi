@@ -490,14 +490,17 @@ operated by TUM Autonomous Motorsport in session 0726 and by Kinetiz in session 
 opponent team provided the localization data used to reconstruct the opponent ground
 truth (Section~\ref{sec:gt}).
 
+The two sessions have been chosen because, as highlighted in the following, they show
+complementary characteristics, both in the dynamics of the opponent and in the relative
+geometry between the two vehicles. The main characteristics of the two sessions are
+summarized in Table~\ref{tab:sessions}.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/ch2/imola_layout.png}
     \caption{Imola circuit track layout.}
     \label{fig:imola}
 \end{figure}
-
-The main characteristics of the two sessions are summarized in Table~\ref{tab:sessions}.
 
 \begin{table}[H]
     \centering
@@ -532,7 +535,7 @@ traction ($a_x$, for $a_x > 0$) and of the absolute value of its lateral acceler
 $a_y = v\,\dot\psi$, computed over the samples in which it is moving
 ($v > \SI{2}{m/s}$).
 
-\begin{table}[tb]
+\begin{table}[H]
     \centering
     \small
     \setlength{\tabcolsep}{5pt}
@@ -559,11 +562,12 @@ the time (\SI{72}{\percent}), and the two cars swap position only once. In sessi
 the ego vehicle leads for most of the session, the opponent being ahead only for
 \SI{35}{\percent} of the time, and the two cars swap position seven times at close
 range. Table~\ref{tab:ds_geom} reports the median and the 95th and 99th percentiles of
-the range $\rho$ and of the absolute value of the range rate $\dot\rho$. In both sessions the median range is about
+the range $\rho$ and of the absolute value of the range rate $\dot\rho$, together with the
+median lateral position $y_{rel}$ of the opponent in the ego frame. In both sessions the median range is about
 \SI{50}{m}, and the range rate is below about \SI{17}{m/s} for \SI{95}{\percent} of the
 time.
 
-\begin{table}[tb]
+\begin{table}[H]
     \centering
     \small
     \setlength{\tabcolsep}{5pt}
@@ -575,23 +579,22 @@ time.
         \midrule
         Range $\rho$ [m]                  & 48.5   & 130.3  & 156.3   & 49.2   & 108.4  & 137.7   \\
         Range rate $|\dot\rho|$ [m/s]     & 3.2    & 16.7   & 24.1    & 4.7    & 16.9   & 23.8    \\
+        Lateral position $y_{rel}$ [m]    & 6.0    & --     & --      & $-5.7$ & --     & --      \\
         \bottomrule
     \end{tabular}
-    \caption{Median and 95th and 99th percentiles of range and absolute range rate between
-    the ego vehicle and the opponent, computed while the opponent is detected by at least
-    one sensor.}
+    \caption{Median and 95th and 99th percentiles of range and absolute range rate, and
+    median lateral position (positive to the left) of the opponent with respect to the ego
+    vehicle, computed while the opponent is detected by at least one sensor.}
     \label{tab:ds_geom}
 \end{table}
 
 \FloatBarrier
 
-\paragraph{Sensor coverage.} Table~\ref{tab:sens_cov} reports, for each sensor, the
-number of detections associated with the opponent, the update rate and the distribution
-of the range at which the opponent is detected. A detection is associated with the
-opponent when its distance from the ground truth, evaluated at the acquisition time of
-the detection, is smaller than \SI{5}{m}. Fig.~\ref{fig:ds_pd} shows the detection rate in three range
-bands computed separately for the intervals in which the opponent is
-ahead of and behind the ego vehicle. In the two sessions the camera pipeline processes
+\paragraph{Sensor coverage.} Fig.~\ref{fig:ds_pd} shows, for each sensor, the detection
+rate of the opponent in three range bands, computed separately for the intervals in
+which the opponent is ahead of and behind the ego vehicle. A detection is associated with
+the opponent when its distance from the ground truth, evaluated at the acquisition time
+of the detection, is smaller than \SI{5}{m}. In the two sessions the camera pipeline processes
 only the images of the front cameras, so the detection rate of the camera is reported
 only for the opponent ahead.
 
@@ -602,28 +605,6 @@ that of the RaDAR and of the camera remains more consistent up to \SI{150}{m}. W
 opponent is behind, the LiDAR detections are limited to the first range band, because of
 the blind spot caused by the rear wing (Section~\ref{sec:sens_eav24}), and the opponent
 is detected mainly by the RaDAR, which keeps a detection rate similar to the one obtained with the opponent ahead. 
-
-\begin{table}[tb]
-    \centering
-    \small
-    \begin{tabular}{llccc}
-        \toprule
-        Session & Sensor              & Detections & Rate [Hz] & Range [m]: median / 95th / max \\
-        \midrule
-        0726    & LiDAR clustering    & 4711       & 10.0      & 40 / 86 / 123        \\
-                & LiDAR PointPillars  & 4968       & 10.0      & 41 / 101 / 123       \\
-                & RaDAR               & 7334       & 16.6      & 48 / 124 / 152       \\
-                & Camera              & 3548       & 10.0      & 54 / 141 / 193       \\
-        \midrule
-        0803    & LiDAR clustering    & 4025       & 10.0      & 35 / 74 / 126        \\
-                & LiDAR PointPillars  & 4973       & 10.0      & 39 / 67 / 123        \\
-                & RaDAR               & 12865      & 16.6      & 50 / 108 / 152       \\
-                & Camera              & 2574       & 10.0      & 39 / 94 / 189        \\
-        \bottomrule
-    \end{tabular}
-    \caption{Detections associated with the opponent for each sensor and session.}
-    \label{tab:sens_cov}
-\end{table}
 
 \begin{figure}[H]
     \centering
