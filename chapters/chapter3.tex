@@ -5,7 +5,7 @@
 \chapter{Target Tracking Pipeline}
 \label{ch:tracking}
 
-This chapter is specifically focused on describing the main characteristics of the target
+This chapter is focused on describing the main characteristics of the target
 tracking module. The objective of the algorithm is to estimate, at every instant, the state
 of the opponents around the ego vehicle, i.e.\ their position, speed, heading and
 acceleration, starting from the detections produced by the perception stage of each
@@ -14,7 +14,7 @@ estimated state is the output of the perception module and becomes the input of 
 planning module.
 
 The estimation of the state of each opponent follows the structure of an Extended Kalman
-Filter (EKF), which is needed to handle the nonlinearities of the dynamic model that
+Filter (EKF), the latter chosen to handle the nonlinearities of the dynamic model that
 describes the motion of the vehicle. The filter alternates two essential steps: the
 \emph{prediction}, in which the state is propagated in time according to a Constant
 Curvature and Acceleration (CCA) model, and the \emph{update}, in which the predicted
@@ -31,15 +31,15 @@ the tracks, i.e.\ their creation, confirmation and deletion.
     \label{fig:tt_pipeline}
 \end{figure}
 
-The chapter develops following the same pipeline. Section~\ref{sec:tt_prediction}
+Following the same pipeline; Section~\ref{sec:tt_prediction}
 describes the prediction step of the EKF. Section~\ref{sec:tt_association} explains how
-each measurement is associated with the corresponding track, through the Mahalanobis
-distance and the Munkres algorithm, and how the measurements that arrive out of sequence
+each measurement is associated with the corresponding track, leveraging on the Mahalanobis
+distance gating and the Munkres algorithm, and how the measurements that arrive out of sequence
 are handled. Section~\ref{sec:tt_correction} presents the measurement models and the
 update step, in which the predicted state is corrected with the associated measurement.
-Section~\ref{sec:tt_management} explains how tracks are managed. Finally,
+Section~\ref{sec:tt_management} is about tracks management. Finally,
 Section~\ref{sec:tt_baseline} overviews the main performance limits of the current
-pipeline, i.e.\ the starting point of the research work.
+pipeline, highlighting estimate degradation in rapidly changing dynamic conditions, i.e.\ the starting point of the research work.
 
 % =====================================================================
 \section{Prediction}

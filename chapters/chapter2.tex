@@ -524,10 +524,9 @@ The main characteristics of the two sessions are summarized in Table~\ref{tab:se
 
 \paragraph{Opponent dynamics.} Session 0726 begins with about \SI{500}{s} of runs at an
 almost constant speed of about \SI{90}{km/h}, followed by a series of stints at higher
-speed, up to \SI{160}{km/h}, separated by stops; overall, the opponent is stationary for
-\SI{139}{s}, i.e.\ \SI{11}{\percent} of the session. Session 0803 consists instead of
+speed, up to \SI{160}{km/h}, separated by different safe stops. Session 0803 consists instead of
 continuous laps, in which braking and acceleration phases alternate along the whole
-session, and the opponent is stationary only for \SI{74}{s} (\SI{4}{\percent}). Table~\ref{tab:ds_dyn} reports the median and the 95th and 99th percentiles of the
+session, overall less safe stops are performed. Table~\ref{tab:ds_dyn} reports the median and the 95th and 99th percentiles of the
 speed $v$ of the opponent, together with the 95th and 99th percentiles of its deceleration in braking ($-a_x$, for $a_x < 0$), of its acceleration in
 traction ($a_x$, for $a_x > 0$) and of the absolute value of its lateral acceleration
 $a_y = v\,\dot\psi$, computed over the samples in which it is moving
@@ -560,9 +559,7 @@ the time (\SI{72}{\percent}), and the two cars swap position only once. In sessi
 the ego vehicle leads for most of the session, the opponent being ahead only for
 \SI{35}{\percent} of the time, and the two cars swap position seven times at close
 range. Table~\ref{tab:ds_geom} reports the median and the 95th and 99th percentiles of
-the range $\rho$ and of the absolute value of the range rate $\dot\rho$, computed over the
-intervals in which the opponent is detected by at least one sensor, i.e.\ when the two
-vehicles are actually interacting. In both sessions the median range is about
+the range $\rho$ and of the absolute value of the range rate $\dot\rho$. In both sessions the median range is about
 \SI{50}{m}, and the range rate is below about \SI{17}{m/s} for \SI{95}{\percent} of the
 time.
 
@@ -593,8 +590,7 @@ number of detections associated with the opponent, the update rate and the distr
 of the range at which the opponent is detected. A detection is associated with the
 opponent when its distance from the ground truth, evaluated at the acquisition time of
 the detection, is smaller than \SI{5}{m}. Fig.~\ref{fig:ds_pd} shows the detection rate in three range
-bands, defined as the fraction of \SI{0.1}{s} intervals in which at least one associated
-detection is available, computed separately for the intervals in which the opponent is
+bands computed separately for the intervals in which the opponent is
 ahead of and behind the ego vehicle. In the two sessions the camera pipeline processes
 only the images of the front cameras, so the detection rate of the camera is reported
 only for the opponent ahead.
@@ -605,11 +601,7 @@ beyond \SI{100}{m} the detection rate of the two LiDAR pipelines drops sharply, 
 that of the RaDAR and of the camera remains more consistent up to \SI{150}{m}. When the
 opponent is behind, the LiDAR detections are limited to the first range band, because of
 the blind spot caused by the rear wing (Section~\ref{sec:sens_eav24}), and the opponent
-is detected mainly by the RaDAR, which keeps a detection rate similar to or higher than
-the one obtained with the opponent ahead. Since in session 0803 the opponent is behind
-the ego vehicle for most of the time (Table~\ref{tab:sessions}), in this session the
-LiDARs provide fewer detections of the opponent, at shorter range
-(Table~\ref{tab:sens_cov}).
+is detected mainly by the RaDAR, which keeps a detection rate similar to the one obtained with the opponent ahead. 
 
 \begin{table}[tb]
     \centering
