@@ -1,0 +1,45 @@
+% Block diagram of the target tracking pipeline (Chapter 3).
+\begin{tikzpicture}[
+    font=\footnotesize,
+    >={Stealth[length=2mm]},
+    blk/.style={draw, rounded corners=2pt, align=center, minimum height=10mm, inner sep=3pt},
+    io/.style={blk, minimum width=18mm, fill=gray!8},
+    mod/.style={blk, minimum width=20mm, fill=blue!6},
+    ekf/.style={blk, minimum width=20mm, fill=blue!18, very thick},
+    grp/.style={draw, dashed, rounded corners=4pt, inner sep=5pt},
+    lab/.style={font=\scriptsize, align=center, text=black!70},
+    line/.style={->, thick}
+]
+% main chain
+\node[mod] (oosm) {OOSM\\handling};
+\node[ekf, right=9mm of oosm] (pred) {Prediction\\(CCA model)};
+\node[mod, right=9mm of pred] (assoc) {Data association\\(Mahalanobis,\\Munkres)};
+\node[ekf, right=12mm of assoc] (upd) {Update\\(correction)};
+\node[blk, minimum width=16mm, right=9mm of upd] (tracks) {Tracks};
+\node[mod, below=9mm of upd] (mgmt) {Track management\\(creation, confirmation,\\deletion)};
+
+% external inputs and output
+\node[io, above=9mm of oosm] (det) {Detections\\(LiDAR, RaDAR,\\camera)};
+\node[io, above=9mm of pred] (db) {Track\\database};
+\node[io, above=9mm of assoc] (ego) {Ego state\\(localization)};
+\node[io, above=9mm of tracks] (plan) {Planning};
+
+% data flow
+\draw[line] (det) -- (oosm);
+\draw[line] (oosm) -- node[lab, above]{$\mathbf{z},\,t_s$} (pred);
+\draw[line] (pred) -- (assoc);
+\draw[line] (assoc) -- node[lab, above]{assigned} (upd);
+\draw[line] (assoc.south) |- node[lab, above, pos=0.75]{unassigned} (mgmt.west);
+\draw[line] (upd) -- (tracks);
+\draw[line] (mgmt.east) -| (tracks.south);
+\draw[line] (db) -- node[lab, right]{curvature $\kappa$} (pred);
+\draw[line] (ego) -- node[lab, right]{ego pose at $t_s$} (assoc);
+\draw[line] (tracks) -- node[lab, right]{opponents} (plan);
+
+% feedback: the tracks are the starting point of the next prediction
+\coordinate (fb) at ($(mgmt.south)+(0,-5mm)$);
+\coordinate (fbr) at ($(tracks.east)+(5mm,0)$);
+\draw[line] (tracks.east) -- (fbr) |- (fb) -| node[lab, above, pos=0.25]{$\hat{\mathbf{x}},\,\mathbf{P}$ of the tracks} (pred.south);
+
+\node[grp, fit=(oosm)(pred)(assoc)(upd)(tracks)(mgmt)(fb)(fbr), label={[lab]left:Target\\tracking}] {};
+\end{tikzpicture}

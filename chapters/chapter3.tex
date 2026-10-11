@@ -1,4 +1,88 @@
+% =====================================================================
+%  Chapter 3 - Target Tracking Pipeline
+% =====================================================================
+
 \chapter{Target Tracking Pipeline}
 \label{ch:tracking}
 
-\TODO{}
+This chapter is specifically focused on describing the main characteristics of the target
+tracking module. The objective of the algorithm is to estimate, at every instant, the state
+of the opponents around the ego vehicle, i.e.\ their position, speed, heading and
+acceleration, starting from the detections produced by the perception stage of each
+sensor. As anticipated in Section~\ref{sec:sw_arch}, the list of the opponents with their
+estimated state is the output of the perception module and becomes the input of the
+planning module.
+
+The estimation of the state of each opponent follows the structure of an Extended Kalman
+Filter (EKF), which is needed to handle the nonlinearities of the dynamic model that
+describes the motion of the vehicle. The filter alternates two essential steps: the
+\emph{prediction}, in which the state is propagated in time according to a Constant
+Curvature and Acceleration (CCA) model, and the \emph{update}, in which the predicted
+state is corrected when a new measurement becomes available. Around the filter, the
+target tracking module manages all the operations required to work with real
+detections: the association of each measurement with the corresponding opponent, the
+handling of the measurements that arrive out of sequence (OOSM), and the management of
+the tracks, i.e.\ their creation, confirmation and deletion.
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{\input{figures/ch3/tikz/tt_pipeline.tex}}
+    \caption{Main steps of the target tracking pipeline.}
+    \label{fig:tt_pipeline}
+\end{figure}
+
+The chapter develops following the same pipeline. Section~\ref{sec:tt_prediction}
+describes the prediction step of the EKF. Section~\ref{sec:tt_association} explains how
+each measurement is associated with the corresponding track, through the Mahalanobis
+distance and the Munkres algorithm, and how the measurements that arrive out of sequence
+are handled. Section~\ref{sec:tt_correction} presents the measurement models and the
+update step, in which the predicted state is corrected with the associated measurement.
+Section~\ref{sec:tt_management} explains how tracks are managed. Finally,
+Section~\ref{sec:tt_baseline} overviews the main performance limits of the current
+pipeline, i.e.\ the starting point of the research work.
+
+% =====================================================================
+\section{Prediction}
+\label{sec:tt_prediction}
+
+\subsection{Constant Curvature and Acceleration Model}
+\label{subsec:tt_cca}
+
+\subsection{Prediction Step}
+\label{subsec:tt_prediction}
+
+% =====================================================================
+\section{Data Association}
+\label{sec:tt_association}
+
+\subsection{Mahalanobis Distance}
+\label{subsec:tt_mahalanobis}
+
+\subsection{Munkres Algorithm}
+\label{subsec:tt_munkres}
+
+\subsection{Out-of-Sequence Measurements}
+\label{subsec:tt_oosm}
+
+% =====================================================================
+\section{Correction}
+\label{sec:tt_correction}
+
+\subsection{Measurement Model}
+\label{subsec:tt_meas_model}
+
+\subsection{Measurement Noise}
+\label{subsec:tt_meas_noise}
+
+\subsection{Update}
+\label{subsec:tt_update}
+
+% =====================================================================
+\section{Track Management}
+\label{sec:tt_management}
+
+% =====================================================================
+\section{Baseline Performance}
+\label{sec:tt_baseline}
+
+\FloatBarrier
