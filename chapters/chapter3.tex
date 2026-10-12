@@ -90,7 +90,7 @@ locate the vehicle more accurately.
 Each pipeline publishes its detections at the rate of the corresponding sensor and with a
 latency that depends on its processing time, so that the detections of the different
 sources reach the tracker asynchronously and not necessarily in the order of their
-validity times.
+acquisition times.
 
 % =====================================================================
 \section{Prediction}
@@ -135,7 +135,7 @@ contribution of the process noise.
 \end{equation}
 
 In the target tracking module the prediction step is performed either when a new
-measurement is received, in which case the state is predicted to the validity time of
+measurement is received, in which case the state is predicted to the acquisition time of
 the measurement, or when a given time has elapsed since the last iteration, so that the
 estimate is kept up to date also in the absence of measurements. Since the measurements
 come from different sensors, with different update rates and latencies, the interval
@@ -357,16 +357,77 @@ At every time instant multiple detections can be produced by the sensors and, at
 time, multiple tracks can be active, either because more than one vehicle is on track or
 because the perception pipelines produce spurious detections. Before the correction step,
 i.e.\ the update of the prediction with the measurement, the filter has to determine which
-detections belong to which track. To this end, all the tracks are predicted to the
-validity time of the detections and the association is solved in two stages: a
-statistical gate, based on the Mahalanobis distance, discards the detection-track pairs
-that are not compatible, and the Munkres algorithm selects, among the remaining pairs, the
-assignment that globally minimizes the total distance.
+detections belong to which track. Since the detections do not reach the tracker in the
+order in which they were acquired, the out-of-sequence measurements are handled first, so
+that each detection is processed in the correct chronological order. Then, once all the
+tracks have been predicted to the acquisition time of the detections, the association is
+solved in two stages: a statistical gate, based on the Mahalanobis distance, discards the
+detection-track pairs that are not compatible, and the Munkres algorithm selects, among
+the remaining pairs, the assignment that globally minimizes the total distance.
+
+\subsection{Out-of-Sequence Measurements}
+\label{subsec:tt_oosm}
+
+The detections produced by the perception pipelines are not available to the tracker at
+the instant in which the corresponding data are acquired, but only after a certain delay.
+Each detection is therefore stamped with its acquisition time, which differs from the time
+at which the tracker receives and processes it. This delay is made of a systematic part,
+related to the amount of processing applied to the raw data, and thus larger for the
+LiDAR pipelines, and of a random part, related to the operation of the sensor itself.
+
+As a consequence, the order in which the measurements reach the tracker does not
+coincide, in general, with the order in which they were acquired: a RaDAR detection may
+arrive before a LiDAR detection acquired earlier. These are known as out-of-sequence
+measurements (OOSM), and the tracker must be able to handle them. The simplest strategies
+are to discard the late measurements, losing the information they carry, or to
+wait for a fixed interval before processing the measurements, so that they can be
+reordered, at the price of a systematic delay of the estimate.
+
+In the proposed tracker, OOSM are handled by reprocessing the history of the whole
+tracker. The tracker keeps a history ordered by acquisition time, in which each entry
+contains a measurement and the state of the tracker after processing it, i.e.\
+the set of tracks with their states, covariances and management information. When a new
+measurement arrives, it is inserted in the history according to its acquisition time. The
+tracker restarts from the state saved in the previous entry, processes the new measurement
+and then processes again, in chronological order, all the subsequent measurements already
+in the history, repeating for each of them the prediction, the association and the
+correction (Fig.~\ref{fig:tt_oosm_timeline}). When the new measurement is the most recent
+one, the ordinary case is recovered and nothing has to be reprocessed.
+
+\begin{figure}[H]
+    \centering
+    \input{figures/ch3/tikz/oosm_timeline.tex}
+    \caption{(a) Generation of out-of-sequence measurements: measurements 1 and 3 of sensor 1
+    reach the tracker after measurements 2 and 4 of sensor 2, although they were acquired
+    earlier. (b) Reprocessing: the late measurement 1 is inserted in the history according
+    to its acquisition time, the tracker restarts from the state saved before it and
+    processes again measurements 2--6, then the most recent state is predicted to the
+    current time.}
+    \label{fig:tt_oosm_timeline}
+\end{figure}
+
+The result is the same that would be obtained if the measurements were received in the
+correct order, without introducing approximations and without waiting in advance for
+possible late measurements. When the estimate has to be published, the most recent state
+of the history is propagated to the current time. The reprocessing involves not only the
+states of the filter, but all the decisions of the tracker: the association between
+measurements and tracks, the birth of new tracks and their confirmation or deletion are
+computed again, so that a late measurement can, for instance, confirm a track a posteriori
+or change the association of a subsequent measurement. The quantities that depend on the
+state of the ego vehicle, such as the range rate measured by the RaDAR, are computed with
+the ego state interpolated at the acquisition time of each measurement, taken from a
+buffer of the ego states.
+
+The cost of the reprocessing grows with the number of measurements to be processed again.
+To keep it limited, the measurements whose delay exceeds a maximum threshold are
+discarded, since the older the information, the lower its benefit to the current estimate
+and the more expensive its reprocessing. For the same reason, the history keeps only the
+last seconds of data, removing the oldest entries.
 
 \subsection{Mahalanobis Distance Gating}
 \label{subsec:tt_mahalanobis}
 
-For the $i$-th track, predicted to the validity time of the detections, and the $j$-th
+For the $i$-th track, predicted to the acquisition time of the detections, and the $j$-th
 detection $\mathbf{z}_j = [x_j,\,y_j]^\top$, the position error, or innovation, is
 \begin{equation}
     \boldsymbol{\nu}_{ij} = \mathbf{z}_j - \mathbf{H}\,\hat{\mathbf{x}}_{i,k+1|k},
@@ -443,72 +504,6 @@ for instance, with a greedy nearest-neighbour strategy, in which each detection 
 assigned in sequence to its closest track, the global solution avoids locally optimal
 choices that lead to wrong associations.
 
-\subsection{Out-of-Sequence Measurements}
-\label{subsec:tt_oosm}
-
-The sources described in Section~\ref{sec:tt_perception} do not provide their detections
-with the same delay. Each pipeline has its own processing time: the RaDAR requires few
-operations on its points, while PointPillars requires the inference of a neural network
-and the clustering the removal of the ground and the alignment of the vehicle model.
-Transmission and synchronization delays between the nodes add to these times. As a
-consequence, the order in which the measurements reach the tracker does not coincide, in
-general, with the order in which they were acquired: a RaDAR detection may arrive before
-a LiDAR detection acquired some tens of milliseconds earlier. These measurements are known
-as out-of-sequence measurements (OOSM), and an example is shown in
-Fig.~\ref{fig:tt_oosm_timeline}.
-
-The problem affects all recursive filters, such as the Kalman filter, which assume that
-the measurements arrive in chronological order: each correction updates a state already
-propagated to the time of the measurement, and it is not possible to go back in time
-directly. The simplest strategies are to discard the late measurements, losing the
-information of the slower sensors, which are often also the most accurate ones, or to
-wait for a fixed interval before processing the measurements, so that they can be
-reordered, at the price of a systematic delay of the estimate. Retrodiction methods
-instead incorporate the late measurement into the current state through approximate
-corrections.
-
-In this work a reprocessing approach based on a history of the filter is adopted. Each
-detection carries the acquisition time of the sensor, and not its arrival time at the
-tracker, and it is already expressed in the map frame with the pose of the ego vehicle at
-that instant. The tracker keeps a history ordered in time, in which each entry contains a
-measurement and the state of the filter after processing it, i.e.\ the set of tracks with
-their states, covariances and management information. When a new measurement arrives, it
-is inserted in the history according to its acquisition time. The filter restarts from the
-state saved immediately before that instant, processes the new measurement and then
-processes again, in chronological order, all the subsequent measurements already in the
-history, repeating for each of them the prediction, the association and the correction
-(Fig.~\ref{fig:tt_oosm_timeline}). When the new measurement is the most recent one, the ordinary
-case is recovered and nothing has to be reprocessed.
-
-\begin{figure}[H]
-    \centering
-    \input{figures/ch3/tikz/oosm_timeline.tex}
-    \caption{(a) Generation of out-of-sequence measurements: the LiDAR measurements 1 and
-    3, processed by a slower pipeline, reach the tracker after the RaDAR measurements 2 and
-    4, acquired later. (b) Reprocessing: at the arrival of the out-of-sequence
-    measurement 1, the filter restarts from the state saved before its acquisition time
-    and processes again the subsequent measurements 2--6.}
-    \label{fig:tt_oosm_timeline}
-\end{figure}
-
-The result is the same that would be obtained if the measurements were received in the
-correct order, without introducing approximations and without waiting in advance for
-possible late measurements. When the estimate has to be published, the most recent state
-of the history is propagated to the current time. The reprocessing involves not only the
-states of the filter, but all the decisions of the tracker: the association between
-measurements and tracks, the birth of new tracks and their confirmation or deletion are
-computed again, so that a late measurement can, for instance, confirm a track a posteriori
-or change the association of a subsequent measurement. The quantities that depend on the
-state of the ego vehicle, such as the range rate measured by the RaDAR, are computed with
-the ego state interpolated at the acquisition time of each measurement, taken from a
-buffer of the ego states.
-
-The cost of the reprocessing grows with the number of measurements to be processed again.
-To keep it limited, the measurements whose delay exceeds a maximum threshold, of the order
-of a few tenths of a second, are discarded, since such old information brings little
-benefit to the current estimate and is expensive to reprocess, and the history keeps only
-the last seconds of data, removing the oldest entries.
-
 % =====================================================================
 \section{Correction}
 \label{sec:tt_correction}
@@ -551,7 +546,7 @@ projection of the relative velocity between opponent and ego vehicle on the line
 \end{equation}
 where $\Delta v_x = v\cos\psi - v_e\cos\psi_e$ and $\Delta v_y = v\sin\psi - v_e\sin\psi_e$
 are the components of the relative velocity, computed with the speed $v_e$ and heading
-$\psi_e$ of the ego vehicle at the validity time of the measurement, and $\beta$ and $r$
+$\psi_e$ of the ego vehicle at the acquisition time of the measurement, and $\beta$ and $r$
 are the bearing and the length of the line of sight. A gating procedure is also applied
 on the range rate: the measurement is used only if the difference between the measured
 and the predicted range rate is smaller than \SI{3}{m/s}. The measurement vector of the
