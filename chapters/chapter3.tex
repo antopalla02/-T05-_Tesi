@@ -60,8 +60,7 @@ heading of a detection is obtained when the sensor cannot measure it, assuming t
 opponent moves approximately parallel to the racing lines.
 
 \paragraph{LiDAR.} The point clouds of the three LiDARs are expressed in the vehicle
-frame, synchronized and merged into a single cloud, from which the points belonging to the
-ego vehicle are removed. This cloud is processed by two complementary pipelines, a
+frame, synchronized and merged into a single cloud. The latter is processed by two complementary pipelines, a
 geometric one based on clustering and a learning-based one based on PointPillars.
 
 \subparagraph{Clustering.} The clustering pipeline is purely geometric: the ground points are removed, the
@@ -69,31 +68,25 @@ remaining points are filtered with the map of the drivable area and grouped into
 of neighbouring points, and the clusters whose size is not compatible with a car are
 discarded. Since the LiDAR observes only the side of the vehicle facing the sensor, the
 estimate of the centre of the vehicle starts from the visible corner closest to the sensor
-and is compensated with the nominal dimensions of the vehicle; when enough points are
-available, it is refined by aligning a three-dimensional model of the vehicle to the
-cluster.
+and is compensated with the nominal dimensions of the vehicle.
 
 \subparagraph{PointPillars.} PointPillars is a neural network that processes the merged
 cloud and returns oriented three-dimensional bounding
 boxes. Having learned the shape of the vehicle, the network can estimate its centre and
 heading also when the vehicle is only partially visible.
 
-\paragraph{RaDAR.} The four RaDARs provide point clouds much sparser than those of the
-LiDARs, but each point carries a direct measurement of the range rate obtained through the
-Doppler effect. After discarding the points of low quality or at incompatible ranges and
+\paragraph{RaDAR.}  Eachpoint carries a direct measurement of the range rate. After discarding the points of low quality or at incompatible ranges and
 heights, the points are clustered according to both their spatial distance and their range
 rate, since the points of the same vehicle are close to each other and move with similar
 radial velocity. Each cluster generates a detection whose position is the centroid of the
-points and whose range rate is their average, while the heading is obtained from the
-reference trajectories.
+points and whose range rate is their average.
 
 \paragraph{Camera.} The camera pipeline detects the vehicles in the images with a YOLO
 neural network, which returns a two-dimensional bounding box for each of them. The position
 of the vehicle is then reconstructed either from the camera alone, estimating the distance
 from the apparent height of the bounding box, or by projecting
-the LiDAR points onto the image and using those that fall inside the bounding box to
-locate the vehicle more accurately; in the latter case, the camera provides the semantic
-information and the LiDAR the geometric accuracy.
+the LiDAR points onto the image and using those to
+locate the vehicle more accurately.
 
 Each pipeline publishes its detections at the rate of the corresponding sensor and with a
 latency that depends on its processing time, so that the detections of the different
@@ -604,7 +597,4 @@ never published and is deleted after $T_w$, while a short sequence of missed det
 does not interrupt the tracking of a real vehicle.
 
 % =====================================================================
-\section{Baseline Performance}
-\label{sec:tt_baseline}
 
-\FloatBarrier
