@@ -30,7 +30,9 @@ the tracks, i.e.\ their creation, confirmation and deletion.
     \label{fig:tt_pipeline}
 \end{figure}
 
-Following the same pipeline; Section~\ref{sec:tt_prediction}
+Section~\ref{sec:tt_perception} gives a brief overview of the perception pipeline, i.e.\
+how the raw inputs of the sensors are processed to obtain the clean detections that are
+used by the tracking module. Then, following the same pipeline, Section~\ref{sec:tt_prediction}
 describes the prediction step of the EKF. Section~\ref{sec:tt_association} explains how
 each measurement is associated with the corresponding track, leveraging on the Mahalanobis
 distance gating and the Munkres algorithm, and how the measurements that arrive out of sequence
@@ -39,6 +41,64 @@ update step, in which the predicted state is corrected with the associated measu
 Section~\ref{sec:tt_management} is about tracks management. Finally,
 Section~\ref{sec:tt_baseline} overviews the main performance limits of the current
 pipeline, highlighting estimate degradation in rapidly changing dynamic conditions, i.e.\ the starting point of the research work.
+
+% =====================================================================
+\section{Perception Measurements}
+\label{sec:tt_perception}
+
+The target tracking module does not work on the raw data of the sensors, but on the
+detections produced by the perception pipelines. Each family of sensors is processed by a
+dedicated pipeline, running as an independent node, but all the pipelines share the same
+output: a list of detections, each one representing a possible opponent vehicle, all
+expressed in the same reference frame. Thanks to this common interface, the tracker can treat all the sources in the same way, the only
+differences being the measured quantities and their uncertainty.
+
+All the pipelines exploit two pieces of prior information on the circuit: a map of the
+drivable area, used to discard the detections that fall outside the track, such as walls
+or structures along the track, and the database of reference trajectories, from which the
+heading of a detection is obtained when the sensor cannot measure it, assuming that the
+opponent moves approximately parallel to the racing lines.
+
+\paragraph{LiDAR.} The point clouds of the three LiDARs are expressed in the vehicle
+frame, synchronized and merged into a single cloud, from which the points belonging to the
+ego vehicle are removed. This cloud is processed by two complementary pipelines, a
+geometric one based on clustering and a learning-based one based on PointPillars.
+
+\subparagraph{Clustering.} The clustering pipeline is purely geometric: the ground points are removed, the
+remaining points are filtered with the map of the drivable area and grouped into clusters
+of neighbouring points, and the clusters whose size is not compatible with a car are
+discarded. Since the LiDAR observes only the side of the vehicle facing the sensor, the
+estimate of the centre of the vehicle starts from the visible corner closest to the sensor
+and is compensated with the nominal dimensions of the vehicle; when enough points are
+available, it is refined by aligning a three-dimensional model of the vehicle to the
+cluster.
+
+\subparagraph{PointPillars.} PointPillars is a neural network that processes the merged
+cloud and returns oriented three-dimensional bounding
+boxes. Having learned the shape of the vehicle, the network can estimate its centre and
+heading also when the vehicle is only partially visible.
+
+\paragraph{RaDAR.} The four RaDARs provide point clouds much sparser than those of the
+LiDARs, but each point carries a direct measurement of the range rate obtained through the
+Doppler effect. After discarding the points of low quality or at incompatible ranges and
+heights, the points are clustered according to both their spatial distance and their range
+rate, since the points of the same vehicle are close to each other and move with similar
+radial velocity. Each cluster generates a detection whose position is the centroid of the
+points and whose range rate is their average, while the heading is obtained from the
+reference trajectories.
+
+\paragraph{Camera.} The camera pipeline detects the vehicles in the images with a YOLO
+neural network, which returns a two-dimensional bounding box for each of them. The position
+of the vehicle is then reconstructed either from the camera alone, estimating the distance
+from the apparent height of the bounding box, or by projecting
+the LiDAR points onto the image and using those that fall inside the bounding box to
+locate the vehicle more accurately; in the latter case, the camera provides the semantic
+information and the LiDAR the geometric accuracy.
+
+Each pipeline publishes its detections at the rate of the corresponding sensor and with a
+latency that depends on its processing time, so that the detections of the different
+sources reach the tracker asynchronously and not necessarily in the order of their
+validity times.
 
 % =====================================================================
 \section{Prediction}
@@ -51,26 +111,21 @@ model of the motion of the opponent.
 \subsection{Prediction Step}
 \label{subsec:tt_prediction}
 
-The EKF describes the evolution of the state of the opponent and its relation with the
-measurements through the discrete-time nonlinear system
+The EKF describes the evolution of the state of the opponent through the discrete-time
+nonlinear model
 \begin{equation}
-    \begin{aligned}
-        \mathbf{x}_{k+1} &= f_d(\mathbf{x}_k) + \mathbf{w}_k, \\
-        \mathbf{z}_k &= h(\mathbf{x}_k) + \mathbf{v}_k,
-    \end{aligned}
+    \mathbf{x}_{k+1} = f_d(\mathbf{x}_k,\,\mathbf{u}_k) + \mathbf{w}_k,
     \label{eq:tt_system}
 \end{equation}
 where $f_d(\cdot)$ is the motion model, which propagates the state $\mathbf{x}_k$ over the
-interval between two filter iterations, and $h(\cdot)$ is the measurement model, which
-depends on the sensor that produced the measurement $\mathbf{z}_k$
-(Section~\ref{sec:tt_correction}). The process noise $\mathbf{w}_k$ is a measure of the
-confidence in the motion model, i.e.\ how reliable the prediction is expected to be,
-while the measurement noise $\mathbf{v}_k$ weights the uncertainty of the measurement; both are modelled as zero-mean Gaussian white noises, with covariance
-matrices $\mathbf{Q}_k$ and $\mathbf{R}_k$ respectively.
+interval between two filter iterations using the known input $\mathbf{u}_k$. The process
+noise $\mathbf{w}_k$ is a measure of the confidence in the motion model, i.e.\ how
+reliable the prediction is expected to be, and it is modelled as a zero-mean Gaussian
+white noise with covariance matrix $\mathbf{Q}_k$.
 
 Since $f_d$ is nonlinear, it is linearized around the last estimate,
 \begin{equation}
-    \mathbf{F}_k = \left.\frac{\partial f_d}{\partial \mathbf{x}}\right|_{\hat{\mathbf{x}}_k}.
+    \mathbf{F}_k = \left.\frac{\partial f_d}{\partial \mathbf{x}}\right|_{\hat{\mathbf{x}}_k,\,\mathbf{u}_k}.
     \label{eq:tt_F_def}
 \end{equation}
 The estimated state $\hat{\mathbf{x}}$ is associated with a measure of its uncertainty,
@@ -81,7 +136,7 @@ contribution of the process noise.
 
 \begin{equation}
     \begin{aligned}
-        \hat{\mathbf{x}}_{k+1|k} &= f_d(\hat{\mathbf{x}}_k), \\
+        \hat{\mathbf{x}}_{k+1|k} &= f_d(\hat{\mathbf{x}}_k,\,\mathbf{u}_k), \\
         \mathbf{P}_{k+1|k} &= \mathbf{F}_k\,\mathbf{P}_k\,\mathbf{F}_k^\top + \mathbf{Q}_k,
     \end{aligned}
     \label{eq:tt_prediction}
@@ -132,7 +187,7 @@ In compact form,
 the system is written as $\dot{\mathbf{x}}(t) = f(\mathbf{x}(t),\kappa)$.
 \\\\The a priori knowledge of the trajectories that the opponent may follow, i.e.\ the racing
 lines stored in the track database introduced in Section~\ref{sec:sw_arch}, is exploited
-as a prior and modelled as an external input: the curvature $\kappa$ is not estimated by
+as a prior and modelled as an external input, $\mathbf{u}_k = \kappa$: the curvature is not estimated by
 the filter, but read from the database. At every prediction the point closest to the estimated position of the opponent
 is searched on the optimal trajectory, starting from the index found at the previous step;
 if its distance from the opponent exceeds \SI{0.5}{m}, the search is extended to all the
@@ -145,7 +200,7 @@ discretization,
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
     \mathbf{x}_{k+1} = \mathbf{x}_k
-    + \int_{t_k}^{t_{k+1}} f(\mathbf{x}(\tau),\kappa)\,\mathrm{d}\tau.
+    + \int_{t_k}^{t_k+\Delta t} f(\mathbf{x}(t),\kappa)\,\mathrm{d}t.
     \label{eq:tt_exact_disc}
 \end{equation}
 Under the assumption of constant curvature and acceleration over the interval, the
@@ -153,21 +208,21 @@ integrals can be solved in closed form. For acceleration, speed and heading,
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
     \begin{aligned}
-        a_{k+1}    &= a_k + \int_{t_k}^{t_{k+1}} 0\,\mathrm{d}\tau = a_k, \\
-        v_{k+1}    &= v_k + \int_{t_k}^{t_{k+1}} a_k\,\mathrm{d}\tau = v_k + a_k\,\Delta t, \\
-        \psi_{k+1} &= \psi_k + \int_{t_k}^{t_{k+1}} \kappa\,v(\tau)\,\mathrm{d}\tau
+        a_{k+1}    &= a_k + \int_{t_k}^{t_k+\Delta t} \dot a(t)\,\mathrm{d}t = a_k, \\
+        v_{k+1}    &= v_k + \int_{t_k}^{t_k+\Delta t} \dot v(t)\,\mathrm{d}t = v_k + a_k\,\Delta t, \\
+        \psi_{k+1} &= \psi_k + \int_{t_k}^{t_k+\Delta t} \dot\psi(t)\,\mathrm{d}t
                     = \psi_k + \kappa\left(v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2\right),
     \end{aligned}
     \label{eq:tt_cca_vapsi}
 \end{equation}
-while, since $\mathrm{d}\psi = \kappa\,v\,\mathrm{d}\tau$, the integrals of the position
+while, since $\mathrm{d}\psi = \kappa\,v\,\mathrm{d}t$, the integrals of the position
 reduce to integrals in the heading,
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
     \begin{aligned}
-        x_{k+1} &= x_k + \int_{t_k}^{t_{k+1}} v(\tau)\cos\psi(\tau)\,\mathrm{d}\tau
+        x_{k+1} &= x_k + \int_{t_k}^{t_k+\Delta t} \dot x(t)\,\mathrm{d}t
                  = x_k + \frac{\sin\psi_{k+1} - \sin\psi_k}{\kappa}, \\
-        y_{k+1} &= y_k + \int_{t_k}^{t_{k+1}} v(\tau)\sin\psi(\tau)\,\mathrm{d}\tau
+        y_{k+1} &= y_k + \int_{t_k}^{t_k+\Delta t} \dot y(t)\,\mathrm{d}t
                  = y_k - \frac{\cos\psi_{k+1} - \cos\psi_k}{\kappa}.
     \end{aligned}
     \label{eq:tt_cca_xy}
@@ -177,7 +232,7 @@ The discrete-time motion model is therefore
 \abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
-    f_d(\mathbf{x}_k) =
+    f_d(\mathbf{x}_k,\,\kappa) =
     \begin{bmatrix}
         x_k + \dfrac{\sin\psi_{k+1} - \sin\psi_k}{\kappa} \\[2ex]
         y_k - \dfrac{\cos\psi_{k+1} - \cos\psi_k}{\kappa} \\[2ex]
@@ -193,7 +248,7 @@ model reduces to:
 \abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
-    \lim_{\kappa \to 0} f_d(\mathbf{x}_k) =
+    \lim_{\kappa \to 0} f_d(\mathbf{x}_k,\,\kappa) =
     \begin{bmatrix}
         x_k + \left(v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2\right)\cos\psi_k \\
         y_k + \left(v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2\right)\sin\psi_k \\
@@ -320,9 +375,9 @@ assignment that globally minimizes the total distance.
 \label{subsec:tt_mahalanobis}
 
 For the $i$-th track, predicted to the validity time of the detections, and the $j$-th
-detection $\mathbf{z}_j = [x_j,\,y_j]^\top$, the position error is
+detection $\mathbf{z}_j = [x_j,\,y_j]^\top$, the position error, or innovation, is
 \begin{equation}
-    \mathbf{e}_{ij} = \mathbf{z}_j - \mathbf{H}\,\hat{\mathbf{x}}_{i,k+1|k},
+    \boldsymbol{\nu}_{ij} = \mathbf{z}_j - \mathbf{H}\,\hat{\mathbf{x}}_{i,k+1|k},
     \qquad
     \mathbf{H} =
     \begin{bmatrix}
@@ -333,7 +388,7 @@ detection $\mathbf{z}_j = [x_j,\,y_j]^\top$, the position error is
 \end{equation}
 where $\mathbf{H}$ extracts the position from the state. The Mahalanobis distance gating
 is an extension of the Euclidean gating: instead of comparing the Euclidean norm
-$\|\mathbf{e}_{ij}\|$ of the error with a fixed radius, which treats all the directions in
+$\|\boldsymbol{\nu}_{ij}\|$ of the error with a fixed radius, which treats all the directions in
 the same way, it weights the error by the uncertainty of the filter. The gate becomes an
 ellipse, whose size and orientation follow the covariance of the error, wider along the
 directions in which the prediction and the measurement are more uncertain and narrower
@@ -348,7 +403,7 @@ where they are more accurate (Fig.~\ref{fig:tt_gating}).
 
 The squared Mahalanobis distance between the $i$-th track and the $j$-th detection is
 \begin{equation}
-    d_{ij}^2 = \mathbf{e}_{ij}^\top\,\mathbf{S}_{ij}^{-1}\,\mathbf{e}_{ij},
+    d_{ij}^2 = \boldsymbol{\nu}_{ij}^\top\,\mathbf{S}_{ij}^{-1}\,\boldsymbol{\nu}_{ij},
     \qquad
     \mathbf{S}_{ij} = \mathbf{H}\,\mathbf{P}_{i,k+1|k}\,\mathbf{H}^\top + \mathbf{R}_{ij},
     \label{eq:tt_mahalanobis}
@@ -404,10 +459,16 @@ choices that lead to wrong associations.
 \label{sec:tt_correction}
 
 Once the association is solved, each track that has received a detection corrects its
-predicted state with the information carried by the measurement. The correction requires
-a model of the measurement, which relates the measured quantities to the state of the
-opponent, and a model of its noise, which describes how accurate the measurement is
-expected to be; both depend on the sensor that produced the detection.
+predicted state with the information carried by the measurement. The measurement is
+related to the state of the opponent through
+\begin{equation}
+    \mathbf{z}_{k+1} = h(\mathbf{x}_{k+1}) + \mathbf{v}_{k+1},
+    \label{eq:tt_meas_eq}
+\end{equation}
+where $h(\cdot)$ is the measurement model, which depends on the sensor that produced the
+detection, and the measurement noise $\mathbf{v}_{k+1}$ weights the uncertainty of the
+measurement; it is modelled as a zero-mean Gaussian white noise with covariance matrix
+$\mathbf{R}_{k+1}$.
 
 \subsection{Measurement Model and Noise}
 \label{subsec:tt_meas_model}
@@ -428,21 +489,19 @@ $\mathbf{z}_p = [x,\,y]^\top$, which is a linear function of the state,
 
 \paragraph{Range rate.} The RaDAR also measures the range rate $\dot\rho$, i.e.\ the
 projection of the relative velocity between opponent and ego vehicle on the line of sight
-(Section~\ref{subsec:radar}). With $\Delta\mathbf{p}$ and $\Delta\mathbf{v}$ the relative
-position and velocity, computed from the state of the opponent and from the state of the
-ego vehicle at the validity time of the measurement,
+(Section~\ref{subsec:radar}),
 \begin{equation}
-    h_{\dot\rho}(\mathbf{x}) = \frac{\Delta\mathbf{p}^\top\,\Delta\mathbf{v}}{\|\Delta\mathbf{p}\|},
-    \qquad
-    \Delta\mathbf{p} = \begin{bmatrix} x - x_e \\ y - y_e \end{bmatrix},
-    \quad
-    \Delta\mathbf{v} = \begin{bmatrix} v\cos\psi - v_e\cos\psi_e \\ v\sin\psi - v_e\sin\psi_e \end{bmatrix},
+    h_{\dot\rho}(\mathbf{x}) = \Delta v_x\cos\beta + \Delta v_y\sin\beta,
     \label{eq:tt_h_rhodot}
 \end{equation}
-which is nonlinear and is linearized around the predicted state. A gating procedure is also applied on the range rate: the measurement is used only if
-the difference between the measured and the predicted range rate is smaller than
-\SI{3}{m/s}. The measurement vector of the RaDAR is therefore
-$\mathbf{z} = [x,\,y,\,\dot\rho]^\top$, and the complete measurement matrix is
+where $\Delta v_x = v\cos\psi - v_e\cos\psi_e$ and $\Delta v_y = v\sin\psi - v_e\sin\psi_e$
+are the components of the relative velocity, computed with the speed $v_e$ and heading
+$\psi_e$ of the ego vehicle at the validity time of the measurement, and $\beta$ and $r$
+are the bearing and the length of the line of sight. A gating procedure is also applied
+on the range rate: the measurement is used only if the difference between the measured
+and the predicted range rate is smaller than \SI{3}{m/s}. The measurement vector of the
+RaDAR is therefore $\mathbf{z} = [x,\,y,\,\dot\rho]^\top$, and the linearized measurement
+matrix is
 \begin{equation}
     \mathbf{H} =
     \begin{bmatrix}
@@ -454,10 +513,7 @@ $\mathbf{z} = [x,\,y,\,\dot\rho]^\top$, and the complete measurement matrix is
     \end{bmatrix},
     \label{eq:tt_H_radar}
 \end{equation}
-where $(\Delta x,\,\Delta y)$ and $(\Delta v_x,\,\Delta v_y)$ are the components of
-$\Delta\mathbf{p}$ and $\Delta\mathbf{v}$, $r = \|\Delta\mathbf{p}\|$ and
-$\beta = \operatorname{atan2}(\Delta y,\,\Delta x)$ are the distance and the bearing of
-the line of sight, and all the quantities are evaluated at the predicted state.
+evaluated at the predicted state.
 
 \paragraph{Measurement noise.} The noise of each measure is modeled as zero-mean
 Gaussian. For the position, the

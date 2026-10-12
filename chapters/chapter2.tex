@@ -6,17 +6,20 @@
 \label{ch:setup}
 
 This chapter describes the experimental framework on which the research work is built.
-It briefly covers the hardware platforms, the sensors, the software stack and the data
-used to design and evaluate the algorithms presented in the following chapters.
+It briefly covers the hardware platforms, the sensors and the software stack used to
+design and evaluate the algorithms presented in the following chapters, together with the
+racing context in which they operate.
 
 Section~\ref{sec:av24} and Section~\ref{sec:eav24} introduce the two autonomous
 racecars: the Dallara AV-24, which races in the Indy Autonomous Challenge (IAC), and
-the Dallara EAV-24, which races in the Abu Dhabi Autonomous Racing League (A2RL).
+the Dallara EAV-25, which races in the Abu Dhabi Autonomous Racing League (A2RL).
 Section~\ref{sec:sensors} presents the working principle, the advantages and the
 limitations of the exteroceptive sensors (LiDARs, RaDARs and cameras) used for opponent
-tracking, together with the sensor configuration of the two vehicles. Section~\ref{sec:sw_arch} gives an overview of the
-main modules of the software architecture. Section~\ref{sec:datasets} describes the two
-datasets used for the analysis, finally, Section~\ref{sec:gt} explains how the reference used to conduct all the analysis is reconstructed.
+tracking, together with the sensor configuration of the two vehicles.
+Section~\ref{sec:sw_arch} gives an overview of the main modules of the software
+architecture. Finally, Section~\ref{sec:operating_conditions} describes the operating conditions of
+the two championships, which make the estimation of the state of the opponents a central
+problem in autonomous racing.
 
 % =====================================================================
 \section{Dallara AV-24}
@@ -68,14 +71,14 @@ Table~\ref{tab:av24}.
 \FloatBarrier
 
 % =====================================================================
-\section{Dallara EAV-24}
+\section{Dallara EAV-25}
 \label{sec:eav24}
 
-The Dallara EAV-24 (Fig.~\ref{fig:eav24}) is the official vehicle of the A2RL. It is
+The Dallara EAV-25 (Fig.~\ref{fig:eav24}) is the official vehicle of the A2RL. It is
 developed from the Dallara SF23, the single-seater of the Japanese Super Formula
 championship, and keeps its chassis and aerodynamic package.
 
-Unlike the AV-24, the EAV-24 is conceived for road circuits; therefore, the vehicle is
+Unlike the AV-24, the EAV-25 is conceived for road circuits; therefore, the vehicle is
 designed for high performance in heavy braking, in slow and fast corners and, in
 general, in more challenging dynamical conditions. The power unit is a turbocharged
 \SI{2.0}{l} four-cylinder engine delivering about \SI{450}{hp}, which can be raised
@@ -91,7 +94,7 @@ Table~\ref{tab:eav24}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{figures/ch2/eav24_imola.jpg}
-    \caption{Dallara EAV-24 at Imola circuit, August 2026.}
+    \caption{Dallara EAV-25 at Imola circuit, August 2026.}
     \label{fig:eav24}
 \end{figure}
 
@@ -111,7 +114,7 @@ Table~\ref{tab:eav24}.
         Length / width / height & \SI{5.24}{m} / \SI{1.93}{m} / \SI{0.97}{m} \\
         \bottomrule
     \end{tabular}
-    \caption{Main characteristics of the Dallara EAV-24.}
+    \caption{Main characteristics of the Dallara EAV-25.}
     \label{tab:eav24}
 \end{table}
 
@@ -121,7 +124,7 @@ Table~\ref{tab:eav24}.
 \section{Sensors}
 \label{sec:sensors}
 
-This section describes the sensors mounted on the Dallara AV-24 and EAV-24. For each
+This section describes the sensors mounted on the Dallara AV-24 and EAV-25. For each
 of them, the working principle, the main advantages and the main limitations are
 briefly described. Overall, the set of sensors allows a complete reconstruction of the
 environment around the vehicle, within the distances of interest for racing, and
@@ -323,10 +326,10 @@ in Table~\ref{tab:cam_av24}.
 \end{table}
 
 \FloatBarrier
-\subsection{Dallara EAV-24}
+\subsection{Dallara EAV-25}
 \label{sec:sens_eav24}
 
-The EAV-24 is equipped with three Innovusion Falcon Kinetic LiDARs, one at the front of
+The EAV-25 is equipped with three Innovusion Falcon Kinetic LiDARs, one at the front of
 the cockpit, facing forward, and two on the sides of the cockpit, oriented at
 $\pm\SI{120}{\degree}$ with respect to the longitudinal axis, and with four ZF FRGen21
 RaDARs, placed at the front, on the two sides and at the rear of the car. Seven Leopard
@@ -339,7 +342,7 @@ sensors on the car is shown in Fig.~\ref{fig:eav24_layout}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch2/eav24_sensor_layout.pdf}
-    \caption{Position of the LiDARs, RaDARs and cameras on the Dallara EAV-24 (top view).}
+    \caption{Position of the LiDARs, RaDARs and cameras on the Dallara EAV-25 (top view).}
     \label{fig:eav24_layout}
 \end{figure}
 
@@ -377,7 +380,7 @@ is coarser than that of the LiDARs.
         Update rate                      & \SI{10}{Hz}                  & \SI{16.7}{Hz} \\
         \bottomrule
     \end{tabular}
-    \caption{Main characteristics of the LiDARs and RaDARs mounted on the Dallara EAV-24.}
+    \caption{Main characteristics of the LiDARs and RaDARs mounted on the Dallara EAV-25.}
     \label{tab:sens_eav24}
 \end{table}
 
@@ -392,7 +395,7 @@ whole horizontal plane around the vehicle.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/ch2/eav24_fov.pdf}
-    \caption{Horizontal field of view of the LiDARs and RaDARs of the Dallara EAV-24. The
+    \caption{Horizontal field of view of the LiDARs and RaDARs of the Dallara EAV-25. The
     angular extent of the sectors follows Table~\ref{tab:sens_eav24}; their radius is not
     to scale, and the occlusion caused by the rear wing is not represented.}
     \label{fig:eav24_fov}
@@ -417,7 +420,7 @@ Table~\ref{tab:cam_eav24}.
         Arrangement       & front stereo pair (baseline \SI{0.32}{m}), two side cameras, three rear cameras (two on the roll hoop, one at the rear end) \\
         \bottomrule
     \end{tabular}
-    \caption{Main characteristics of the cameras mounted on the Dallara EAV-24.}
+    \caption{Main characteristics of the cameras mounted on the Dallara EAV-25.}
     \label{tab:cam_eav24}
 \end{table}
 
@@ -477,137 +480,34 @@ keeps the vehicle on the reference path.
 \FloatBarrier
 
 % =====================================================================
-\section{Datasets}
-\label{sec:datasets}
+\section{Operating Conditions}
+\label{sec:operating_conditions}
 
-The analyses presented in this thesis are based on two on-track sessions, recorded on
-26 July 2026 and on 3 August 2026 and referred to in the following as session 0726 and
-session 0803. Both sessions took place on the same circuit, the Autodromo Internazionale
-Enzo e Dino Ferrari in Imola, a road course of about \SI{4.9}{km} that alternates long
-straights, fast corners and chicanes; its layout is shown in Fig.~\ref{fig:imola}.
-The two sessions have been chosen because, as highlighted in the following, they show
-complementary characteristics, both in the dynamics of the opponent and in the relative
-geometry between the two vehicles.The main characteristics of the two sessions are
-summarized in Table~\ref{tab:sessions}.
+The vehicles described in this chapter compete in two autonomous racing championships.
+In its previous seasons the IAC raced mainly on oval tracks, such as the Indianapolis
+Motor Speedway and the Las Vegas Motor Speedway, where the cars reach the highest speeds
+and spend most of the lap at full throttle; in the current season it moved to road
+courses, racing at WeatherTech Raceway Laguna Seca. The A2RL races on road circuits, with
+a larger number of corners and a continuous alternation of braking, cornering and
+acceleration phases: in the current season it raced at the Yas Marina Circuit in Abu
+Dhabi and, for the first time outside the United Arab Emirates, at the Autodromo
+Internazionale Enzo e Dino Ferrari in Imola. In both cases the vehicles operate with extremely excited dynamics,
+at speeds above \SI{250}{km/h}, with decelerations above \SI{1}{g} and high lateral
+accelerations.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/ch2/imola_layout.png}
-    \caption{Imola circuit track layout.}
-    \label{fig:imola}
-\end{figure}
-
-\begin{table}[H]
-    \centering
-    \small
-    \begin{tabular}{lcc}
-        \toprule
-                                                   & Session 0726            & Session 0803            \\
-        \midrule
-        Date                                       & 26/07/2026              & 03/08/2026              \\
-        Circuit                                    & Imola                   & Imola                   \\
-        Opponent                                   & TUM                     & Kinetiz                 \\
-        Distance covered by the opponent           & \SI{29.2}{km} (6 laps)  & \SI{43.3}{km} (9 laps)  \\
-        Opponent stationary                        & \SI{139}{s} (\SI{11}{\percent}) & \SI{74}{s} (\SI{4}{\percent}) \\
-        Opponent ahead of the ego vehicle          & \SI{72}{\percent}       & \SI{35}{\percent}       \\
-        Position swaps                             & 1                       & 7                       \\
-        Opponent detected by at least one sensor   & \SI{60}{\percent}       & \SI{57}{\percent}       \\
-        \bottomrule
-    \end{tabular}
-    \caption{Main characteristics of the two sessions.}
-    \label{tab:sessions}
-\end{table}
+The events are organized as in conventional motorsport, in qualifying sessions and races.
+In qualifying each car is alone on track and has to complete the fastest possible lap:
+the challenge lies entirely in driving the vehicle autonomously at the limits of its
+dynamic performance. The race adds a further level of complexity, since the same
+performance has to be achieved while sharing the track with other vehicles, which drive
+in close proximity both when following each other and during overtakes. The presence of
+the opponents turns the problem from a pure driving task into an interactive one, and
+opens planning scenarios in which the vehicle has to decide and execute defending and
+overtaking manoeuvres, choosing when to attack, how to protect its position and which
+trajectory to follow. All these decisions rely on the knowledge of where the opponents
+are and of how they are moving. For this reason, enabling the multi-vehicle interaction
+requires the ability to identify the opponent vehicles in a reliable and consistent way,
+providing an estimate of their state that remains accurate over time and coherent with
+their actual motion.
 
 \FloatBarrier
-
-\paragraph{Opponent dynamics.} Session 0726 begins with about \SI{500}{s} of runs at an
-almost constant speed of about \SI{90}{km/h}, followed by a series of stints at higher
-speed, up to \SI{160}{km/h}, separated by different safe stops. Session 0803 consists instead of
-continuous laps, in which braking and acceleration phases alternate along the whole
-session, overall less safe stops are performed. Table~\ref{tab:ds_dyn} reports the median and the 95th and 99th percentiles of the
-speed $v$ of the opponent, together with the 95th and 99th percentiles of its deceleration in braking ($-a_x$, for $a_x < 0$), of its acceleration in
-traction ($a_x$, for $a_x > 0$) and of the absolute value of its lateral acceleration
-$a_y = v\,\dot\psi$, computed over the samples in which it is moving
-($v > \SI{2}{m/s}$).
-
-\begin{table}[H]
-    \centering
-    \small
-    \setlength{\tabcolsep}{5pt}
-    \begin{tabular}{lcccccc}
-        \toprule
-                                               & \multicolumn{3}{c}{Session 0726} & \multicolumn{3}{c}{Session 0803} \\
-        \cmidrule(lr){2-4}\cmidrule(lr){5-7}
-        Quantity                               & Median & 95th   & 99th    & Median & 95th   & 99th    \\
-        \midrule
-        Speed $v$ [km/h]                       & 89.5  & 150.4   & 161.7   & 91.1  & 137.1   & 154.1   \\
-        Braking deceleration $-a_x$ [m/s$^2$]  & --    & 9.4     & 12.4    & --    & 10.1    & 12.0    \\
-        Traction acceleration $a_x$ [m/s$^2$]  & --    & 7.9     & 9.5     & --    & 6.8     & 7.8     \\
-        Lateral acceleration $|a_y|$ [m/s$^2$] & --    & 10.8    & 13.5    & --    & 8.1     & 9.1     \\
-        \bottomrule
-    \end{tabular}
-    \caption{Median speed and 95th and 99th percentiles of speed and accelerations of the
-    opponent.}
-    \label{tab:ds_dyn}
-\end{table}
-
-\paragraph{Relative geometry.} The two sessions also differ in the relative position of
-the two vehicles. In session 0726 the opponent is ahead of the ego vehicle for most of
-the time (\SI{72}{\percent}), and the two cars swap position only once. In session 0803
-the ego vehicle leads for most of the session, the opponent being ahead only for
-\SI{35}{\percent} of the time, and the two cars swap position seven times at close
-range. Table~\ref{tab:ds_geom} reports the median and the 95th and 99th percentiles of
-the range $\rho$ and of the absolute value of the range rate $\dot\rho$, together with the
-median lateral position $y_{rel}$ of the opponent in the ego frame. In both sessions the median range is about
-\SI{50}{m}, and the range rate is below about \SI{17}{m/s} for \SI{95}{\percent} of the
-time.
-
-\begin{table}[H]
-    \centering
-    \small
-    \setlength{\tabcolsep}{5pt}
-    \begin{tabular}{lcccccc}
-        \toprule
-                                          & \multicolumn{3}{c}{Session 0726} & \multicolumn{3}{c}{Session 0803} \\
-        \cmidrule(lr){2-4}\cmidrule(lr){5-7}
-        Quantity                          & Median & 95th   & 99th    & Median & 95th   & 99th    \\
-        \midrule
-        Range $\rho$ [m]                  & 48.5   & 130.3  & 156.3   & 49.2   & 108.4  & 137.7   \\
-        Range rate $|\dot\rho|$ [m/s]     & 3.2    & 16.7   & 24.1    & 4.7    & 16.9   & 23.8    \\
-        Lateral position $y_{rel}$ [m]    & 6.0    & --     & --      & $-5.7$ & --     & --      \\
-        \bottomrule
-    \end{tabular}
-    \caption{Median and 95th and 99th percentiles of range and absolute range rate, and
-    median lateral position (positive to the left) of the opponent with respect to the ego
-    vehicle, computed while the opponent is detected by at least one sensor.}
-    \label{tab:ds_geom}
-\end{table}
-
-\FloatBarrier
-
-\paragraph{Sensor coverage.} Fig.~\ref{fig:ds_pd} shows, for each sensor, the detection
-rate of the opponent in three range bands, computed separately for the intervals in
-which the opponent is ahead of and behind the ego vehicle. A detection is associated with
-the opponent when its distance from the ground truth, evaluated at the acquisition time
-of the detection, is smaller than \SI{5}{m}. In the two sessions the camera pipeline processes
-only the images of the front cameras, so the detection rate of the camera is reported
-only for the opponent ahead.
-
-When the opponent is ahead, the distribution of the detections over the range shows
-that, within \SI{75}{m}, all the sensors detect the opponent consistently. As expected,
-beyond \SI{100}{m} the detection rate of the two LiDAR pipelines drops sharply, while
-that of the RaDAR and of the camera remains more consistent up to \SI{150}{m}. When the
-opponent is behind, the LiDAR detections are limited to the first range band, because of
-the blind spot caused by the rear wing (Section~\ref{sec:sens_eav24}), and the opponent
-is detected mainly by the RaDAR, which keeps a detection rate similar to the one obtained with the opponent ahead. 
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{figures/ch2/dataset_detection_rate.pdf}
-    \caption{Detection rate of the opponent in three range bands for each sensor, with the
-    opponent ahead of (top) and behind (bottom) the ego vehicle. In the two sessions only
-    the front cameras are used by the camera pipeline.}
-    \label{fig:ds_pd}
-\end{figure}
-
-

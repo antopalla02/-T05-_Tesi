@@ -7,14 +7,14 @@
 
 ## 2. Experimental Setup and Methodology
 - 2.1 Dallara AV-24
-- 2.2 Dallara EAV-24
+- 2.2 Dallara EAV-25
 - 2.3 Sensors
   - 2.3.1 LiDAR
   - 2.3.2 RaDAR
   - 2.3.3 Cameras
   - 2.3.4 Localization
   - 2.3.5 Dallara AV-24 (sensor configuration)
-  - 2.3.6 Dallara EAV-24 (sensor configuration)
+  - 2.3.6 Dallara EAV-25 (sensor configuration)
 - 2.4 Software Architecture: localization, perception, planning, control
 - 2.5 Datasets
 - 2.6 Ground Truth Reconstruction

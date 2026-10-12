@@ -1,7 +1,144 @@
-\chapter{Adaptive Measurement Noise Matrix}
+\chapter{Measurement Noise Analysis}
 \label{ch:adaptive_r}
 
 \TODO{}
+
+% =====================================================================
+\section{Datasets}
+\label{sec:datasets}
+
+The analyses presented in this thesis are based on two on-track sessions, recorded on
+26 July 2026 and on 3 August 2026 and referred to in the following as session 0726 and
+session 0803. Both sessions took place on the same circuit, the Autodromo Internazionale
+Enzo e Dino Ferrari in Imola, a road course of about \SI{4.9}{km} that alternates long
+straights, fast corners and chicanes; its layout is shown in Fig.~\ref{fig:imola}.
+The two sessions have been chosen because, as highlighted in the following, they show
+complementary characteristics, both in the dynamics of the opponent and in the relative
+geometry between the two vehicles.The main characteristics of the two sessions are
+summarized in Table~\ref{tab:sessions}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/ch2/imola_layout.png}
+    \caption{Imola circuit track layout.}
+    \label{fig:imola}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{lcc}
+        \toprule
+                                                   & Session 0726            & Session 0803            \\
+        \midrule
+        Date                                       & 26/07/2026              & 03/08/2026              \\
+        Circuit                                    & Imola                   & Imola                   \\
+        Opponent                                   & TUM                     & Kinetiz                 \\
+        Distance covered by the opponent           & \SI{29.2}{km} (6 laps)  & \SI{43.3}{km} (9 laps)  \\
+        Opponent stationary                        & \SI{139}{s} (\SI{11}{\percent}) & \SI{74}{s} (\SI{4}{\percent}) \\
+        Opponent ahead of the ego vehicle          & \SI{72}{\percent}       & \SI{35}{\percent}       \\
+        Position swaps                             & 1                       & 7                       \\
+        Opponent detected by at least one sensor   & \SI{60}{\percent}       & \SI{57}{\percent}       \\
+        \bottomrule
+    \end{tabular}
+    \caption{Main characteristics of the two sessions.}
+    \label{tab:sessions}
+\end{table}
+
+\FloatBarrier
+
+\paragraph{Opponent dynamics.} Session 0726 begins with about \SI{500}{s} of runs at an
+almost constant speed of about \SI{90}{km/h}, followed by a series of stints at higher
+speed, up to \SI{160}{km/h}, separated by different safe stops. Session 0803 consists instead of
+continuous laps, in which braking and acceleration phases alternate along the whole
+session, overall less safe stops are performed. Table~\ref{tab:ds_dyn} reports the median and the 95th and 99th percentiles of the
+speed $v$ of the opponent, together with the 95th and 99th percentiles of its deceleration in braking ($-a_x$, for $a_x < 0$), of its acceleration in
+traction ($a_x$, for $a_x > 0$) and of the absolute value of its lateral acceleration
+$a_y = v\,\dot\psi$, computed over the samples in which it is moving
+($v > \SI{2}{m/s}$).
+
+\begin{table}[H]
+    \centering
+    \small
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{lcccccc}
+        \toprule
+                                               & \multicolumn{3}{c}{Session 0726} & \multicolumn{3}{c}{Session 0803} \\
+        \cmidrule(lr){2-4}\cmidrule(lr){5-7}
+        Quantity                               & Median & 95th   & 99th    & Median & 95th   & 99th    \\
+        \midrule
+        Speed $v$ [km/h]                       & 89.5  & 150.4   & 161.7   & 91.1  & 137.1   & 154.1   \\
+        Braking deceleration $-a_x$ [m/s$^2$]  & --    & 9.4     & 12.4    & --    & 10.1    & 12.0    \\
+        Traction acceleration $a_x$ [m/s$^2$]  & --    & 7.9     & 9.5     & --    & 6.8     & 7.8     \\
+        Lateral acceleration $|a_y|$ [m/s$^2$] & --    & 10.8    & 13.5    & --    & 8.1     & 9.1     \\
+        \bottomrule
+    \end{tabular}
+    \caption{Median speed and 95th and 99th percentiles of speed and accelerations of the
+    opponent.}
+    \label{tab:ds_dyn}
+\end{table}
+
+\paragraph{Relative geometry.} The two sessions also differ in the relative position of
+the two vehicles. In session 0726 the opponent is ahead of the ego vehicle for most of
+the time (\SI{72}{\percent}), and the two cars swap position only once. In session 0803
+the ego vehicle leads for most of the session, the opponent being ahead only for
+\SI{35}{\percent} of the time, and the two cars swap position seven times at close
+range. Table~\ref{tab:ds_geom} reports the median and the 95th and 99th percentiles of
+the range $\rho$ and of the absolute value of the range rate $\dot\rho$, together with the
+median lateral position $y_{rel}$ of the opponent in the ego frame. In both sessions the median range is about
+\SI{50}{m}, and the range rate is below about \SI{17}{m/s} for \SI{95}{\percent} of the
+time.
+
+\begin{table}[H]
+    \centering
+    \small
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{lcccccc}
+        \toprule
+                                          & \multicolumn{3}{c}{Session 0726} & \multicolumn{3}{c}{Session 0803} \\
+        \cmidrule(lr){2-4}\cmidrule(lr){5-7}
+        Quantity                          & Median & 95th   & 99th    & Median & 95th   & 99th    \\
+        \midrule
+        Range $\rho$ [m]                  & 48.5   & 130.3  & 156.3   & 49.2   & 108.4  & 137.7   \\
+        Range rate $|\dot\rho|$ [m/s]     & 3.2    & 16.7   & 24.1    & 4.7    & 16.9   & 23.8    \\
+        Lateral position $y_{rel}$ [m]    & 6.0    & --     & --      & $-5.7$ & --     & --      \\
+        \bottomrule
+    \end{tabular}
+    \caption{Median and 95th and 99th percentiles of range and absolute range rate, and
+    median lateral position (positive to the left) of the opponent with respect to the ego
+    vehicle, computed while the opponent is detected by at least one sensor.}
+    \label{tab:ds_geom}
+\end{table}
+
+\FloatBarrier
+
+\paragraph{Sensor coverage.} Fig.~\ref{fig:ds_pd} shows, for each sensor, the detection
+rate of the opponent in three range bands, computed separately for the intervals in
+which the opponent is ahead of and behind the ego vehicle. A detection is associated with
+the opponent when its distance from the ground truth, evaluated at the acquisition time
+of the detection, is smaller than \SI{5}{m}. In the two sessions the camera pipeline processes
+only the images of the front cameras, so the detection rate of the camera is reported
+only for the opponent ahead.
+
+When the opponent is ahead, the distribution of the detections over the range shows
+that, within \SI{75}{m}, all the sensors detect the opponent consistently. As expected,
+beyond \SI{100}{m} the detection rate of the two LiDAR pipelines drops sharply, while
+that of the RaDAR and of the camera remains more consistent up to \SI{150}{m}. When the
+opponent is behind, the LiDAR detections are limited to the first range band, because of
+the blind spot caused by the rear wing (Section~\ref{sec:sens_eav24}), and the opponent
+is detected mainly by the RaDAR, which keeps a detection rate similar to the one obtained with the opponent ahead. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figures/ch2/dataset_detection_rate.pdf}
+    \caption{Detection rate of the opponent in three range bands for each sensor, with the
+    opponent ahead of (top) and behind (bottom) the ego vehicle. In the two sessions only
+    the front cameras are used by the camera pipeline.}
+    \label{fig:ds_pd}
+\end{figure}
+
+\FloatBarrier
+
 
 % ---------------------------------------------------------------------
 % Draft moved from Section 2.6 (Ground Truth Reconstruction): relative quantities,

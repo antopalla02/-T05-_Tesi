@@ -12,6 +12,7 @@
 ]
 % main chain
 \node[mod] (oosm) {OOSM\\handling};
+\node[io, left=20mm of oosm] (perc) {Perception\\pipelines};
 \node[ekf, right=9mm of oosm] (pred) {Prediction\\(CCA model)};
 \node[mod, right=9mm of pred] (assoc) {Data association\\(Mahalanobis,\\Munkres)};
 \node[ekf, right=12mm of assoc] (upd) {Update\\(correction)};
@@ -19,13 +20,14 @@
 \node[mod, below=9mm of upd] (mgmt) {Track management\\(creation, confirmation,\\deletion)};
 
 % external inputs and output
-\node[io, above=9mm of oosm] (det) {Detections\\(LiDAR, RaDAR,\\camera)};
+\node[io, above=9mm of perc] (raw) {Sensors\\(LiDAR, RaDAR,\\camera)};
 \node[io, above=9mm of pred] (db) {Track\\database};
 \node[io, above=9mm of assoc] (ego) {Ego state\\(localization)};
 \node[io, above=9mm of tracks] (plan) {Planning};
 
 % data flow
-\draw[line] (det) -- (oosm);
+\draw[line] (raw) -- node[lab, right]{raw data} (perc);
+\draw[line] (perc) -- node[lab, above, pos=0.4]{detections} (oosm);
 \draw[line] (oosm) -- node[lab, above]{$\mathbf{z},\,t_s$} (pred);
 \draw[line] (pred) -- (assoc);
 \draw[line] (assoc) -- node[lab, above]{assigned} (upd);
@@ -41,5 +43,5 @@
 \coordinate (fbr) at ($(tracks.east)+(5mm,0)$);
 \draw[line] (tracks.east) -- (fbr) |- (fb) -| node[lab, above, pos=0.25]{$\hat{\mathbf{x}},\,\mathbf{P}$ of the tracks} (pred.south);
 
-\node[grp, fit=(oosm)(pred)(assoc)(upd)(tracks)(mgmt)(fb)(fbr), label={[lab]left:Target\\tracking}] {};
+\node[grp, fit=(oosm)(pred)(assoc)(upd)(tracks)(mgmt)(fb)(fbr), label={[lab]below:Target tracking}] {};
 \end{tikzpicture}
