@@ -45,11 +45,263 @@ pipeline, highlighting estimate degradation in rapidly changing dynamic conditio
 \section{Prediction}
 \label{sec:tt_prediction}
 
-\subsection{Constant Curvature and Acceleration Model}
-\label{subsec:tt_cca}
+The prediction step propagates the state of each track, together with its uncertainty,
+from the time of the last update to the time of the next measurement, according to a
+model of the motion of the opponent.
 
 \subsection{Prediction Step}
 \label{subsec:tt_prediction}
+
+The EKF describes the evolution of the state of the opponent and its relation with the
+measurements through the discrete-time nonlinear system
+\begin{equation}
+    \begin{aligned}
+        \mathbf{x}_{k+1} &= f_d(\mathbf{x}_k) + \mathbf{w}_k, \\
+        \mathbf{z}_k &= h(\mathbf{x}_k) + \mathbf{v}_k,
+    \end{aligned}
+    \label{eq:tt_system}
+\end{equation}
+where $f_d(\cdot)$ is the motion model, which propagates the state $\mathbf{x}_k$ over the
+interval between two filter iterations, and $h(\cdot)$ is the measurement model, which
+depends on the sensor that produced the measurement $\mathbf{z}_k$
+(Section~\ref{sec:tt_correction}). The process noise $\mathbf{w}_k$ represents the
+confidence in the motion model, i.e.\ how reliable the prediction is expected to be,
+while the measurement noise $\mathbf{v}_k$ represents the accuracy of the measurement; both are modelled as zero-mean Gaussian white noises, with covariance
+matrices $\mathbf{Q}_k$ and $\mathbf{R}_k$ respectively.
+
+Since $f_d$ is nonlinear, it is linearized around the last estimate,
+\begin{equation}
+    \mathbf{F}_k = \left.\frac{\partial f_d}{\partial \mathbf{x}}\right|_{\hat{\mathbf{x}}_k}.
+    \label{eq:tt_F_def}
+\end{equation}
+The estimated state $\hat{\mathbf{x}}$ is associated with a measure of its uncertainty,
+represented by the covariance matrix $\mathbf{P}$ of the filter. Given the estimate
+$\hat{\mathbf{x}}_k$ and its covariance $\mathbf{P}_k$, the prediction step computes the a
+priori estimate and covariance at the next iteration,
+\begin{equation}
+    \begin{aligned}
+        \hat{\mathbf{x}}_{k+1|k} &= f_d(\hat{\mathbf{x}}_k), \\
+        \mathbf{P}_{k+1|k} &= \mathbf{F}_k\,\mathbf{P}_k\,\mathbf{F}_k^\top + \mathbf{Q}_k,
+    \end{aligned}
+    \label{eq:tt_prediction}
+\end{equation}
+where the covariance is propagated forward with the motion model and increased by the
+contribution of the process noise.
+
+In the target tracking module the prediction step is performed either when a new
+measurement is received, in which case the state is predicted to the validity time of
+the measurement, or when a given time has elapsed since the last iteration, so that the
+estimate is kept up to date also in the absence of measurements. Since the measurements
+come from different sensors, with different update rates and latencies, the interval
+$\Delta t = t_{k+1} - t_k$ between two consecutive predictions is not constant. For this
+reason the discrete-time equations used to propagate the state and the process noise are
+derived through an exact discretization of the continuous-time model, which is valid for
+any value of $\Delta t$ and is described in Section~\ref{subsec:tt_cca}.
+
+\subsection{Constant Curvature and Acceleration Model}
+\label{subsec:tt_cca}
+
+The motion of the opponent is described by a Constant Curvature and Acceleration (CCA)
+model. The state of each opponent is defined as
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \mathbf{x} = \begin{bmatrix} x & y & v & a & \psi \end{bmatrix}^\top,
+    \label{eq:tt_state}
+\end{equation}
+where $(x,\,y)$ is the position of the opponent, $v$ its speed, $a$ its longitudinal
+acceleration and $\psi$ its heading.
+
+\paragraph{Continuous-time model.} The CCA model assumes that, over a prediction
+interval, the opponent travels along a path of constant curvature $\kappa$ with a constant
+longitudinal acceleration. The continuous-time dynamics are
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \left\{
+    \begin{aligned}
+        \dot x(t)    &= v(t)\cos\psi(t), \\
+        \dot y(t)    &= v(t)\sin\psi(t), \\
+        \dot v(t)    &= a(t), \\
+        \dot a(t)    &= 0, \\
+        \dot\psi(t)  &= \kappa\,v(t),
+    \end{aligned}
+    \right.
+    \label{eq:tt_cca}
+\end{equation}
+where the yaw rate is expressed as $\dot\psi = \kappa\,v$: once the path is fixed, the
+rotation of the vehicle depends only on how fast it travels along it. In compact form,
+the system is written as $\dot{\mathbf{x}}(t) = f(\mathbf{x}(t),\kappa)$.
+
+The a priori knowledge of the trajectories that the opponent may follow, i.e.\ the racing
+lines stored in the track database introduced in Section~\ref{sec:sw_arch}, is exploited
+as a prior and modelled as an external input: the curvature $\kappa$ is not estimated by
+the filter, but read from the database. At every prediction the point closest to the estimated position of the opponent
+is searched on the optimal trajectory, starting from the index found at the previous step;
+if its distance from the opponent exceeds \SI{0.5}{m}, the search is extended to all the
+other trajectories of the database, and the curvature of the closest point is used for
+the prediction.
+
+\paragraph{Discrete-time model.} Starting from the continuous-time
+model~\eqref{eq:tt_cca}, the discrete-time motion model is obtained through its exact
+discretization,
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \mathbf{x}_{k+1} = \mathbf{x}_k
+    + \int_{t_k}^{t_{k+1}} f(\mathbf{x}(\tau),\kappa)\,\mathrm{d}\tau.
+    \label{eq:tt_exact_disc}
+\end{equation}
+Under the assumption of constant curvature and acceleration over the interval, the
+integrals can be solved in closed form. For acceleration, speed and heading,
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \begin{aligned}
+        a_{k+1}    &= a_k + \int_{t_k}^{t_{k+1}} 0\,\mathrm{d}\tau = a_k, \\
+        v_{k+1}    &= v_k + \int_{t_k}^{t_{k+1}} a_k\,\mathrm{d}\tau = v_k + a_k\,\Delta t, \\
+        \psi_{k+1} &= \psi_k + \int_{t_k}^{t_{k+1}} \kappa\,v(\tau)\,\mathrm{d}\tau
+                    = \psi_k + \kappa\left(v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2\right),
+    \end{aligned}
+    \label{eq:tt_cca_vapsi}
+\end{equation}
+while, since $\mathrm{d}\psi = \kappa\,v\,\mathrm{d}\tau$, the integrals of the position
+reduce to integrals in the heading,
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \begin{aligned}
+        x_{k+1} &= x_k + \int_{t_k}^{t_{k+1}} v(\tau)\cos\psi(\tau)\,\mathrm{d}\tau
+                 = x_k + \frac{\sin\psi_{k+1} - \sin\psi_k}{\kappa}, \\
+        y_{k+1} &= y_k + \int_{t_k}^{t_{k+1}} v(\tau)\sin\psi(\tau)\,\mathrm{d}\tau
+                 = y_k - \frac{\cos\psi_{k+1} - \cos\psi_k}{\kappa}.
+    \end{aligned}
+    \label{eq:tt_cca_xy}
+\end{equation}
+The discrete-time motion model is therefore
+\abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
+\abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    f_d(\mathbf{x}_k) =
+    \begin{bmatrix}
+        x_k + \dfrac{\sin\psi_{k+1} - \sin\psi_k}{\kappa} \\[2ex]
+        y_k - \dfrac{\cos\psi_{k+1} - \cos\psi_k}{\kappa} \\[2ex]
+        v_k + a_k\,\Delta t \\
+        a_k \\
+        \psi_k + \kappa\left(v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2\right)
+    \end{bmatrix}.
+    \label{eq:tt_cca_discrete}
+\end{equation}
+When the curvature tends to zero, the opponent travels along a straight line and the
+model reduces to
+\abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
+\abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \lim_{\kappa \to 0} f_d(\mathbf{x}_k) =
+    \begin{bmatrix}
+        x_k + \left(v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2\right)\cos\psi_k \\
+        y_k + \left(v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2\right)\sin\psi_k \\
+        v_k + a_k\,\Delta t \\
+        a_k \\
+        \psi_k
+    \end{bmatrix},
+    \label{eq:tt_cca_straight}
+\end{equation}
+which is used when $|\kappa| < \SI{e-4}{m^{-1}}$ to avoid the division by zero
+in~\eqref{eq:tt_cca_discrete}.
+
+Applying~\eqref{eq:tt_F_def} to~\eqref{eq:tt_cca_discrete}, the linearized state matrix
+used in the prediction of the covariance is
+\abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
+\abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \mathbf{F}_k =
+    \begin{bmatrix}
+        1 & 0 & \Delta t\cos\psi_{k+1} & \tfrac{1}{2}\Delta t^2\cos\psi_{k+1} & \dfrac{\cos\psi_{k+1} - \cos\psi_k}{\kappa} \\[2ex]
+        0 & 1 & \Delta t\sin\psi_{k+1} & \tfrac{1}{2}\Delta t^2\sin\psi_{k+1} & \dfrac{\sin\psi_{k+1} - \sin\psi_k}{\kappa} \\[2ex]
+        0 & 0 & 1 & \Delta t & 0 \\
+        0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & \kappa\,\Delta t & \tfrac{1}{2}\kappa\,\Delta t^2 & 1
+    \end{bmatrix},
+    \label{eq:tt_F}
+\end{equation}
+while, in the straight-line case~\eqref{eq:tt_cca_straight}, it becomes
+\abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
+\abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \mathbf{F}_k =
+    \begin{bmatrix}
+        1 & 0 & \Delta t\cos\psi_k & \tfrac{1}{2}\Delta t^2\cos\psi_k & -\left(v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2\right)\sin\psi_k \\
+        0 & 1 & \Delta t\sin\psi_k & \tfrac{1}{2}\Delta t^2\sin\psi_k & \phantom{-}\left(v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2\right)\cos\psi_k \\
+        0 & 0 & 1 & \Delta t & 0 \\
+        0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 & 1
+    \end{bmatrix}.
+    \label{eq:tt_F_straight}
+\end{equation}
+All the quantities in~\eqref{eq:tt_F} and~\eqref{eq:tt_F_straight} are evaluated at the
+last estimate $\hat{\mathbf{x}}_k$.
+
+\paragraph{Process noise.} Two sources of uncertainty are considered. The first is the
+variation of the acceleration, which the model assumes constant: a white noise $w_a$ with
+spectral density $q_a$ acts on its derivative, so that the acceleration evolves as a
+random walk and can follow the braking and traction phases. The second is the
+uncertainty of the curvature read from the database: since the set of trajectories that
+the opponent may follow is used as prior information, this uncertainty is lower, but it
+accounts for the small differences between the actual trajectory of the opponent and the
+one prescribed by the database. A white perturbation $w_\kappa$ of the curvature, with
+spectral density $q_\kappa$, produces an error $v\,w_\kappa$ on the yaw rate. The
+continuous-time model with process noise becomes
+\abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
+\abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \dot{\mathbf{x}}(t) = f(\mathbf{x}(t),\kappa) + \mathbf{G}\,\mathbf{w}(t),
+    \qquad
+    \mathbf{G} =
+    \begin{bmatrix}
+        0 & 0 & 0 & 0 & v \\
+        0 & 0 & 0 & 1 & 0
+    \end{bmatrix}^\top,
+    \qquad
+    \mathbf{Q}_c = \begin{bmatrix} q_\kappa & 0 \\ 0 & q_a \end{bmatrix},
+    \label{eq:tt_noise}
+\end{equation}
+where $\mathbf{w} = [w_\kappa,\,w_a]^\top$ and $\mathbf{Q}_c$ is its spectral density
+matrix. The discrete-time process noise covariance is obtained through the exact
+discretization of the noise, i.e.\ by integrating its effect over the prediction interval
+through the linearized dynamics,
+\abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
+\abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \mathbf{Q}_k = \int_0^{\Delta t} e^{\mathbf{A}\tau}\,\mathbf{G}\,\mathbf{Q}_c\,
+        \mathbf{G}^\top e^{\mathbf{A}^\top\tau}\,\mathrm{d}\tau,
+    \label{eq:tt_Q_def}
+\end{equation}
+where $\mathbf{A}$ is the Jacobian of the continuous-time dynamics~\eqref{eq:tt_cca},
+evaluated at the last estimate,
+\abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
+\abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
+\begin{equation}
+    \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \mathbf{A} = \left.\frac{\partial f}{\partial \mathbf{x}}\right|_{\hat{\mathbf{x}}_k} =
+    \begin{bmatrix}
+        0 & 0 & \cos\psi & 0 & -v\sin\psi \\
+        0 & 0 & \sin\psi & 0 & \phantom{-}v\cos\psi \\
+        0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & \kappa & 0 & 0
+    \end{bmatrix}.
+    \label{eq:tt_A}
+\end{equation}
+The integral is solved analytically, and the resulting closed-form expressions of the
+elements of $\mathbf{Q}_k$, which depend on $v$, $\psi$, $\kappa$ and $\Delta t$, are
+evaluated at every prediction. The result is a full $5 \times 5$ matrix: although the
+noise acts directly only on the acceleration and on the heading, it propagates
+indirectly to the other states through the integration of the dynamics. The two spectral
+densities $q_\kappa$ and $q_a$ are the tuning parameters of the model, and their ratio
+with respect to the measurement noise sets how much the filter relies on the prediction
+rather than on the measurements.
 
 % =====================================================================
 \section{Data Association}
