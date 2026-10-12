@@ -63,9 +63,9 @@ measurements through the discrete-time nonlinear system
 where $f_d(\cdot)$ is the motion model, which propagates the state $\mathbf{x}_k$ over the
 interval between two filter iterations, and $h(\cdot)$ is the measurement model, which
 depends on the sensor that produced the measurement $\mathbf{z}_k$
-(Section~\ref{sec:tt_correction}). The process noise $\mathbf{w}_k$ represents the
+(Section~\ref{sec:tt_correction}). The process noise $\mathbf{w}_k$ is a measure of the
 confidence in the motion model, i.e.\ how reliable the prediction is expected to be,
-while the measurement noise $\mathbf{v}_k$ represents the accuracy of the measurement; both are modelled as zero-mean Gaussian white noises, with covariance
+while the measurement noise $\mathbf{v}_k$ weights the uncertainty of the measurement; both are modelled as zero-mean Gaussian white noises, with covariance
 matrices $\mathbf{Q}_k$ and $\mathbf{R}_k$ respectively.
 
 Since $f_d$ is nonlinear, it is linearized around the last estimate,
@@ -76,7 +76,9 @@ Since $f_d$ is nonlinear, it is linearized around the last estimate,
 The estimated state $\hat{\mathbf{x}}$ is associated with a measure of its uncertainty,
 represented by the covariance matrix $\mathbf{P}$ of the filter. Given the estimate
 $\hat{\mathbf{x}}_k$ and its covariance $\mathbf{P}_k$, the prediction step computes the a
-priori estimate and covariance at the next iteration,
+priori estimate and covariance at the next iteration, the first simply propagating through the motion model, the second one, accounting also for the
+contribution of the process noise.
+
 \begin{equation}
     \begin{aligned}
         \hat{\mathbf{x}}_{k+1|k} &= f_d(\hat{\mathbf{x}}_k), \\
@@ -84,8 +86,6 @@ priori estimate and covariance at the next iteration,
     \end{aligned}
     \label{eq:tt_prediction}
 \end{equation}
-where the covariance is propagated forward with the motion model and increased by the
-contribution of the process noise.
 
 In the target tracking module the prediction step is performed either when a new
 measurement is received, in which case the state is predicted to the validity time of
@@ -100,7 +100,7 @@ any value of $\Delta t$ and is described in Section~\ref{subsec:tt_cca}.
 \subsection{Constant Curvature and Acceleration Model}
 \label{subsec:tt_cca}
 
-The motion of the opponent is described by a Constant Curvature and Acceleration (CCA)
+In the Tracking module, the motion of the opponent is described by a Constant Curvature and Acceleration (CCA)
 model. The state of each opponent is defined as
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
@@ -112,7 +112,8 @@ acceleration and $\psi$ its heading.
 
 \paragraph{Continuous-time model.} The CCA model assumes that, over a prediction
 interval, the opponent travels along a path of constant curvature $\kappa$ with a constant
-longitudinal acceleration. The continuous-time dynamics are
+longitudinal acceleration. The continuous-time equations of motion are:
+
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
     \left\{
@@ -126,11 +127,10 @@ longitudinal acceleration. The continuous-time dynamics are
     \right.
     \label{eq:tt_cca}
 \end{equation}
-where the yaw rate is expressed as $\dot\psi = \kappa\,v$: once the path is fixed, the
-rotation of the vehicle depends only on how fast it travels along it. In compact form,
-the system is written as $\dot{\mathbf{x}}(t) = f(\mathbf{x}(t),\kappa)$.
 
-The a priori knowledge of the trajectories that the opponent may follow, i.e.\ the racing
+In compact form,
+the system is written as $\dot{\mathbf{x}}(t) = f(\mathbf{x}(t),\kappa)$.
+\\\\The a priori knowledge of the trajectories that the opponent may follow, i.e.\ the racing
 lines stored in the track database introduced in Section~\ref{sec:sw_arch}, is exploited
 as a prior and modelled as an external input: the curvature $\kappa$ is not estimated by
 the filter, but read from the database. At every prediction the point closest to the estimated position of the opponent
@@ -187,8 +187,8 @@ The discrete-time motion model is therefore
     \end{bmatrix}.
     \label{eq:tt_cca_discrete}
 \end{equation}
-When the curvature tends to zero, the opponent travels along a straight line and the
-model reduces to
+When the curvature tends to zero,  the
+model reduces to:
 \abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
 \abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
 \begin{equation}
@@ -222,7 +222,7 @@ used in the prediction of the covariance is
     \end{bmatrix},
     \label{eq:tt_F}
 \end{equation}
-while, in the straight-line case~\eqref{eq:tt_cca_straight}, it becomes
+\\while, in the straight-line case~\eqref{eq:tt_cca_straight}, it becomes
 \abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
 \abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
 \begin{equation}
@@ -247,8 +247,8 @@ random walk and can follow the braking and traction phases. The second is the
 uncertainty of the curvature read from the database: since the set of trajectories that
 the opponent may follow is used as prior information, this uncertainty is lower, but it
 accounts for the small differences between the actual trajectory of the opponent and the
-one prescribed by the database. A white perturbation $w_\kappa$ of the curvature, with
-spectral density $q_\kappa$, produces an error $v\,w_\kappa$ on the yaw rate. The
+one prescribed by the database; the latter modeled as a white perturbation $w_\kappa$ of the curvature, with
+spectral density $q_\kappa$, acting on the yaw rate through $v\,w_\kappa$. \\The
 continuous-time model with process noise becomes
 \abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
 \abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
@@ -297,10 +297,10 @@ The integral is solved analytically, and the resulting closed-form expressions o
 elements of $\mathbf{Q}_k$, which depend on $v$, $\psi$, $\kappa$ and $\Delta t$, are
 evaluated at every prediction. The result is a full $5 \times 5$ matrix: although the
 noise acts directly only on the acceleration and on the heading, it propagates
-indirectly to the other states through the integration of the dynamics. The two spectral
+indirectly to the other states through the integration of the dynamics. \\The two spectral
 densities $q_\kappa$ and $q_a$ are the tuning parameters of the model, and their ratio
 with respect to the measurement noise sets how much the filter relies on the prediction
-rather than on the measurements.
+rather than on the measurements driving the Kalman gain in the correction step (Section \ref{sec:tt_correction}).
 
 % =====================================================================
 \section{Data Association}
@@ -314,7 +314,7 @@ detections belong to which track. To this end, all the tracks are predicted to t
 validity time of the detections and the association is solved in two stages: a
 statistical gate, based on the Mahalanobis distance gating, discards the detection-track pairs
 that are not compatible, and the Munkres algorithm selects, among the remaining pairs, the
-assignment that minimizes the total distance.
+assignment that globally minimizes the total distance.
 
 \subsection{Mahalanobis Distance Gating}
 \label{subsec:tt_mahalanobis}
@@ -415,16 +415,16 @@ expected to be; both depend on the sensor that produced the detection.
 \paragraph{Position.} All the sensors provide the position of the opponent,
 $\mathbf{z}_p = [x,\,y]^\top$, which is a linear function of the state,
 \begin{equation}
-    h_p(\mathbf{x}) = \mathbf{H}_p\,\mathbf{x},
+    h_p(\mathbf{x}) = \mathbf{H}\,\mathbf{x},
     \qquad
-    \mathbf{H}_p =
+    \mathbf{H} =
     \begin{bmatrix}
         1 & 0 & 0 & 0 & 0 \\
         0 & 1 & 0 & 0 & 0
     \end{bmatrix},
     \label{eq:tt_h_pos}
 \end{equation}
-where $\mathbf{H}_p$ coincides with the matrix $\mathbf{H}$ used in the data association.
+
 
 \paragraph{Range rate.} The RaDAR also measures the range rate $\dot\rho$, i.e.\ the
 projection of the relative velocity between opponent and ego vehicle on the line of sight
@@ -439,8 +439,7 @@ ego vehicle at the validity time of the measurement,
     \Delta\mathbf{v} = \begin{bmatrix} v\cos\psi - v_e\cos\psi_e \\ v\sin\psi - v_e\sin\psi_e \end{bmatrix},
     \label{eq:tt_h_rhodot}
 \end{equation}
-which is nonlinear and is linearized around the predicted state. Besides the gating on the
-position, a gating is also applied on the range rate: the measurement is used only if
+which is nonlinear and is linearized around the predicted state. A gating procedure is also applied on the range rate: the measurement is used only if
 the difference between the measured and the predicted range rate is smaller than
 \SI{3}{m/s}. The measurement vector of the RaDAR is therefore
 $\mathbf{z} = [x,\,y,\,\dot\rho]^\top$, and the complete measurement matrix is
@@ -460,7 +459,7 @@ $\Delta\mathbf{p}$ and $\Delta\mathbf{v}$, $r = \|\Delta\mathbf{p}\|$ and
 $\beta = \operatorname{atan2}(\Delta y,\,\Delta x)$ are the distance and the bearing of
 the line of sight, and all the quantities are evaluated at the predicted state.
 
-\paragraph{Measurement noise.} The noise of each measurement is modelled as zero-mean
+\paragraph{Measurement noise.} The noise of each measure is modeled as zero-mean
 Gaussian. For the position, the
 accuracy of each sensor is described by two standard deviations, $\sigma_x$ and
 $\sigma_y$, along the longitudinal and lateral axes of the vehicle; the corresponding
