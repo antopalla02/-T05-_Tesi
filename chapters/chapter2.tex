@@ -10,16 +10,50 @@ It briefly covers the hardware platforms, the sensors and the software stack use
 design and evaluate the algorithms presented in the following chapters, together with the
 racing context in which they operate.
 
-Section~\ref{sec:av24} and Section~\ref{sec:eav24} introduce the two autonomous
-racecars: the Dallara AV-24, which races in the Indy Autonomous Challenge (IAC), and
-the Dallara EAV-25, which races in the Abu Dhabi Autonomous Racing League (A2RL).
+Section~\ref{sec:operating_conditions} describes the operating conditions of the two
+autonomous racing championships, the Indy Autonomous Challenge (IAC) and the Abu Dhabi
+Autonomous Racing League (A2RL), which make the estimation of the state of the opponents
+a central problem in autonomous racing. Section~\ref{sec:av24} and
+Section~\ref{sec:eav24} introduce the two autonomous racecars: the Dallara AV-24, which
+races in the IAC, and the Dallara EAV-25, which races in the A2RL.
 Section~\ref{sec:sensors} presents the working principle, the advantages and the
 limitations of the exteroceptive sensors (LiDARs, RaDARs and cameras) used for opponent
-tracking, together with the sensor configuration of the two vehicles.
+tracking, together with the sensor configuration of the two vehicles. Finally,
 Section~\ref{sec:sw_arch} gives an overview of the main modules of the software
-architecture. Finally, Section~\ref{sec:operating_conditions} describes the operating conditions of
-the two championships, which make the estimation of the state of the opponents a central
-problem in autonomous racing.
+architecture.
+
+% =====================================================================
+\section{Operating Conditions}
+\label{sec:operating_conditions}
+
+The vehicles described in this chapter compete in two autonomous racing championships.
+In its previous seasons the IAC raced mainly on oval tracks, such as the Indianapolis
+Motor Speedway and the Las Vegas Motor Speedway, where the cars reach the highest speeds
+and spend most of the lap at full throttle; in the current season it moved to road
+courses, racing at WeatherTech Raceway Laguna Seca. The A2RL races on road circuits, with
+a larger number of corners and a continuous alternation of braking, cornering and
+acceleration phases: in the current season it raced at the Yas Marina Circuit in Abu
+Dhabi and, for the first time outside the United Arab Emirates, at the Autodromo
+Internazionale Enzo e Dino Ferrari in Imola. In both cases the vehicles operate with extremely excited dynamics,
+at speeds above \SI{250}{km/h}, with decelerations above \SI{1}{g} and high lateral
+accelerations.
+
+The events are organized as in conventional motorsport, in qualifying sessions and races.
+In qualifying each car is alone on track and has to complete the fastest possible lap:
+the challenge lies entirely in driving the vehicle autonomously at the limits of its
+dynamic performance. The race adds a further level of complexity, since the same
+performance has to be achieved while sharing the track with other vehicles, which drive
+in close proximity both when following each other and during overtakes. The presence of
+the opponents turns the problem from a pure driving task into an interactive one, and
+opens planning scenarios in which the vehicle has to decide and execute defending and
+overtaking manoeuvres, choosing when to attack, how to protect its position and which
+trajectory to follow. All these decisions rely on the knowledge of where the opponents
+are and of how they are moving. For this reason, enabling the multi-vehicle interaction
+requires the ability to identify the opponent vehicles in a reliable and consistent way,
+providing an estimate of their state that remains accurate over time and coherent with
+their actual motion.
+
+\FloatBarrier
 
 % =====================================================================
 \section{Dallara AV-24}
@@ -261,8 +295,8 @@ resolution of both RaDARs is coarser than that of the LiDARs, so that at the sam
 they provide fewer points on the target.
 
 The values in Table~\ref{tab:sens_av24} refer to the best working conditions. In real
-scenarios the detection range is shorter: as shown in Section~\ref{sec:datasets}, for
-example, the LiDARs provide measurements of the opponent at most up to 80--\SI{100}{m}.
+scenarios the detection range is shorter, since it depends on the size, the orientation
+and the reflectivity of the target, as well as on the environmental conditions.
 
 \begin{table}[H]
     \centering
@@ -476,38 +510,5 @@ keeps the vehicle on the reference path.
     them.}
     \label{fig:sw_arch}
 \end{figure}
-
-\FloatBarrier
-
-% =====================================================================
-\section{Operating Conditions}
-\label{sec:operating_conditions}
-
-The vehicles described in this chapter compete in two autonomous racing championships.
-In its previous seasons the IAC raced mainly on oval tracks, such as the Indianapolis
-Motor Speedway and the Las Vegas Motor Speedway, where the cars reach the highest speeds
-and spend most of the lap at full throttle; in the current season it moved to road
-courses, racing at WeatherTech Raceway Laguna Seca. The A2RL races on road circuits, with
-a larger number of corners and a continuous alternation of braking, cornering and
-acceleration phases: in the current season it raced at the Yas Marina Circuit in Abu
-Dhabi and, for the first time outside the United Arab Emirates, at the Autodromo
-Internazionale Enzo e Dino Ferrari in Imola. In both cases the vehicles operate with extremely excited dynamics,
-at speeds above \SI{250}{km/h}, with decelerations above \SI{1}{g} and high lateral
-accelerations.
-
-The events are organized as in conventional motorsport, in qualifying sessions and races.
-In qualifying each car is alone on track and has to complete the fastest possible lap:
-the challenge lies entirely in driving the vehicle autonomously at the limits of its
-dynamic performance. The race adds a further level of complexity, since the same
-performance has to be achieved while sharing the track with other vehicles, which drive
-in close proximity both when following each other and during overtakes. The presence of
-the opponents turns the problem from a pure driving task into an interactive one, and
-opens planning scenarios in which the vehicle has to decide and execute defending and
-overtaking manoeuvres, choosing when to attack, how to protect its position and which
-trajectory to follow. All these decisions rely on the knowledge of where the opponents
-are and of how they are moving. For this reason, enabling the multi-vehicle interaction
-requires the ability to identify the opponent vehicles in a reliable and consistent way,
-providing an estimate of their state that remains accurate over time and coherent with
-their actual motion.
 
 \FloatBarrier
