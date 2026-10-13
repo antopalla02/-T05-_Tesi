@@ -27,9 +27,9 @@ architecture.
 This section gives an overview of the competitions in which the vehicles described in
 this chapter take part.
 
-\paragraph{Indy Autonomous Challenge.} The IAC started in 2019 with a series of simulation
-challenges and held its first event on track in 2021, at the Indianapolis Motor Speedway.
-All the teams race with the same vehicle provided by the organisers. Historically, the events have been held mainly on oval tracks, such as the
+\paragraph{Indy Autonomous Challenge.} The first edition of the IAC was held in 2021 at
+the Indianapolis Motor Speedway, preceded since 2019 by a series of competitions in
+simulation. All the teams compete with the same vehicle, provided by the organisers. Historically, the events have been held mainly on oval tracks, such as the
 Indianapolis Motor Speedway, the Las Vegas Motor Speedway, during the Consumer Electronics
 Show, and the Texas Motor Speedway. Since
 2023 the series has also raced on road courses, starting from Monza, and in the last two
@@ -82,16 +82,8 @@ second generation of racecars adopted by the series, introduced in 2024 as the s
 of the AV-21. It is built by Dallara on the chassis of the Indy NXT, the open-wheel
 single-seater of the development series of IndyCar, and has been adapted to driverless
 operation while keeping the layout and the performance of the original car. The
-vehicle has been designed to compete on oval tracks.
-
-To enable autonomous operation, the cockpit hosts the on-board computer and the set of
-actuators that turns the commands of the control software into steering, throttle,
-brake and gear inputs to the vehicle, together with the power and network distribution
-that connects sensors, computer and actuators. The bodywork has been modified to carry
-the sensors, and a radio link connects the
-car to the base station, which receives the telemetry and sends the race control
-signals. The main characteristics of the vehicle are collected in
-Table~\ref{tab:av24}.
+vehicle has been designed to compete on oval tracks. Its main characteristics are
+collected in Table~\ref{tab:av24}.
 
 
 \begin{table}[H]
@@ -114,19 +106,22 @@ Table~\ref{tab:av24}.
     \label{tab:av24}
 \end{table}
 
-To enable autonomous driving, the vehicle has been equipped with a set of sensors that
-are heterogeneous in some aspects and redundant in others: the
-LiDARs provide a dense and accurate description of the shape of the surrounding objects,
-the RaDARs measure directly the relative velocity and reach longer distances, and the
-cameras provide rich images from which the vehicles can be recognized reliably. Each type
-of sensor has its own strengths and limitations, and their combination enables a full
-perception of the surroundings, accurate and robust in all the operating conditions and
-over the dynamics and the distances of interest. On the AV-24, the perception of the
-surroundings relies on three LiDARs, two RaDARs and six cameras, described in
-Section~\ref{sec:sensors}, while the state of the ego vehicle is estimated from a
-VectorNav VN-310 GNSS/INS and two NovAtel PwrPak7 receivers, which provide position,
-attitude, velocity and acceleration with centimetre-level position accuracy.
-
+Several modifications have been introduced on the original car to enable autonomous
+driving. The bodywork has been modified to host the exteroceptive sensors used for the
+perception of the environment and of the opponents, three LiDARs, two RaDARs and six
+cameras, described in Section~\ref{sec:sensors}. These sensors are heterogeneous in some
+aspects and redundant in others: their joint use makes the perception robust to the
+limitations of the single sensors and provides a full perception of the surroundings in
+all the conditions of interest. The state of the ego vehicle is estimated from GNSS
+receivers and from proprioceptive sensors: a VectorNav VN-310 GNSS/INS, which includes an
+inertial measurement unit, and two NovAtel PwrPak7 receivers provide position, attitude,
+velocity and acceleration with centimetre-level position accuracy, while the wheel speed
+and steering angle sensors measure the motion of the wheels and the steering input. The cockpit, no longer occupied by the driver, hosts the on-board
+computer, a dSPACE AUTERA AutoBox with a 12-core Intel Xeon CPU and an NVIDIA A5000 GPU,
+which processes the data of the sensors and translates them into the commands for the
+drive-by-wire actuators of steering, throttle, brake and gear. Finally, a radio system
+with dedicated antennas connects the car to the base station, which receives the
+telemetry and sends the race control signals.
 
 \FloatBarrier
 
@@ -144,11 +139,7 @@ general, in more challenging dynamical conditions. The power unit is a turbochar
 \SI{2.0}{l} four-cylinder engine delivering about \SI{450}{hp}, which can be raised
 temporarily to about \SI{550}{hp} with the push-to-pass, coupled with a
 longitudinal six-speed sequential gearbox, which brings the car to a top speed of about
-\SI{300}{km/h}.
-
-As on the AV-24, the cockpit hosts the on-board computer and the actuation system that
-executes the commands of the control software, and the bodywork carries the sensors.
-The main characteristics are summarized in
+\SI{300}{km/h}. The main characteristics of the vehicle are summarized in
 Table~\ref{tab:eav24}.
 
 
@@ -172,14 +163,16 @@ Table~\ref{tab:eav24}.
     \label{tab:eav24}
 \end{table}
 
-As on the AV-24, the vehicle has been equipped with a set of heterogeneous and redundant
-sensors to enable autonomous driving. On the EAV-25, the perception of the surroundings
-relies on three LiDARs, four RaDARs and seven cameras, described in
-Section~\ref{sec:sensors}, while the state of the ego vehicle is estimated from a
+For autonomous driving, the bodywork of the EAV-25 carries three LiDARs, four RaDARs and
+seven cameras for the perception of the environment and of the opponents, also described
+in Section~\ref{sec:sensors}. The state of the ego vehicle is estimated from a
 dual-antenna VectorNav VN-310 RTK-GNSS/INS, which includes an inertial measurement unit,
-and from a Kistler SF~Motion optical sensor, which measures the longitudinal and lateral
-ground speed of the vehicle.
-
+and from further sensors that measure the motion of the vehicle: a Kistler SF~Motion
+optical sensor, which measures the longitudinal and lateral ground speed, and the wheel
+speed sensors. The cockpit hosts the
+on-board computer, with a 16-core AMD EPYC 7313P CPU and an NVIDIA RTX 6000 Ada GPU,
+which runs the autonomous driving software and commands the steer-by-wire system and the
+other actuators, together with the radio system for the communication with race control.
 
 \FloatBarrier
 
