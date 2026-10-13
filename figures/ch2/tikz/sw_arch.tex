@@ -20,8 +20,8 @@
 \node[hl, right=14mm of det] (trk) {Target\\tracking};
 \node[grp, fit=(det)(trk), label={[lab]above:Perception}] (P) {};
 
-% localization, below perception; GNSS/INS at the same height
-\node[mod, below=10mm of P.south, anchor=north] (loc) {Localization};
+% estimation, below perception; GNSS/INS at the same height
+\node[mod, below=10mm of P.south, anchor=north] (loc) {Estimation};
 \node[sens] (gnss) at (cam |- loc) {GNSS / INS};
 \node[grp, fit=(lidar)(radar)(cam)(gnss), label={[lab]above:Sensors}] (S) {};
 

@@ -125,7 +125,7 @@ that, within \SI{75}{m}, all the sensors detect the opponent consistently. As ex
 beyond \SI{100}{m} the detection rate of the two LiDAR pipelines drops sharply, while
 that of the RaDAR and of the camera remains more consistent up to \SI{150}{m}. When the
 opponent is behind, the LiDAR detections are limited to the first range band, because of
-the blind spot caused by the rear wing (Section~\ref{sec:sens_eav24}), and the opponent
+the blind spot caused by the rear wing (Section~\ref{subsec:lidar}), and the opponent
 is detected mainly by the RaDAR, which keeps a detection rate similar to the one obtained with the opponent ahead. 
 
 \begin{figure}[H]
@@ -176,8 +176,8 @@ true state of the opponent at every instant. Only with this reference it is poss
 quantify the error of the raw detections of each sensor and the error of the estimates
 produced by the filter, separately for each component of the state.
 
-The reference for the opponent state is the localization of the opponent vehicle
-itself. During the sessions, each team records the output of its own state estimation,
+The reference for the opponent state is the state estimated on board the opponent
+vehicle itself. During the sessions, each team records the output of its own state estimation,
 based on RTK-GNSS receivers and inertial units, and shares it after the session. The
 data provided by the opponent contain, for each sample, the timestamp, the position and
 the heading of the vehicle, its longitudinal speed and, when available, its
@@ -190,7 +190,7 @@ deriving the acceleration from the speed.
 
 It is important to note that this reference is not exact: it is the output of the
 state estimation of the opponent, and it may therefore contain errors related to the
-quality of its localization. Since the errors of the sensors are computed with respect
+quality of its estimate. Since the errors of the sensors are computed with respect
 to this reference, the analyses of the measurement errors carried out in
 Chapter~\ref{ch:adaptive_r} are also affected by the accuracy of the ground truth, and part of what is observed as
 an error of the detections may originate from the reference itself.
