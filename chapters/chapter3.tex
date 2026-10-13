@@ -52,16 +52,14 @@ expressed in the same reference frame. Thanks to this common interface, the trac
 differences being the measured quantities and their uncertainty.
 
 All the pipelines exploit two pieces of prior information on the circuit: a map of the
-drivable area, used to discard the detections that fall outside the track, such as walls
-or structures along the track, and the database of reference trajectories, from which the
-heading of a detection is obtained when the sensor cannot measure it, assuming that the
-opponent moves approximately parallel to the racing lines.
+drivable area, used to discard the detections that fall outside the track, and the database of reference trajectories, from which the
+heading of a detection is obtained when the sensor cannot measure it.
 
 \paragraph{LiDAR.} The point clouds of the three LiDARs are expressed in the vehicle
 frame, synchronized and merged into a single cloud. The latter is processed by two complementary pipelines, a
-geometric one based on clustering and a learning-based one based on PointPillars.
+geometric one (i.e clustering) and a Neural-network one (i.e PointPillars).
 
-\subparagraph{Clustering.} The clustering pipeline is purely geometric: the ground points are removed, the
+\subparagraph{Clustering.} The clustering pipeline evolves as follows: the ground points are removed, the
 remaining points are filtered with the map of the drivable area and grouped into clusters
 of neighbouring points, and the clusters whose size is not compatible with a car are
 discarded. Since the LiDAR observes only the side of the vehicle facing the sensor, the
@@ -292,9 +290,9 @@ variation of the acceleration, which the model assumes constant: a white noise $
 spectral density $q_a$ acts on its derivative, so that the acceleration evolves as a
 random walk and can follow the braking and traction phases. The second is the
 uncertainty of the curvature read from the database: since the set of trajectories that
-the opponent may follow is used as prior information, this uncertainty is lower, but it
-accounts for the small differences between the actual trajectory of the opponent and the
-one prescribed by the database; the latter modeled as a white perturbation $w_\kappa$ of the curvature, with
+the opponent may follow is used as prior information, this uncertainty is lower, but it used to
+account for the small differences between the actual trajectory of the opponent and the
+one prescribed by the references; the latter is modeled as a white perturbation $w_\kappa$ of the curvature, with
 spectral density $q_\kappa$, acting on the yaw rate through $v\,w_\kappa$. \\The
 continuous-time model with process noise becomes
 \abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
@@ -354,8 +352,7 @@ rather than on the measurements driving the Kalman gain in the correction step (
 \label{sec:tt_association}
 
 At every time instant multiple detections can be produced by the sensors and, at the same
-time, multiple tracks can be active, either because more than one vehicle is on track or
-because the perception pipelines produce spurious detections. Before the correction step,
+time, multiple tracks can be active. Before the correction step,
 i.e.\ the update of the prediction with the measurement, the filter has to determine which
 detections belong to which track. Since the detections do not reach the tracker in the
 order in which they were acquired, the out-of-sequence measurements are handled first, so
@@ -581,9 +578,7 @@ covariance is rotated by the heading $\hat\psi$ of the predicted track,
 \end{equation}
 For the RaDAR, the range rate is assumed independent of the position, and the covariance
 of the complete measurement is block-diagonal,
-$\mathbf{R} = \operatorname{diag}(\mathbf{R}_p,\,\sigma_{\dot\rho}^2)$. The standard
-deviations of each sensor are fixed at design time and do not change with the operating
-conditions.
+$\mathbf{R} = \operatorname{diag}(\mathbf{R}_p,\,\sigma_{\dot\rho}^2)$. 
 
 \subsection{Update}
 \label{subsec:tt_update}
