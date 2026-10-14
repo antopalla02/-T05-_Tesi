@@ -1,20 +1,153 @@
-% Main file of the thesis.
-\documentclass[12pt,a4paper,openright]{report}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage[a4paper,margin=2.5cm]{geometry}
-\usepackage{amsmath,amssymb,array,booktabs,siunitx,graphicx,xcolor}
+% Main file of the thesis, based on the PoliMi template for MSc theses
+% (School of Industrial and Information Engineering, classical format).
+
+\documentclass{Configuration_Files/PoliMi3i_thesis}
+
+%------------------------------------------------------------------------------
+%	REQUIRED PACKAGES AND CONFIGURATIONS
+%------------------------------------------------------------------------------
+
+% CONFIGURATIONS
+\usepackage{parskip} % For paragraph layout
+\usepackage{setspace} % For using single or double spacing
+\usepackage{emptypage} % To insert empty pages
+\usepackage{multicol} % To write in multiple columns (executive summary)
+\setlength\columnsep{15pt} % Column separation in executive summary
+\setlength\parindent{0pt} % Indentation
+\raggedbottom
+
+% PACKAGES FOR TITLES
+\usepackage{titlesec}
+\titlespacing{\section}{0pt}{3.3ex}{2ex}
+\titlespacing{\subsection}{0pt}{3.3ex}{1.65ex}
+\titlespacing{\subsubsection}{0pt}{3.3ex}{1ex}
+\usepackage{color}
+
+% PACKAGES FOR LANGUAGE AND FONT
+\usepackage[english]{babel} % The document is in English
+\usepackage[utf8]{inputenc} % UTF8 encoding
+\usepackage[T1]{fontenc} % Font encoding
+\usepackage[11pt]{moresize} % Big fonts
+
+% PACKAGES FOR IMAGES
+\usepackage{graphicx}
+\usepackage{transparent} % Enables transparent images
+\usepackage{eso-pic} % For the background picture on the title page
+\usepackage{subfig} % Numbered and caption subfigures using \subfloat.
+\usepackage{tikz} % A package for high-quality hand-made figures.
+\usetikzlibrary{positioning,fit,arrows.meta,calc,shapes.geometric,decorations.pathreplacing}
+\graphicspath{{./Images/}} % Directory of the template images
+\usepackage{caption} % Coloured captions
+\usepackage{xcolor} % Coloured captions
+\usepackage{amsthm,thmtools,xcolor} % Coloured "Theorem"
+\usepackage{float}
+
+% STANDARD MATH PACKAGES
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage[overload]{empheq} % For braced-style systems of equations.
+\usepackage{fix-cm} % To override original LaTeX restrictions on sizes
+
+% PACKAGES FOR TABLES
+\usepackage{tabularx}
+\usepackage{longtable} % Tables that can span several pages
+\usepackage{colortbl}
+
+% PACKAGES FOR ALGORITHMS (PSEUDO-CODE)
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% PACKAGES FOR REFERENCES & BIBLIOGRAPHY
+\usepackage[colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=black,filecolor=black,menucolor=black,runcolor=black,urlcolor=black]{hyperref} % Adds clickable links at references
+\usepackage{cleveref}
+\usepackage[square, numbers, sort&compress]{natbib} % Square brackets, citing references with numbers, citations sorted by appearance in the text and compressed
+\bibliographystyle{abbrvnat} % You may use a different style adapted to your field
+
+% OTHER PACKAGES
+\usepackage{pdfpages} % To include a pdf file
+\usepackage{afterpage}
+\usepackage{fancyhdr} % For the headers
+\fancyhf{}
+
+% Input of configuration file. Do not change config.tex file unless you really know what you are doing.
+\input{Configuration_Files/config}
+
+%----------------------------------------------------------------------------
+%	ADD YOUR PACKAGES (be careful of package interaction)
+%----------------------------------------------------------------------------
+\usepackage{array,booktabs,siunitx}
 \usepackage{xurl}
-\usepackage{tikz}
-\usetikzlibrary{positioning,fit,arrows.meta,calc,shapes.geometric}
-\usepackage[hidelinks]{hyperref}
+
+%----------------------------------------------------------------------------
+%	ADD YOUR DEFINITIONS AND COMMANDS (be careful of existing commands)
+%----------------------------------------------------------------------------
 \input{macros}
 
-\begin{document}
-\tableofcontents
+%----------------------------------------------------------------------------
+%	BEGIN OF YOUR DOCUMENT
+%----------------------------------------------------------------------------
 
+\begin{document}
+
+\fancypagestyle{plain}{%
+\fancyhf{} % Clear all header and footer fields
+\fancyhead[RO,RE]{\thepage} %RO=right odd, RE=right even
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+
+%----------------------------------------------------------------------------
+%	TITLE PAGE (to be added)
+%----------------------------------------------------------------------------
+
+\pagestyle{empty} % No page numbers
+\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the preamble pages
+
+% \puttitle{
+% 	title=Title, % Title of the thesis
+% 	name=Name Surname, % Author Name and Surname
+% 	course=Xxxxxxx Engineering - Ingegneria Xxxxxxx, % Study Programme (in Italian)
+% 	ID  = 000000,  % Student ID number (numero di matricola)
+% 	advisor= Prof. Name Surname, % Supervisor name
+% 	coadvisor={Name Surname, Name Surname}, % Co-Supervisor name, remove this line if there is none
+% 	academicyear={20XX-XX},  % Academic Year
+% }
+
+%----------------------------------------------------------------------------
+%	PREAMBLE PAGES: ABSTRACT (inglese e italiano)
+%----------------------------------------------------------------------------
+\startpreamble
+\setcounter{page}{1} % Set page counter to 1
+
+% ABSTRACT IN ENGLISH
 \chapter*{Abstract}
 \TODO{}
+\\
+\\
+\textbf{Keywords:} \TODO{}
+
+% ABSTRACT IN ITALIAN
+\chapter*{Abstract in lingua italiana}
+\TODO{}
+\\
+\\
+\textbf{Parole chiave:} \TODO{}
+
+%----------------------------------------------------------------------------
+%	TABLE OF CONTENTS
+%----------------------------------------------------------------------------
+\thispagestyle{empty}
+\tableofcontents
+\thispagestyle{empty}
+\cleardoublepage
+
+%-------------------------------------------------------------------------
+%	THESIS MAIN TEXT
+%-------------------------------------------------------------------------
+\addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
+\mainmatter % Begin numeric (1,2,3...) page numbering
 
 \input{chapters/chapter1}
 \input{chapters/chapter2}
@@ -24,5 +157,25 @@
 \input{chapters/chapter6}
 \input{chapters/chapter7}
 \input{chapters/chapter8}
+
+%-------------------------------------------------------------------------
+%	BIBLIOGRAPHY (to be enabled when the first citations are added)
+%-------------------------------------------------------------------------
+% \addtocontents{toc}{\vspace{2em}}
+% \bibliography{Thesis_bibliography}
+
+%-------------------------------------------------------------------------
+%	LISTS OF FIGURES AND TABLES
+%-------------------------------------------------------------------------
+\cleardoublepage
+\addtocontents{toc}{\vspace{2em}}
+\listoffigures
+\listoftables
+
+% ACKNOWLEDGEMENTS
+\chapter*{Acknowledgements}
+\TODO{}
+
+\cleardoublepage
 
 \end{document}

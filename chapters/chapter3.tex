@@ -18,8 +18,7 @@ describes the motion of the vehicle. The filter alternates two essential steps: 
 \emph{prediction}, in which the state is propagated in time according to a Constant
 Curvature and Acceleration (CCA) model, and the \emph{update}, in which the predicted
 state is corrected with the information brought by the measurements. Around these two steps, the
-target tracking module manages all the operations required to work with non ideal
-detections: the association of each measurement with the corresponding opponent, the
+target tracking module manages all the operations required to work with non-ideal detections: the association of each measurement with the corresponding opponent, the
 handling of the measurements that arrive out of sequence (OOSM), and the management of
 the tracks, i.e.\ their creation, confirmation and deletion.
 
@@ -34,20 +33,20 @@ Section~\ref{sec:tt_perception} gives a brief overview of the perception pipelin
 how the raw data of the sensors are processed to obtain the detections used by the
 tracking module. Then, following the structure of the EKF, Section~\ref{sec:tt_prediction}
 describes the prediction step. Section~\ref{sec:tt_association} explains how the
-measurements that arrive out of sequence are handled and how each of them is
-associated with the corresponding track, through the Mahalanobis distance gating and the
+measurements that arrive out of sequence are handled and how each detection is associated with the corresponding track, through the Mahalanobis distance gating and the
 Munkres algorithm. Section~\ref{sec:tt_correction} presents the measurement models and the
 update step.
-Finally, Section~\ref{sec:tt_management} overviews how track lifecycle is managed.
+Finally, Section~\ref{sec:tt_management} describes how the life cycle of the tracks is
+managed.
 
 % =====================================================================
 \section{Perception Measurements}
 \label{sec:tt_perception}
 
 The target tracking module does not process the raw data of the sensors, but the
-detections produced by the perception pipelines, therefore is necessary to give a brief description of how these are processed. Firsto of all, since each type of sensor is present in
-more units on the vehicle, the data of the sensors of the same type are first
-synchronized and brought into a common reference frame through the roto-translations
+detections produced by the perception pipelines; therefore, a brief description of how
+the data are processed is given first. Since each type of sensor is present in more
+units on the vehicle, the data of the sensors of the same type are first synchronized and brought into a common reference frame through the roto-translations
 given by their extrinsic calibration. Each family of sensors is then processed by a
 dedicated pipeline, running as an independent process, and all the pipelines publish
 their output with the same structure: a list of detections, each one representing a
@@ -61,32 +60,32 @@ All the pipelines exploit two pieces of prior information on the circuit. The fi
 binary map of the drivable area, which is used to discard the detections that fall outside the track boundaries. The second is the database of reference trajectories: when the sensor cannot measure the heading of a detection, it is taken from the closest
 point of the closest trajectory.
 
-\paragraph{LiDAR.} The point cloud of the LiDARs,  is processed by two complementary pipelines, a geometric one (i.e.\ clustering) and a neural-network one (i.e.\ PointPillars).
+\paragraph{LiDAR.} The point cloud of the LiDARs is processed by two complementary pipelines, a geometric one (i.e.\ clustering) and a neural-network one (i.e.\ PointPillars).
 
 \subparagraph{Clustering.} The clustering pipeline works as follows. The points belonging to the ground are removed
 first, and the remaining ones are filtered with the
 map of the drivable area, so that only the points inside the track are kept. These points are joined into clusters by a density-based clustering algorithm (DBSCAN),
 and the clusters whose extent is not compatible with the dimensions of a car are
 discarded. Since the LiDAR samples only the surfaces facing the sensor, the
-centre of the vehicle does not coincide with the centroid of the points of the cluster:
-the visible corner closest to the sensor is identified, and the centre is obtained by
+center of the vehicle does not coincide with the centroid of the points of the cluster:
+the visible corner closest to the sensor is identified, and the center is obtained by
 aligning to the visible sides a model of the vehicle with its nominal dimensions.
 
 \subparagraph{PointPillars.} PointPillars is a deep neural network for three-dimensional object detection in point
 clouds. The merged cloud is divided into vertical columns, the pillars, whose points are
 encoded into features and processed by the network as an image; for each detected object,
-the network returns an oriented three-dimensional bounding box, i.e.\ its centre,
+the network returns an oriented three-dimensional bounding box, i.e.\ its center,
 dimensions and heading, together with a confidence score. Having
 learned the shape of the vehicle from the training data, the network can estimate its
-centre and heading also when the vehicle is only partially visible.
+center and heading also when the vehicle is only partially visible.
 
 \paragraph{RaDAR.} At every cycle, each RaDAR returns a list of reflection points, each
 one described by its range, azimuth, elevation and range rate, together with indicators
 of the quality of the reflection. The points of low quality, or at ranges and heights not
 compatible with a vehicle on track, are discarded, and the remaining ones are expressed
-in the common reference frame and filtered with the map of the drivable area. The points
-are then clustered based on their position and range rate: reflections of
-the same vehicle  close to each other that share a similar radial velocity are gathered together,  points that are spatially close but move differently, instead are separated. Each cluster
+in the common reference frame and filtered with the map of the drivable area. The points are then clustered based on their position and range rate: reflections that
+are close to each other and share a similar radial velocity are gathered together, while
+points that are spatially close but move differently are separated. Each cluster
 generates a detection whose position is the centroid of its points and whose range rate
 is their mean.
 
@@ -119,7 +118,7 @@ nonlinear model
 where $f_d(\cdot)$ is the motion model, which propagates the state $\mathbf{x}_k$ over the
 interval between two filter iterations using the known input $\mathbf{u}_k$. The process
 noise $\mathbf{w}_k$ is a measure of the confidence in the motion model, i.e.\ how
-reliable the prediction is expected to be, and it is modelled as a zero-mean Gaussian
+reliable the prediction is expected to be, and it is modeled as a zero-mean Gaussian
 white noise with covariance matrix $\mathbf{Q}_k$.
 
 Since $f_d$ is nonlinear, it is linearized around the last estimate,
@@ -186,7 +185,7 @@ In compact form,
 the system is written as $\dot{\mathbf{x}}(t) = f(\mathbf{x}(t),\kappa)$.
 \\\\The a priori knowledge of the trajectories that the opponent may follow, i.e.\ the racing
 lines stored in the track database introduced in Section~\ref{sec:sw_arch}, is exploited
-as a prior and modelled as an external input, $\mathbf{u}_k = \kappa$. At every prediction the point closest to the estimated position of the opponent
+as a prior and modeled as an external input, $\mathbf{u}_k = \kappa$. At every prediction the point closest to the estimated position of the opponent
 is searched on the optimal trajectory, starting from the index found at the previous step;
 if its distance from the opponent exceeds \SI{0.5}{m}, the search is extended to all the
 other trajectories of the database, and the curvature of the closest point is used for
@@ -361,7 +360,7 @@ rather than on the measurements driving the Kalman gain in the correction step (
 
 At every time instant multiple detections can be produced by the sensors and, at the same
 time, multiple tracks can be active. Before the correction step, i.e.\ the update of the prediction with the measurement, the
-filter has to determine which detections belong to which track. First of all, the out-of-sequence measurements (OOSM), are taken into account. Then, once all the tracks have been
+filter has to determine which detections belong to which track. First of all, the out-of-sequence measurements (OOSM) are taken into account. Then, once all the tracks have been
 predicted to the acquisition time of the detections, the association is solved in two
 stages: a statistical gate, based on the Mahalanobis distance, discards the
 detection-track pairs that are not compatible, and the Munkres algorithm selects, among
@@ -382,28 +381,25 @@ used in the standard way. The simplest solutions are either to discard the late
 measurements, losing the information they carry, or to buffer the measurements for a
 fixed interval and reorder them, at the price of a constant delay of the estimate.
 
-In the proposed tracker, OOSM are handled by reprocessing the history of the whole
-tracker as they arrive. 
+In the proposed tracker, OOSM are handled as soon as they arrive, by reprocessing the
+history of the whole tracker. 
 
 \begin{figure}[H]
     \centering
     \input{figures/ch3/tikz/oosm_timeline.tex}
-    \caption{(a) Generation of out-of-sequence measurements: measurements 1 and 3 of sensor 1
-    reach the tracker after measurements 2 and 4 of sensor 2, although they were acquired
-    earlier. (b) Reprocessing: the late measurement 1 is inserted in the history according
-    to its acquisition time, the tracker restarts from the state saved before it and
-    processes again measurements 2--6, then the most recent state is predicted to the
-    current time.}
+    \caption{(a) Generation of out-of-sequence measurements. (b) Reprocessing of the
+    history.}
     \label{fig:tt_oosm_timeline}
 \end{figure}
 The tracker keeps a history ordered by acquisition time, in which each entry
-contains a measurement and the state of the tracker after. When a new
+contains a measurement and the state of the tracker after processing it. When a new
 measurement arrives, it is inserted in the history according to its acquisition time. The
 tracker restarts from the state saved in the previous entry, processes the new measurement
 and then processes again, in chronological order, all the subsequent measurements already
 in the history, repeating for each of them the prediction, the association and the
 correction (Fig.~\ref{fig:tt_oosm_timeline}). When the new measurement is the most recent
 one, the ordinary case is recovered and nothing has to be reprocessed.
+
 The result is the same that would be obtained if the measurements were received in the
 correct order, without introducing approximations and without waiting in advance for
 possible late measurements. When the estimate has to be published, the most recent state
@@ -421,8 +417,8 @@ tracks has to be stored for every entry of the history, and a single late measur
 require several measurements to be processed again, a number that grows with the delay of
 the late measurement.
 To keep it limited, the measurements whose delay exceeds a maximum threshold are
-discarded, since the older the information, the lower their benefit to the current estimate
-and the more expensive the reprocessing. For the same reason, the history keeps only the
+discarded, since the older the measurements, the lower their benefit to the current estimate and
+the more expensive their reprocessing. For the same reason, the history keeps only the
 last seconds of data, removing the oldest entries.
 
 \subsection{Mahalanobis Distance Gating}
@@ -444,7 +440,10 @@ detection $\mathbf{z}_j = [x_j,\,y_j]^\top$, the position error, or innovation, 
     \end{bmatrix},
     \label{eq:tt_assoc_error}
 \end{equation}
-where $\mathbf{H}$ extracts the position from the state. \\In our tracker gating is performed with the Mahlanobis distance, an extension of the classical Euclidean distance: instead of comparing the Euclidean norm
+where $\mathbf{H}$ extracts the position from the state.
+
+In our tracker, gating is performed with the Mahalanobis distance, an extension of the
+classical Euclidean distance: instead of comparing the Euclidean norm
 $\|\boldsymbol{\nu}_{ij}\|$ of the error with a fixed radius, which treats all the directions in
 the same way, it weights the error by the uncertainty of the filter. The gate becomes an
 ellipse, whose size and orientation follow the covariance of the error, wider along the
@@ -465,9 +464,11 @@ The squared Mahalanobis distance between the $i$-th track and the $j$-th detecti
     \mathbf{S}_{ij} = \mathbf{H}\,\mathbf{P}_{i,k+1|k}\,\mathbf{H}^\top + \mathbf{R}_{ij},
     \label{eq:tt_mahalanobis}
 \end{equation}
-where $\mathbf{S}_{ij}$ is the innovation covariance, which resembles the uncertainty of
-the predicted position, summing the covariance $\mathbf{P}_{i,k+1|k}$ (i.e how much the filter is trusted ) , and
-the measurement noise covariance $\mathbf{R}_{ij}$ (i.e how uncertain is the measurement of the sensor) of the sensor that produced it.
+where $\mathbf{S}_{ij}$ is the innovation covariance, which represents the overall
+uncertainty of the error and is obtained by summing the covariance of the predicted
+position, through $\mathbf{P}_{i,k+1|k}$, i.e.\ how uncertain the prediction of the filter
+is, and the measurement noise covariance $\mathbf{R}_{ij}$, i.e.\ how uncertain the
+measurement of the sensor that produced the detection is.
 
 Under the hypothesis of Gaussian errors, $d_{ij}^2$ follows a $\chi^2$ distribution with
 two degrees of freedom, and a detection is considered compatible with a track only if
@@ -481,7 +482,7 @@ generated by the track falls inside the gate with a probability of \SI{95}{\perc
 \subsection{Munkres Algorithm}
 \label{subsec:tt_munkres}
 
-The detections  filtered by the gate enter the assignment problem. Their
+The detections that pass the gate enter the assignment problem. Their
 distances are collected in a cost matrix $\mathbf{D}$, with one row for each track and
 one column for each detection, whose elements are
 \begin{equation}
@@ -504,7 +505,7 @@ $j$-th detection is assigned to the $i$-th track,
 i.e.\ each track receives at most one detection and each detection is assigned to at
 most one track. The problem is solved with the Munkres algorithm, also known as Hungarian
 algorithm, which guarantees the globally optimal assignment in polynomial time. Compared,
-for instance, with a greedy nearest-neighbour strategy, in which each detection is
+for instance, with a greedy nearest-neighbor strategy, in which each detection is
 assigned in sequence to its closest track, the global solution avoids locally optimal
 choices that lead to wrong associations.
 
@@ -522,7 +523,7 @@ related to the state of the opponent through
 where $h(\cdot)$ is the measurement model, which depends on the sensor that produced the
 detection, and the measurement noise $\mathbf{v}_{k+1}$ represents the error of the
 measurement, i.e.\ the difference between the measured quantity and its true value, due
-to the accuracy of the sensor and of the perception pipeline. It is modelled as a
+to the accuracy of the sensor and of the perception pipeline. It is modeled as a
 zero-mean Gaussian white noise with covariance matrix $\mathbf{R}_{k+1}$, which describes
 how accurate the measurements of each sensor are expected to be.
 
@@ -630,8 +631,17 @@ of the opponents follows the vehicles actually present on track without being af
 isolated spurious detections or missed detections.
 
 The filter implements an $M/N$ logic, in which a track is confirmed after $M$
-associations over the last $N$ scans. A sliding window of length $T_w$ instead of a number of scans $N$ is preferred because it makes the logic
-independent of the different update rates of the sensors.
+associations over the last $N$ scans. A sliding window of duration $T_w$ is used instead of a fixed number of scans $N$, since
+it makes the logic independent of the different update rates of the sensors; $M$ is
+therefore the number of detections associated with the track within the window
+(Fig.~\ref{fig:tt_mn_logic}).
+
+\begin{figure}[H]
+    \centering
+    \input{figures/ch3/tikz/mn_logic.tex}
+    \caption{Finite state machine of the track life cycle.}
+    \label{fig:tt_mn_logic}
+\end{figure}
 
 \paragraph{Track life cycle.} Each track can be either \emph{tentative} or
 \emph{confirmed}:

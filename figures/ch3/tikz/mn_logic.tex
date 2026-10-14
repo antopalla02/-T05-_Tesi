@@ -1,0 +1,32 @@
+% Finite state machine of the track life cycle (Chapter 3, track management).
+\begin{tikzpicture}[
+    font=\footnotesize,
+    >={Stealth[length=2mm]},
+    state/.style={circle, draw, thick, minimum size=19mm, align=center, font=\footnotesize\bfseries},
+    tr/.style={->, thick},
+    lab/.style={font=\scriptsize, align=center, fill=white, inner sep=1.5pt}
+]
+\node[state, fill=black!5] (T) at (0,0) {Tentative};
+\node[state, fill=black!15] (C) at (6,0) {Confirmed};
+\node[state, fill=white, dashed] (D) at (3,-3.6) {Deleted};
+
+% birth
+\coordinate (S) at (-2.9,0);
+\fill (S) circle (2pt);
+\draw[tr] (S) -- node[above, font=\scriptsize, align=center]{unassigned\\detection} (T);
+
+% confirmation / de-confirmation
+\draw[tr] (T) to[bend left=22] node[lab, above]{$M \geq M_{\mathrm{high}}$} (C);
+\draw[tr] (C) to[bend left=22] node[lab, below]{$M < M_{\mathrm{low}}$} (T);
+
+% self loops
+\draw[tr] (T) to[out=120, in=60, looseness=5] node[lab, above]{$0 < M < M_{\mathrm{high}}$} (T);
+\draw[tr] (C) to[out=120, in=60, looseness=5] node[lab, above]{$M \geq M_{\mathrm{low}}$} (C);
+
+% deletion
+\draw[tr] (T) -- node[left=3pt, font=\scriptsize, align=right]{$M = 0$ or\\diverged speed} (D);
+\draw[tr] (C) -- node[right=3pt, font=\scriptsize, align=left]{diverged\\speed} (D);
+
+% publication
+\draw[dashed, black!60, ->] (C.east) -- ++(1.4,0) node[right, font=\scriptsize, align=left, text=black!70]{published\\to planning};
+\end{tikzpicture}
