@@ -1,16 +1,15 @@
 \chapter{Measurement Noise Analysis}
 \label{ch:adaptive_r}
 
-In this chapter, the measurement noise of the sensors introduced in
-Chapter~\ref{ch:tracking} is analyzed. A correct characterization of the measurement
-noise is important, since its covariance regulates the correction step of the Kalman
-filter and therefore the quality of the estimate: a covariance that is too large
-underuses the information carried by the measurements, while one that is too small
-weights them too much and makes the estimate of the filter noisier.
+In this chapter,  an in depth analysis and characterization of the measurement noise of the sensors introduced in
+Chapter~\ref{ch:tracking} is presented. The latter is of particular relevance mainly because the covariance of the measurement noise regulates the correction step of the Kalman
+filter and therefore the quality of the estimate; indeed, a covariance that is too large
+under uses the information carried by the measurements, while one that is too small
+weights them too much making the estimate too noisy.
 
 The chapter is divided into two parts. The first part aims at characterizing the
 measurement noise of the sensors. The errors of each source are analyzed, and their
-deterministic components, such as offsets, are identified and compensated: in this way,
+deterministic components, are identified and compensated: in this way,
 only the random part of the error has to be described by the measurement noise
 covariance, and each measurement is weighted correctly by the filter.
 
@@ -19,7 +18,7 @@ errors depend on the conditions in which the measurements are taken, e.g.\ a par
 occlusion of the opponent or a degraded detection quality, so that the measurement noise
 covariance is adapted to these conditions.
 
-Section~\ref{sec:preprocessing} describes the preprocessing of the data, i.e.\ the
+Section~\ref{sec:preprocessing} describes the pre-processing of the data, i.e.\ the
 reconstruction of the ground truth and the reference frames of the errors, and
 Section~\ref{sec:datasets} analyzes the datasets. Sections~\ref{sec:deterministic},
 \ref{sec:macro} and~\ref{sec:gauss_markov} address, respectively, the deterministic
@@ -28,7 +27,7 @@ Section~\ref{sec:adaptive_r} presents the adaptive approach and
 Section~\ref{sec:ch4_results} the results.
 
 % =====================================================================
-\section{Preprocessing}
+\section{Pre-processing}
 \label{sec:preprocessing}
 
 The analysis of the measurement errors requires each detection to be compared with the
@@ -40,7 +39,7 @@ the resulting errors are expressed.
 \subsection{Ground Truth Reconstruction}
 \label{sec:gt}
 
-The reference for the state of the opponent is the state estimated on board the opponent
+The reference for the state of the opponent is the state estimated by the opponent
 vehicle itself. During the sessions, each team records the output of its own state
 estimation, based on RTK-GNSS receivers and inertial units, and shares it after the
 session. For each sample, the data contain the timestamp, the position and the heading of
@@ -87,14 +86,7 @@ projection of the relative velocity on the line of sight,
 \end{equation}
 with $v_o$ and $v_e$ the speeds of the two vehicles.
 
-It must be stressed that the reference obtained in this way is not an exact ground truth.
-It is the output of the state estimation of the opponent, whose accuracy depends on its
-sensors, on its estimation algorithm and on its tuning, none of which is known or
-controlled by the ego team. Any error of that estimate, e.g.\ a bias of the position or a
-degradation of the GNSS solution, is inherited by the reference, to which the errors
-introduced by the synchronization of the two logs are added. The quality of the ground
-truth therefore depends on the quality of the state estimation of each opponent, and it
-can differ from one opponent to another.
+It is important to note that the reference obtained in this way is not an exact ground truth. As stated at the beginning of the section, it coincides with the output of the state estimation pipeline of the opponent, and its quality is therefore strictly related to the performance of that pipeline: a degradation of the GNSS measurements, as well as any other error of the estimate, is directly inherited by the reference. Moreover, since each opponent adopts its own pipeline, the quality of the reference can differ from one opponent to another.
 
 \subsection{Reference Frames of the Errors}
 \label{subsec:err_frames}
@@ -184,13 +176,12 @@ the rate is computed as the number of detections associated with the opponent in
 range interval divided by the time spent by the opponent in that interval, merging the
 two sessions. With the opponent ahead, both LiDAR pipelines detect it at close to the
 nominal rate of \SI{10}{Hz} up to about \SI{50}{m}, and the rate decreases gradually with
-the range, down to about \SI{100}{m} for the clustering and \SI{120}{m} for PointPillars.
+the range, down to about \SI{100}{m} for both clustering and PointPillars.
 With the opponent behind, instead, the rate drops already beyond \SI{30}{m} and becomes
 negligible beyond 50--\SI{60}{m}: this is the effect of the blind spot
 caused by the rear wing (Section~\ref{subsec:lidar}), which leaves only a few points on
 the opponent. The RaDAR does not suffer from this limitation and keeps detecting the
-opponent behind up to \SI{150}{m}, becoming the main source of information behind the
-car.
+opponent behind up to \SI{150}{m}, becoming the main source of information when the opponent is trailing.
 
 \begin{figure}[H]
     \centering
@@ -206,11 +197,9 @@ car.
 \label{sec:deterministic}
 
 The deterministic components are the systematic and repeatable part of the measurement
-errors, such as offsets or trends with the measurement conditions. They are identified
-on session 07/26\_TUM, and session 08/03\_Kinetiz is then used to verify whether they generalize: a
-component observed in both sessions and only on some sensors is attributed to the ego
-vehicle, while a component that changes with the session is attributed to the opponent,
-i.e.\ to the ground truth. The errors are expressed in the ego frame, as defined
+errors, such as offsets or trends with the measurement conditions, therefore, if identified they can be compensated . They are identified
+on session 07/26\_TUM, and session 08/03\_Kinetiz is then used for validation.
+The errors are expressed in the ego frame, as defined
 in~\eqref{eq:err_ego}, and the longitudinal component $e_x$ and the lateral component
 $e_y$ are analyzed separately.
 
@@ -314,8 +303,7 @@ increases with the range, and reaches about \SI{0.6}{m} at \SI{100}{m}.
 The same slope is found in session 08/03\_Kinetiz, with \SI{0.56}{cm/m} and \SI{0.52}{cm/m}: the
 dependence generalizes across the two sessions and is specific of the LiDARs, so it is
 related to the ego vehicle and not to the opponent. It is compatible with an offset in
-the calibration of the ring on which the three LiDARs are mounted, which rotates the
-point clouds of all of them by the same angle. This dependence is not observed for the
+the calibration of the ring on which the three LiDARs are mounted. This dependence is not observed for the
 RaDAR, whose slope is close to zero in both sessions (\SI{0.01}{cm/m} and
 \SI{0.06}{cm/m}), nor for the camera, whose slope changes from \SI{1.23}{cm/m} in
 session 07/26\_TUM to \SI{-0.26}{cm/m} in session 08/03\_Kinetiz and does not generalize.
