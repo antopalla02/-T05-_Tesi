@@ -1,196 +1,352 @@
 \chapter{Measurement Noise Analysis}
 \label{ch:adaptive_r}
 
-\TODO{}
+In this chapter, the measurement noise of the sensors introduced in
+Chapter~\ref{ch:tracking} is analyzed. A correct characterization of the measurement
+noise is important, since its covariance regulates the correction step of the Kalman
+filter and therefore the quality of the estimate: a covariance that is too large
+underuses the information carried by the measurements, while one that is too small
+weights them too much and makes the estimate of the filter noisier.
+
+The chapter is divided into two parts. The first part aims at characterizing the
+measurement noise of the sensors. The errors of each source are analyzed, and their
+deterministic components, such as offsets, are identified and compensated: in this way,
+only the random part of the error has to be described by the measurement noise
+covariance, and each measurement is weighted correctly by the filter.
+
+The second part introduces an adaptive approach to model the fact that the measurement
+errors depend on the conditions in which the measurements are taken, e.g.\ a partial
+occlusion of the opponent or a degraded detection quality, so that the measurement noise
+covariance is adapted to these conditions.
+
+Section~\ref{sec:preprocessing} describes the preprocessing of the data, i.e.\ the
+reconstruction of the ground truth and the reference frames of the errors, and
+Section~\ref{sec:datasets} analyzes the datasets. Sections~\ref{sec:deterministic},
+\ref{sec:macro} and~\ref{sec:gauss_markov} address, respectively, the deterministic
+components of the errors, their macroscopic correlations and their temporal structure.
+Section~\ref{sec:adaptive_r} presents the adaptive approach and
+Section~\ref{sec:ch4_results} the results.
 
 % =====================================================================
-\section{Datasets}
+\section{Preprocessing}
+\label{sec:preprocessing}
+
+The analysis of the measurement errors requires each detection to be compared with the
+true position of the opponent at the instant in which it was acquired. This section
+describes how the reference trajectory of the opponent is obtained and synchronized with
+the detections, how the detections are associated with it, and in which reference frames
+the resulting errors are expressed.
+
+\subsection{Ground Truth Reconstruction}
+\label{sec:gt}
+
+The reference for the state of the opponent is the state estimated on board the opponent
+vehicle itself. During the sessions, each team records the output of its own state
+estimation, based on RTK-GNSS receivers and inertial units, and shares it after the
+session. For each sample, the data contain the timestamp, the position and the heading of
+the vehicle, its longitudinal speed and, when available, its longitudinal acceleration.
+Since each team adopts its own format and reference system, the data are first brought
+into a common structure, compatible with the logs of the ego vehicle. The position and
+the heading of the opponent are roto-translated into the map frame of the ego vehicle, so that the two vehicles are
+described with respect to the same origin and orientation. When the estimate of the
+opponent refers to a point different from the one adopted for the ego vehicle, the
+position is also shifted along the longitudinal axis of the vehicle, so that both
+refer to the same point.
+
+When the longitudinal acceleration is measured by the
+inertial unit of the opponent, it is low-pass filtered with a zero-phase Butterworth
+filter, to remove the high-frequency content due to vibrations; otherwise, it is
+obtained by differentiating the speed and smoothing the result with a Savitzky-Golay
+filter. The yaw rate, when not provided, is obtained in the same way from the heading.
+
+To compute the relative geometry of the two vehicles, each sample of the opponent is
+associated with the sample of the ego vehicle with the closest timestamp. For each pair of
+synchronized samples, the position of
+the opponent in the frame of the ego vehicle is obtained by rotating the relative position
+by the heading $\psi_e$ of the ego vehicle,
+\begin{equation}
+    \mathbf{p}_{\mathrm{rel}} =
+    \begin{bmatrix} x_{\mathrm{rel}} \\ y_{\mathrm{rel}} \end{bmatrix}
+    = \mathbf{R}(\psi_e)^\top \left(\mathbf{p}_o - \mathbf{p}_e\right),
+    \qquad
+    \psi_{\mathrm{rel}} = \psi_o - \psi_e,
+    \label{eq:gt_rel}
+\end{equation}
+where $\mathbf{p}_o$, $\mathbf{p}_e$ and $\psi_o$, $\psi_e$ are the positions and the
+headings of opponent and ego vehicle in the map frame, and $\mathbf{R}(\cdot)$ is the
+rotation matrix defined in~\eqref{eq:tt_R_rot}. The range is the distance between the
+two vehicles, $\rho = \|\mathbf{p}_o - \mathbf{p}_e\|$, and the range rate is the
+projection of the relative velocity on the line of sight,
+\begin{equation}
+    \dot\rho = \frac{\left(\mathbf{p}_o - \mathbf{p}_e\right)^\top
+    \left(\mathbf{v}_o - \mathbf{v}_e\right)}{\rho},
+    \qquad
+    \mathbf{v}_i = v_i \begin{bmatrix} \cos\psi_i \\ \sin\psi_i \end{bmatrix},
+    \quad i \in \{o,\,e\},
+    \label{eq:gt_rhodot}
+\end{equation}
+with $v_o$ and $v_e$ the speeds of the two vehicles.
+
+It must be stressed that the reference obtained in this way is not an exact ground truth.
+It is the output of the state estimation of the opponent, whose accuracy depends on its
+sensors, on its estimation algorithm and on its tuning, none of which is known or
+controlled by the ego team. Any error of that estimate, e.g.\ a bias of the position or a
+degradation of the GNSS solution, is inherited by the reference, to which the errors
+introduced by the synchronization of the two logs are added. The quality of the ground
+truth therefore depends on the quality of the state estimation of each opponent, and it
+can differ from one opponent to another.
+
+\subsection{Reference Frames of the Errors}
+\label{subsec:err_frames}
+
+The first step to compute the measurement errors is the association between the ground
+truth and the measurements of the sensors. Since the ground truth is available at
+\SI{100}{Hz}, while the detections are produced at 10--\SI{16.7}{Hz}, the ground truth is
+linearly interpolated at the acquisition time of each detection. The measurement error is
+then the difference between the position of the detection and the position of the
+opponent given by the ground truth at the same instant.
+
+The errors are expressed in the frame of the ego vehicle,
+\begin{equation}
+    \mathbf{e} =
+    \begin{bmatrix} e_x \\ e_y \end{bmatrix}
+    = \mathbf{R}(\psi_e)^\top \left(\mathbf{p}_{\mathrm{det}} - \mathbf{p}_{\mathrm{gt}}\right),
+    \label{eq:err_ego}
+\end{equation}
+where $\mathbf{p}_{\mathrm{det}}$ and $\mathbf{p}_{\mathrm{gt}}$ are the positions of the
+detection and of the ground truth in the map frame, and $\psi_e$ is the heading of the ego
+vehicle, consistently with~\eqref{eq:gt_rel}. This frame is attached to the ego vehicle,
+so its axes keep the same meaning along the whole lap: $x_{\mathrm{rel}}$ is always
+positive ahead of the ego vehicle and $y_{\mathrm{rel}}$ positive to its left. As a
+consequence, $e_x$ is always the error along the longitudinal direction of the ego vehicle
+and $e_y$ the lateral one, regardless of the absolute orientation of the vehicles in the
+map, and the errors collected along the lap can be compared and aggregated consistently.
+
+\FloatBarrier
+
+% =====================================================================
+\section{Dataset Analysis}
 \label{sec:datasets}
 
-The analyses presented in this thesis are based on two on-track sessions, recorded on
-26 July 2026 and on 3 August 2026 and referred to in the following as session 0726 and
-session 0803. Both sessions took place on the same circuit, the Autodromo Internazionale
-Enzo e Dino Ferrari in Imola, a road course of about \SI{4.9}{km} that alternates long
-straights, fast corners and chicanes; its layout is shown in Fig.~\ref{fig:imola}.
-The two sessions have been chosen because, as highlighted in the following, they show
-complementary characteristics, both in the dynamics of the opponent and in the relative
-geometry between the two vehicles.The main characteristics of the two sessions are
+This section provides an in-depth analysis of the datasets used to develop the
+characterization of the sensors. The two sessions, recorded on 26 July 2026 and on
+3 August 2026 and referred to in the following as session 07/26\_TUM and session 08/03\_Kinetiz, both
+took place at the Autodromo Internazionale Enzo e Dino Ferrari in Imola, with two
+different opponents, TUM and Kinetiz respectively. Their main characteristics are
 summarized in Table~\ref{tab:sessions}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/ch2/imola_layout.png}
-    \caption{Imola circuit track layout.}
-    \label{fig:imola}
-\end{figure}
 
 \begin{table}[H]
     \centering
     \small
     \begin{tabular}{lcc}
         \toprule
-                                                   & Session 0726            & Session 0803            \\
+                                             & Session 07/26\_TUM            & Session 08/03\_Kinetiz            \\
         \midrule
-        Date                                       & 26/07/2026              & 03/08/2026              \\
-        Circuit                                    & Imola                   & Imola                   \\
-        Opponent                                   & TUM                     & Kinetiz                 \\
-        Distance covered by the opponent           & \SI{29.2}{km} (6 laps)  & \SI{43.3}{km} (9 laps)  \\
-        Opponent stationary                        & \SI{139}{s} (\SI{11}{\percent}) & \SI{74}{s} (\SI{4}{\percent}) \\
-        Opponent ahead of the ego vehicle          & \SI{72}{\percent}       & \SI{35}{\percent}       \\
-        Position swaps                             & 1                       & 7                       \\
-        Opponent detected by at least one sensor   & \SI{60}{\percent}       & \SI{57}{\percent}       \\
+        Date                                 & 26/07/2026              & 03/08/2026              \\
+        Opponent                             & TUM                     & Kinetiz                 \\
+        Duration                             & \SI{1261}{s}            & \SI{1780}{s}            \\
+        Distance covered by the opponent     & \SI{29.2}{km} (6 laps)  & \SI{43.3}{km} (9 laps)  \\
+        Median / maximum speed of the opponent & \SI{90}{} / \SI{163}{km/h} & \SI{91}{} / \SI{156}{km/h} \\
+        Opponent stationary                  & \SI{139}{s}             & \SI{74}{s}              \\
+        Opponent ahead of the ego vehicle    & \SI{72}{\percent}       & \SI{35}{\percent}       \\
+        Position swaps                       & 1                       & 7                       \\
+        Median range                         & \SI{48.5}{m}            & \SI{49.2}{m}            \\
+        Median lateral position $y_{\mathrm{rel}}$ & \SI{6.0}{m}       & \SI{-5.7}{m}            \\
         \bottomrule
     \end{tabular}
-    \caption{Main characteristics of the two sessions.}
+    \caption{Main characteristics of the two sessions. Range and lateral position are
+    computed while the opponent is detected by at least one sensor; the lateral position
+    is positive to the left of the ego vehicle.}
     \label{tab:sessions}
 \end{table}
 
-\FloatBarrier
+Both sessions cover a wide range of dynamic conditions. The opponent travels at a median
+speed of about \SI{90}{km/h} and reaches more than \SI{150}{km/h}, alternating braking,
+cornering and traction phases along the lap. The two sessions also include several safe
+stops, during which the opponent is stationary for \SI{139}{s} and \SI{74}{s}
+respectively: since the sensors keep detecting it, these intervals allow the errors to be
+characterized also in static conditions. Session 08/03\_Kinetiz contains seven position swaps
+between the two vehicles at close range, i.e.\ overtakes. Overall, the combination of
+safe stops, overtakes and laps at high speed ensures that the whole spectrum of the
+dynamics of interest is covered by the datasets.
 
-\paragraph{Opponent dynamics.} Session 0726 begins with about \SI{500}{s} of runs at an
-almost constant speed of about \SI{90}{km/h}, followed by a series of stints at higher
-speed, up to \SI{160}{km/h}, separated by different safe stops. Session 0803 consists instead of
-continuous laps, in which braking and acceleration phases alternate along the whole
-session, overall less safe stops are performed. Table~\ref{tab:ds_dyn} reports the median and the 95th and 99th percentiles of the
-speed $v$ of the opponent, together with the 95th and 99th percentiles of its deceleration in braking ($-a_x$, for $a_x < 0$), of its acceleration in
-traction ($a_x$, for $a_x > 0$) and of the absolute value of its lateral acceleration
-$a_y = v\,\dot\psi$, computed over the samples in which it is moving
-($v > \SI{2}{m/s}$).
+The two sessions are also complementary in the relative geometry between the two
+vehicles. In session 07/26\_TUM the opponent is ahead of the ego vehicle for most of the time
+and moves mainly on its left, both when ahead and when behind, with a median lateral
+position of about \SI{6}{m}. In session 08/03\_Kinetiz the ego vehicle leads for most of the time,
+and the opponent moves mainly on its right, with a median lateral position of about
+\SI{-6}{m}. The two datasets therefore observe the opponent from symmetric points of view.
 
-\begin{table}[H]
-    \centering
-    \small
-    \setlength{\tabcolsep}{5pt}
-    \begin{tabular}{lcccccc}
-        \toprule
-                                               & \multicolumn{3}{c}{Session 0726} & \multicolumn{3}{c}{Session 0803} \\
-        \cmidrule(lr){2-4}\cmidrule(lr){5-7}
-        Quantity                               & Median & 95th   & 99th    & Median & 95th   & 99th    \\
-        \midrule
-        Speed $v$ [km/h]                       & 89.5  & 150.4   & 161.7   & 91.1  & 137.1   & 154.1   \\
-        Braking deceleration $-a_x$ [m/s$^2$]  & --    & 9.4     & 12.4    & --    & 10.1    & 12.0    \\
-        Traction acceleration $a_x$ [m/s$^2$]  & --    & 7.9     & 9.5     & --    & 6.8     & 7.8     \\
-        Lateral acceleration $|a_y|$ [m/s$^2$] & --    & 10.8    & 13.5    & --    & 8.1     & 9.1     \\
-        \bottomrule
-    \end{tabular}
-    \caption{Median speed and 95th and 99th percentiles of speed and accelerations of the
-    opponent.}
-    \label{tab:ds_dyn}
-\end{table}
-
-\paragraph{Relative geometry.} The two sessions also differ in the relative position of
-the two vehicles. In session 0726 the opponent is ahead of the ego vehicle for most of
-the time (\SI{72}{\percent}), and the two cars swap position only once. In session 0803
-the ego vehicle leads for most of the session, the opponent being ahead only for
-\SI{35}{\percent} of the time, and the two cars swap position seven times at close
-range. Table~\ref{tab:ds_geom} reports the median and the 95th and 99th percentiles of
-the range $\rho$ and of the absolute value of the range rate $\dot\rho$, together with the
-median lateral position $y_{rel}$ of the opponent in the ego frame. In both sessions the median range is about
-\SI{50}{m}, and the range rate is below about \SI{17}{m/s} for \SI{95}{\percent} of the
-time.
-
-\begin{table}[H]
-    \centering
-    \small
-    \setlength{\tabcolsep}{5pt}
-    \begin{tabular}{lcccccc}
-        \toprule
-                                          & \multicolumn{3}{c}{Session 0726} & \multicolumn{3}{c}{Session 0803} \\
-        \cmidrule(lr){2-4}\cmidrule(lr){5-7}
-        Quantity                          & Median & 95th   & 99th    & Median & 95th   & 99th    \\
-        \midrule
-        Range $\rho$ [m]                  & 48.5   & 130.3  & 156.3   & 49.2   & 108.4  & 137.7   \\
-        Range rate $|\dot\rho|$ [m/s]     & 3.2    & 16.7   & 24.1    & 4.7    & 16.9   & 23.8    \\
-        Lateral position $y_{rel}$ [m]    & 6.0    & --     & --      & $-5.7$ & --     & --      \\
-        \bottomrule
-    \end{tabular}
-    \caption{Median and 95th and 99th percentiles of range and absolute range rate, and
-    median lateral position (positive to the left) of the opponent with respect to the ego
-    vehicle, computed while the opponent is detected by at least one sensor.}
-    \label{tab:ds_geom}
-\end{table}
-
-\FloatBarrier
-
-\paragraph{Sensor coverage.} Fig.~\ref{fig:ds_pd} shows, for each sensor, the detection
-rate of the opponent in three range bands, computed separately for the intervals in
-which the opponent is ahead of and behind the ego vehicle. A detection is associated with
-the opponent when its distance from the ground truth, evaluated at the acquisition time
-of the detection, is smaller than \SI{5}{m}. In the two sessions the camera pipeline processes
-only the images of the front cameras, so the detection rate of the camera is reported
-only for the opponent ahead.
-
-When the opponent is ahead, the distribution of the detections over the range shows
-that, within \SI{75}{m}, all the sensors detect the opponent consistently. As expected,
-beyond \SI{100}{m} the detection rate of the two LiDAR pipelines drops sharply, while
-that of the RaDAR and of the camera remains more consistent up to \SI{150}{m}. When the
-opponent is behind, the LiDAR detections are limited to the first range band, because of
-the blind spot caused by the rear wing (Section~\ref{subsec:lidar}), and the opponent
-is detected mainly by the RaDAR, which keeps a detection rate similar to the one obtained with the opponent ahead. 
+The availability of the detections depends on the position of the opponent with respect
+to the ego vehicle. Fig.~\ref{fig:ds_rate} shows the detection rate of each sensor as a
+function of the range, separately for the opponent ahead of and behind the ego vehicle;
+the rate is computed as the number of detections associated with the opponent in each
+range interval divided by the time spent by the opponent in that interval, merging the
+two sessions. With the opponent ahead, both LiDAR pipelines detect it at close to the
+nominal rate of \SI{10}{Hz} up to about \SI{50}{m}, and the rate decreases gradually with
+the range, down to about \SI{100}{m} for the clustering and \SI{120}{m} for PointPillars.
+With the opponent behind, instead, the rate drops already beyond \SI{30}{m} and becomes
+negligible beyond 50--\SI{60}{m}: this is the effect of the blind spot
+caused by the rear wing (Section~\ref{subsec:lidar}), which leaves only a few points on
+the opponent. The RaDAR does not suffer from this limitation and keeps detecting the
+opponent behind up to \SI{150}{m}, becoming the main source of information behind the
+car.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{figures/ch2/dataset_detection_rate.pdf}
-    \caption{Detection rate of the opponent in three range bands for each sensor, with the
-    opponent ahead of (top) and behind (bottom) the ego vehicle. In the two sessions only
-    the front cameras are used by the camera pipeline.}
-    \label{fig:ds_pd}
+    \includegraphics[width=\textwidth]{figures/ch4/detection_rate_range.pdf}
+    \caption{Detection rate as a function of the range, with the opponent ahead and behind.}
+    \label{fig:ds_rate}
 \end{figure}
 
 \FloatBarrier
 
+% =====================================================================
+\section{Compensation of the Deterministic Components}
+\label{sec:deterministic}
 
-% ---------------------------------------------------------------------
-% Draft moved from Section 2.6 (Ground Truth Reconstruction): relative quantities,
-% to be introduced together with the measurement error in the relative frame.
-%
-% Let $\mathbf{p}_e = [x_e,\,y_e]^\top$, $\psi_e$ and $v_e$ be the position, heading and
-% speed of the ego vehicle, and $\mathbf{p}_o = [x_o,\,y_o]^\top$, $\psi_o$ and $v_o$
-% those of the opponent, all expressed in the map frame. The position of the opponent in
-% the ego frame and the relative heading are
-% \begin{equation}
-%     \begin{bmatrix} x_{rel} \\ y_{rel} \end{bmatrix}
-%     = \mathbf{R}(\psi_e)^{\top}\,(\mathbf{p}_o - \mathbf{p}_e),
-%     \qquad
-%     \psi_{rel} = \psi_o - \psi_e,
-% \end{equation}
-% where $\mathbf{R}(\psi_e)$ is the planar rotation matrix of angle $\psi_e$. The range
-% and the range rate, which are the quantities measured by the RaDAR, are computed as
-% \begin{equation}
-%     \rho = \|\mathbf{p}_o - \mathbf{p}_e\|,
-%     \qquad
-%     \dot\rho = \frac{(\mathbf{p}_o - \mathbf{p}_e)^{\top}(\mathbf{v}_o - \mathbf{v}_e)}{\rho},
-% \end{equation}
-% where the velocities are assumed to be aligned with the heading of each vehicle,
-% $\mathbf{v}_i = v_i\,[\cos\psi_i,\,\sin\psi_i]^\top$.
+The deterministic components are the systematic and repeatable part of the measurement
+errors, such as offsets or trends with the measurement conditions. They are identified
+on session 07/26\_TUM, and session 08/03\_Kinetiz is then used to verify whether they generalize: a
+component observed in both sessions and only on some sensors is attributed to the ego
+vehicle, while a component that changes with the session is attributed to the opponent,
+i.e.\ to the ground truth. The errors are expressed in the ego frame, as defined
+in~\eqref{eq:err_ego}, and the longitudinal component $e_x$ and the lateral component
+$e_y$ are analyzed separately.
 
+\subsection{Longitudinal Component}
+\label{subsec:det_long}
+
+Fig.~\ref{fig:det_long} shows the longitudinal error of the two LiDAR pipelines in a
+window of session 07/26\_TUM. In both cases the error is centered on a constant offset, equal
+to \SI{0.40}{m} for the clustering and to \SI{0.36}{m} for PointPillars. Both pipelines refer the detection to the same point
+of the vehicle, its center: PointPillars estimates the bounding box of the vehicle,
+while the clustering compensates the position with respect to the corner that is
+observed. The offset is therefore compatible with the reference point of the ground
+truth: as discussed in Section~\ref{sec:gt}, the
+state estimated by the opponent is assumed to refer to the center of the vehicle, and any
+difference between the two points appears as a constant longitudinal offset. This
+interpretation is supported by session 08/03\_Kinetiz, in which the offset drops to \SI{0.02}{m}
+and \SI{0.09}{m}: the offset changes with the opponent, and is therefore related to the
+reference rather than to the sensors of the ego vehicle. A share of it is also due to the
+uncertainty of the state estimation of the opponent, which cannot be separated from the
+offset of the reference point.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/ch4/det_long_time.pdf}
+    \caption[Longitudinal error of the LiDARs]{Longitudinal error of the LiDARs in a window of session 07/26\_TUM, with the mean
+    over the session: \SI{0.40}{m} for the clustering and \SI{0.36}{m} for PointPillars.}
+    \label{fig:det_long}
+\end{figure}
+
+The camera provides an independent confirmation of this hypothesis, since it also
+refers the detection to the center of the vehicle, through the estimate of its bounding
+box. Its longitudinal error is shown in Fig.~\ref{fig:det_cam} as a function of the
+longitudinal position of the opponent. The range 20--\SI{60}{m} is the operating range of
+the camera, in which its error shows no dependence on the range, so that the
+deterministic component is isolated. In this range, the mean longitudinal error of the
+camera is compatible with the one of the LiDARs in both sessions
+(Table~\ref{tab:det_long}): a different sensor, with a different detection pipeline,
+measures the same offset, and the offset changes with the session in the same way. It
+must be noted that the longitudinal uncertainty of the camera is much
+larger than the one of the LiDARs: even in the operating range, the standard deviation of
+its error is two to four times higher.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/ch4/det_cam_range.pdf}
+    \caption[Longitudinal error of the camera as a function of $x_{\mathrm{rel}}$]{Longitudinal error of the camera as a function of $x_{\mathrm{rel}}$ in session
+    07/26\_TUM, compared with the LiDARs. The shaded area is the operating range.}
+    \label{fig:det_cam}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \small
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabular}{lcccc}
+        \toprule
+        & \multicolumn{2}{c}{Session 07/26\_TUM} & \multicolumn{2}{c}{Session 08/03\_Kinetiz} \\
+        \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+        Sensor             & Mean [m] & Std [m] & Mean [m] & Std [m] \\
+        \midrule
+        LiDAR clustering   & $0.41$   & $0.17$  & $-0.03$  & $0.18$  \\
+        LiDAR PointPillars & $0.36$   & $0.13$  & $-0.07$  & $0.16$  \\
+        Camera             & $0.35$   & $0.51$  & $-0.05$  & $0.37$  \\
+        \bottomrule
+    \end{tabular}
+    \caption{Longitudinal error in the range 20--\SI{60}{m}.}
+    \label{tab:det_long}
+\end{table}
+
+The longitudinal component of the RaDAR has a specific behavior, which is analyzed in
+Section~\ref{sec:macro}.
+
+\subsection{Lateral Component}
+\label{subsec:det_lat}
+
+Fig.~\ref{fig:det_lat} shows the lateral error of the LiDARs as a function of the
+longitudinal position $x_{\mathrm{rel}}$ of the opponent, for session 07/26\_TUM. The error is
+correlated with $x_{\mathrm{rel}}$, and its trend is estimated through a least squares
+fit,
+\begin{equation}
+    e_y = a\,x_{\mathrm{rel}} + b,
+    \label{eq:det_lat_fit}
+\end{equation}
+which gives a slope $a$ of \SI{0.60}{cm/m} for the clustering and \SI{0.58}{cm/m} for
+PointPillars. An error proportional to $x_{\mathrm{rel}}$, which changes sign between the
+opponent ahead and behind, is the one produced by a small rotation of the measured
+positions around the ego vehicle: for a rotation $\delta\psi$, the lateral error is
+$e_y \simeq \delta\psi\,x_{\mathrm{rel}}$, and the fitted slope corresponds to
+$\delta\psi \simeq \SI{0.3}{\degree}$. Although small, this rotation produces an error that
+increases with the range, and reaches about \SI{0.6}{m} at \SI{100}{m}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/ch4/det_lat_xrel.pdf}
+    \caption[Lateral error of the LiDARs as a function of $x_{\mathrm{rel}}$]{Lateral error of the LiDARs as a function of $x_{\mathrm{rel}}$ in session 07/26\_TUM,
+    with the least squares fit: slope of \SI{0.60}{cm/m} for the clustering and
+    \SI{0.58}{cm/m} for PointPillars.}
+    \label{fig:det_lat}
+\end{figure}
+
+The same slope is found in session 08/03\_Kinetiz, with \SI{0.56}{cm/m} and \SI{0.52}{cm/m}: the
+dependence generalizes across the two sessions and is specific of the LiDARs, so it is
+related to the ego vehicle and not to the opponent. It is compatible with an offset in
+the calibration of the ring on which the three LiDARs are mounted, which rotates the
+point clouds of all of them by the same angle. This dependence is not observed for the
+RaDAR, whose slope is close to zero in both sessions (\SI{0.01}{cm/m} and
+\SI{0.06}{cm/m}), nor for the camera, whose slope changes from \SI{1.23}{cm/m} in
+session 07/26\_TUM to \SI{-0.26}{cm/m} in session 08/03\_Kinetiz and does not generalize.
+
+As a result, the lateral error of the LiDAR detections is compensated by rotating them by
+the estimated angle $-\delta\psi$, while the longitudinal offset, being related to the
+reference and not to the sensors, is removed from the errors of each session before the
+characterization of their random part.
 
 \FloatBarrier
 
 % =====================================================================
-\section{Ground Truth Reconstruction}
-\label{sec:gt}
+\section{Macroscopic Correlations}
+\label{sec:macro}
 
-The evaluation of the measurements and of the target tracking algorithm requires the
-true state of the opponent at every instant. Only with this reference it is possible to
-quantify the error of the raw detections of each sensor and the error of the estimates
-produced by the filter, separately for each component of the state.
+\TODO{}
 
-The reference for the opponent state is the state estimated on board the opponent
-vehicle itself. During the sessions, each team records the output of its own state estimation,
-based on RTK-GNSS receivers and inertial units, and shares it after the session. The
-data provided by the opponent contain, for each sample, the timestamp, the position and
-the heading of the vehicle, its longitudinal speed and, when available, its
-longitudinal acceleration, and they are converted into a common structure compatible
-with the logs of the ego vehicle. The conversion consists in expressing the position
-and the heading of the opponent in the map frame of the ego vehicle; in associating each sample of the opponent with the
-sample of the ego vehicle with the closest timestamp; and in low-pass filtering the raw
-inertial measurement of the longitudinal acceleration or, when it is not available, in
-deriving the acceleration from the speed.
+% =====================================================================
+\section{Autocorrelation and Gauss-Markov Model}
+\label{sec:gauss_markov}
 
-It is important to note that this reference is not exact: it is the output of the
-state estimation of the opponent, and it may therefore contain errors related to the
-quality of its estimate. Since the errors of the sensors are computed with respect
-to this reference, the analyses of the measurement errors carried out in
-Chapter~\ref{ch:adaptive_r} are also affected by the accuracy of the ground truth, and part of what is observed as
-an error of the detections may originate from the reference itself.
+\TODO{}
+
+% =====================================================================
+\section{Adaptive Measurement Covariance}
+\label{sec:adaptive_r}
+
+\TODO{}
+
+% =====================================================================
+\section{Results}
+\label{sec:ch4_results}
+
+\TODO{}
