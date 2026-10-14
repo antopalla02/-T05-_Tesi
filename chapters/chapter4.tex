@@ -206,20 +206,15 @@ $e_y$ are analyzed separately.
 \subsection{Longitudinal Component}
 \label{subsec:det_long}
 
-Fig.~\ref{fig:det_long} shows the longitudinal error of the two LiDAR pipelines in a
-window of session 07/26\_TUM. In both cases the error is centered on a constant offset, equal
-to \SI{0.40}{m} for the clustering and to \SI{0.36}{m} for PointPillars. Both pipelines refer the detection to the same point
-of the vehicle, its center: PointPillars estimates the bounding box of the vehicle,
-while the clustering compensates the position with respect to the corner that is
-observed. The offset is therefore compatible with the reference point of the ground
-truth: as discussed in Section~\ref{sec:gt}, the
-state estimated by the opponent is assumed to refer to the center of the vehicle, and any
-difference between the two points appears as a constant longitudinal offset. This
-interpretation is supported by session 08/03\_Kinetiz, in which the offset drops to \SI{0.02}{m}
-and \SI{0.09}{m}: the offset changes with the opponent, and is therefore related to the
-reference rather than to the sensors of the ego vehicle. A share of it is also due to the
-uncertainty of the state estimation of the opponent, which cannot be separated from the
-offset of the reference point.
+The analysis of the longitudinal component starts from the two LiDAR pipelines.
+Fig.~\ref{fig:det_long} shows their longitudinal error in a window of session
+07/26\_TUM: in both cases the error is centered on a constant bias, equal to
+\SI{0.40}{m} for the clustering and to \SI{0.36}{m} for PointPillars, with a dispersion
+around it of about \SI{0.2}{m}. The two pipelines process the same point clouds but
+estimate the position of the opponent in different ways: PointPillars regresses the
+bounding box of the vehicle, while the clustering compensates the centroid of the
+cluster with respect to the corner that is observed. Both, however, refer the detection
+to the same point of the vehicle, and both estimate it with the same bias.
 
 \begin{figure}[H]
     \centering
@@ -229,18 +224,30 @@ offset of the reference point.
     \label{fig:det_long}
 \end{figure}
 
-The camera provides an independent confirmation of this hypothesis, since it also
-refers the detection to the center of the vehicle, through the estimate of its bounding
-box. Its longitudinal error is shown in Fig.~\ref{fig:det_cam} as a function of the
-longitudinal position of the opponent. The range 20--\SI{60}{m} is the operating range of
-the camera, in which its error shows no dependence on the range, so that the
-deterministic component is isolated. In this range, the mean longitudinal error of the
-camera is compatible with the one of the LiDARs in both sessions
-(Table~\ref{tab:det_long}): a different sensor, with a different detection pipeline,
-measures the same offset, and the offset changes with the session in the same way. It
-must be noted that the longitudinal uncertainty of the camera is much
-larger than the one of the LiDARs: even in the operating range, the standard deviation of
-its error is two to four times higher.
+When the analysis is extended to session 08/03\_Kinetiz, the bias vanishes: the mean
+longitudinal error is \SI{0.02}{m} for the clustering and \SI{0.09}{m} for PointPillars.
+The sensors, their calibration and the detection pipelines are the same in the two
+sessions, while the opponent, and therefore the reference, changes. The first hypothesis
+is thus that the bias originates from the reference point of the ground truth, which is
+assumed to coincide with the point to which the detections are referred
+(Section~\ref{sec:gt}): a shift of this point along the longitudinal axis of the opponent
+appears as a constant bias of $e_x$.
+
+The latter is validated by the measurement errors of the camera. Being a different
+sensor, with its own detection pipeline, the camera is independent of the LiDARs, and it
+estimates the position of the same point of the vehicle through its bounding box.
+Fig.~\ref{fig:det_cam} shows its longitudinal error, without any compensation, as a
+function of the longitudinal position of the opponent. The range 20--\SI{60}{m} is the
+operating range of the camera, in which its error shows no dependence on the range, so
+that the deterministic component is isolated. In this range, the bias of the camera
+matches the one of the LiDARs in both sessions (Table~\ref{tab:det_long}): it is equal
+to \SI{0.35}{m} in session 07/26\_TUM and to \SI{-0.05}{m} in session 08/03\_Kinetiz,
+i.e.\ it changes with the opponent in the same way. An independent sensor thus measures
+the same bias, which makes its origin in the reference a plausible explanation. The
+fluctuations of the mean error of the camera within the operating range, visible in
+Fig.~\ref{fig:det_cam}, are explained by its longitudinal uncertainty, which is much
+larger than the one of the LiDARs: the standard deviation of its error is two to four
+times higher.
 
 \begin{figure}[H]
     \centering
