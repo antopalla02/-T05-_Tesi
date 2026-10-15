@@ -13,10 +13,12 @@ deterministic components, are identified and compensated: in this way,
 only the random part of the error has to be described by the measurement noise
 covariance, and each measurement is weighted correctly by the filter.
 
-The second part introduces an adaptive approach to model the fact that the measurement
-errors depend on the conditions in which the measurements are taken, e.g.\ a partial
-occlusion of the opponent or a degraded detection quality, so that the measurement noise
-covariance is adapted to these conditions.
+The second part introduces a covariance matching technique for the measurement noise
+covariance. This technique adapts the matrix $\mathbf{R}$ online, using the information
+contained in the innovations of the filter, in order to handle the local trends of the
+standard deviation of the measurement errors, which can increase, e.g.\ due to a partial
+occlusion of the opponent or to a degradation of the sensors, or decrease, e.g.\ when the
+opponent is stationary.
 
 Section~\ref{sec:preprocessing} describes the pre-processing of the data, i.e.\ the
 reconstruction of the ground truth and the reference frames of the errors, and
@@ -93,7 +95,7 @@ It is important to note that the reference obtained in this way is not an exact 
 
 The first step to compute the measurement errors is the association between the ground
 truth and the measurements of the sensors. Since the ground truth is available at
-\SI{100}{Hz}, while the detections are produced at 10--\SI{16.7}{Hz}, the ground truth is
+a higher frequency than the detections, the first is
 linearly interpolated at the acquisition time of each detection. The measurement error is
 then the difference between the position of the detection and the position of the
 opponent given by the ground truth at the same instant.
@@ -155,33 +157,32 @@ summarized in Table~\ref{tab:sessions}.
 Both sessions cover a wide range of dynamic conditions. The opponent travels at a median
 speed of about \SI{90}{km/h} and reaches more than \SI{150}{km/h}, alternating braking,
 cornering and traction phases along the lap. The two sessions also include several safe
-stops, during which the opponent is stationary for \SI{139}{s} and \SI{74}{s}
-respectively: since the sensors keep detecting it, these intervals allow the errors to be
+stops, during which the opponent is stationary; these intervals are of peculiar interest since they allow the errors to be
 characterized also in static conditions. Session 08/03\_Kinetiz contains seven position swaps
-between the two vehicles at close range, i.e.\ overtakes. Overall, the combination of
+between the two vehicles. Overall, the combination of
 safe stops, overtakes and laps at high speed ensures that the whole spectrum of the
 dynamics of interest is covered by the datasets.
 
-The two sessions are also complementary in the relative geometry between the two
+The sessions are also complementary in the relative geometry between the two
 vehicles. In session 07/26\_TUM the opponent is ahead of the ego vehicle for most of the time
 and moves mainly on its left, both when ahead and when behind, with a median lateral
 position of about \SI{6}{m}. In session 08/03\_Kinetiz the ego vehicle leads for most of the time,
 and the opponent moves mainly on its right, with a median lateral position of about
-\SI{-6}{m}. The two datasets therefore observe the opponent from symmetric points of view.
+\SI{-6}{m}.
 
 The availability of the detections depends on the position of the opponent with respect
 to the ego vehicle. Fig.~\ref{fig:ds_rate} shows the detection rate of each sensor as a
 function of the range, separately for the opponent ahead of and behind the ego vehicle;
 the rate is computed as the number of detections associated with the opponent in each
-range interval divided by the time spent by the opponent in that interval, merging the
-two sessions. With the opponent ahead, both LiDAR pipelines detect it at close to the
+range interval divided by the time spent by the opponent in that interval. With the opponent ahead, both LiDAR pipelines detect it at close to the
 nominal rate of \SI{10}{Hz} up to about \SI{50}{m}, and the rate decreases gradually with
 the range, down to about \SI{100}{m} for both clustering and PointPillars.
 With the opponent behind, instead, the rate drops already beyond \SI{30}{m} and becomes
-negligible beyond 50--\SI{60}{m}: this is the effect of the blind spot
-caused by the rear wing (Section~\ref{subsec:lidar}), which leaves only a few points on
-the opponent. The RaDAR does not suffer from this limitation and keeps detecting the
-opponent behind up to \SI{150}{m}, becoming the main source of information when the opponent is trailing.
+negligible beyond 50--\SI{60}{m}. The degradation of the detection rate is due to the fact that, as the range increases,
+the opponent approaches the longitudinal axis of the ego vehicle and enters the blind
+spot caused by the rear wing (Section~\ref{subsec:lidar}). Only a small portion of the
+opponent remains visible, and the few points returned are often not enough to produce a detection.  The RaDAR, mounted below the rear wing, does not suffer from this limitation and keeps detecting the
+opponent behind up to \SI{150}{m}.
 
 \begin{figure}[H]
     \centering
@@ -197,10 +198,9 @@ opponent behind up to \SI{150}{m}, becoming the main source of information when 
 \label{sec:deterministic}
 
 The deterministic components are the systematic and repeatable part of the measurement
-errors, such as offsets or trends with the measurement conditions, therefore, if identified they can be compensated . They are identified
-on session 07/26\_TUM, and session 08/03\_Kinetiz is then used for validation.
-The errors are expressed in the ego frame, as defined
-in~\eqref{eq:err_ego}, and the longitudinal component $e_x$ and the lateral component
+errors that, if present and identified, can be compensated . They are identified
+on session 07/26\_TUM, and validated on 08/03\_Kinetiz.
+The errors are expressed in the ego frame, the longitudinal component $e_x$ and the lateral component
 $e_y$ are analyzed separately.
 
 \subsection{Longitudinal Component}
@@ -209,10 +209,7 @@ $e_y$ are analyzed separately.
 The analysis of the longitudinal component starts from the two LiDAR pipelines.
 Fig.~\ref{fig:det_long} shows their longitudinal error in a window of session
 07/26\_TUM: in both cases the error is centered on a constant bias, equal to
-\SI{0.40}{m} for the clustering and to \SI{0.36}{m} for PointPillars.  The two pipelines process the same point clouds but
-estimate the position of the opponent in different ways: PointPillars regresses the
-bounding box of the vehicle, while the clustering compensates the centroid of the
-cluster with respect to the corner that is observed. Both, however show the same bias.
+\SI{0.40}{m} for the clustering and to \SI{0.36}{m} for PointPillars.  
 
 \begin{figure}[H]
     \centering
@@ -223,24 +220,27 @@ cluster with respect to the corner that is observed. Both, however show the same
 \end{figure}
 
 When the analysis is extended to session 08/03\_Kinetiz, the  offset changes: the mean
-longitudinal error is \SI{0.02}{m} for the clustering and \SI{0.09}{m} for PointPillars.
+longitudinal error is \SI{0.02}{m} for Clustering and \SI{0.09}{m} for PointPillars.
 The sensors and the detection pipelines are the same in the two
-sessions, while the opponent, and therefore the reference, changes. The first hypothesis
-is thus that the bias originates from the reference point of the ground truth, which is
-assumed to coincide with the point to which the detections are referred
-(Section~\ref{sec:gt}): a shift of this point along the longitudinal axis of the opponent
+sessions, while the opponent, and therefore the reference, changes. The first hypothesis is thus that the bias originates from the ground truth: if the
+point to which the opponent refers its state estimate is shifted along its longitudinal
+axis with respect to the point of the detections (Section~\ref{sec:gt}), the shift
 appears as a constant bias of $e_x$.
 
 The analysis is then extended to the longitudinal errors of the camera, shown in
-Fig.~\ref{fig:det_cam} for session 07/26\_TUM without any compensation, as a function of
-the longitudinal position of the opponent. Beyond \SI{60}{m}, the error shows a clear
+Fig.~\ref{fig:det_cam} for session 07/26\_TUM. Beyond \SI{60}{m}, the error shows a clear
 dependence on the range, so the analysis is restricted to the range 20--\SI{60}{m}. Within
 this range, the camera shares the same bias as the LiDARs in both sessions
 (Table~\ref{tab:det_long}), with a mean error of \SI{0.35}{m} in session 07/26\_TUM and of
 \SI{-0.05}{m} in session 08/03\_Kinetiz; the only difference is a noisier mean, due to a
-standard deviation of the error two to four times higher than the one of the LiDARs. The fact that the camera shares the same bias validates the starting hypothesis: the
-camera is a different sensor, which relies on a different detection pipeline, so an
-error shared with the LiDARs is necessarily related to the reference.
+standard deviation of the error two to four times higher than the one of the LiDARs. The fact that the camera shares the same bias validates the starting hypothesis. Since
+the camera is a different sensor with its own detection pipeline, an error shared with
+the LiDARs is necessarily related to the reference.
+The longitudinal component of the RaDAR is analyzed separately in
+Section~\ref{sec:macro}, since it does not show the same behavior. This is due to the
+fact that, unlike the LiDAR clustering, the position of the RaDAR detections is not
+compensated with respect to the observed side of the vehicle.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_cam_range.pdf}
@@ -268,52 +268,47 @@ error shared with the LiDARs is necessarily related to the reference.
     \label{tab:det_long}
 \end{table}
 
-The longitudinal component of the RaDAR has a specific behavior, which is analyzed in
-Section~\ref{sec:macro}.
+
 
 \subsection{Lateral Component}
 \label{subsec:det_lat}
 
 Fig.~\ref{fig:det_lat} shows the lateral error of the LiDARs as a function of the
-longitudinal position $x_{\mathrm{rel}}$ of the opponent, for session 07/26\_TUM. The error is
-correlated with $x_{\mathrm{rel}}$, and its trend is estimated through a least squares
-fit,
+longitudinal position $x_{\mathrm{rel}}$ of the opponent, for session 07/26\_TUM. The
+error shows a clear linear dependence on $x_{\mathrm{rel}}$. For this reason, the errors
+are fitted with a straight line,
 \begin{equation}
     e_y = a\,x_{\mathrm{rel}} + b,
     \label{eq:det_lat_fit}
 \end{equation}
-which gives a slope $a$ of \SI{0.60}{cm/m} for the clustering and \SI{0.58}{cm/m} for
-PointPillars. An error proportional to $x_{\mathrm{rel}}$, which changes sign between the
-opponent ahead and behind, is the one produced by a small rotation of the measured
-positions around the ego vehicle: for a rotation $\delta\psi$, the lateral error is
-$e_y \simeq \delta\psi\,x_{\mathrm{rel}}$, and the fitted slope corresponds to
-$\delta\psi \simeq \SI{0.3}{\degree}$. Although small, this rotation produces an error that
-increases with the range, and reaches about \SI{0.6}{m} at \SI{100}{m}.
+whose slope $a$ is estimated through a least squares fit on the data. The fit gives a
+slope of \SI{0.60}{cm/m} for the clustering and \SI{0.58}{cm/m} for PointPillars. With
+the opponent close to the ego vehicle, the resulting lateral error is negligible, but at
+\SI{100}{m} it reaches about \SI{0.6}{m}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_lat_xrel.pdf}
-    \caption[Lateral error of the LiDARs as a function of $x_{\mathrm{rel}}$]{Lateral error of the LiDARs as a function of $x_{\mathrm{rel}}$ in session 07/26\_TUM,
-    with the least squares fit: slope of \SI{0.60}{cm/m} for the clustering and
-    \SI{0.58}{cm/m} for PointPillars.}
+    \caption[Lateral error of the LiDARs as a function of $x_{\mathrm{rel}}$]{Lateral error
+    of the LiDARs as a function of $x_{\mathrm{rel}}$ in session 07/26\_TUM, with the least
+    squares fit: slope of \SI{0.60}{cm/m} for the clustering and \SI{0.58}{cm/m} for
+    PointPillars.}
     \label{fig:det_lat}
 \end{figure}
 
-The same slope is found in session 08/03\_Kinetiz, with \SI{0.56}{cm/m} and \SI{0.52}{cm/m}: the
-dependence generalizes across the two sessions and is specific of the LiDARs, so it is
-related to the ego vehicle and not to the opponent. It is compatible with an offset in
-the calibration of the ring on which the three LiDARs are mounted. This dependence is not observed for the
-RaDAR, whose slope is close to zero in both sessions (\SI{0.01}{cm/m} and
-\SI{0.06}{cm/m}), nor for the camera, whose slope changes from \SI{1.23}{cm/m} in
-session 07/26\_TUM to \SI{-0.26}{cm/m} in session 08/03\_Kinetiz and does not generalize.
+The same analysis on session 08/03\_Kinetiz gives a slope of \SI{0.56}{cm/m} for the
+clustering and \SI{0.52}{cm/m} for PointPillars, very close to the ones of the first
+session. Interestingly, this behavior does not generalize to the other sensors. The slope
+of the RaDAR is close to zero in both sessions, while the one of the camera changes from
+\SI{1.23}{cm/m} in session 07/26\_TUM to \SI{-0.26}{cm/m} in session 08/03\_Kinetiz.
 
-As a result, the lateral error of the LiDAR detections is compensated by rotating them by
-the estimated angle $-\delta\psi$, while the longitudinal offset, being related to the
-reference and not to the sensors, is removed from the errors of each session before the
-characterization of their random part.
-
-\FloatBarrier
-
+The fact that the trend is repeatable across the two datasets but observed only on the
+LiDARs points to a cause related to the sensors rather than to the reference. The trend
+is compatible with a small calibration offset of about \SI{0.33}{\degree} in yaw, since
+a rotation $\delta\psi$ of the measured positions produces a lateral error
+$e_y \simeq \delta\psi\,x_{\mathrm{rel}}$, exactly as observed. The same offset affects
+all three LiDARs because they are mounted on the same support. The trend is therefore
+compensated by rotating the LiDAR detections by $-\delta\psi$ in the ego frame.
 % =====================================================================
 \section{Macroscopic Correlations}
 \label{sec:macro}
