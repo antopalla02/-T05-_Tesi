@@ -60,9 +60,9 @@ All the pipelines exploit two pieces of prior information on the circuit. The fi
 binary map of the drivable area, which is used to discard the detections that fall outside the track boundaries. The second is the database of reference trajectories: when the sensor cannot measure the heading of a detection, it is taken from the closest
 point of the closest trajectory.
 
-\paragraph{LiDAR.} The point cloud of the LiDARs is processed by two complementary pipelines, a geometric one (i.e.\ clustering) and a neural-network one (i.e.\ PointPillars).
+\paragraph{LiDAR.} The point cloud of the LiDARs is processed by two complementary pipelines, a geometric one (i.e.\ Clustering) and a neural-network one (i.e.\ PointPillars).
 
-\subparagraph{Clustering.} The clustering pipeline works as follows. The points belonging to the ground are removed
+\subparagraph{Clustering.} The Clustering pipeline works as follows. The points belonging to the ground are removed
 first, and the remaining ones are filtered with the
 map of the drivable area, so that only the points inside the track are kept. These points are joined into clusters by a density-based clustering algorithm (DBSCAN),
 and the clusters whose extent is not compatible with the dimensions of a car are

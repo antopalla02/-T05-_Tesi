@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 U = 'data/'
 SES = {'0726': '20260726_ontrack_TUM_', '0803': '202600803_ontrack_KINETIZ_'}
-SENS = [('lid_clust', 'LiDAR clustering', '#2ca02c'),
+SENS = [('lid_clust', 'LiDAR Clustering', '#2ca02c'),
         ('lid_pp', 'LiDAR PointPillars', '#ff7f0e'),
         ('rad_clust', 'RaDAR', '#4fa8e0')]
 GATE = 5.0

@@ -176,7 +176,7 @@ function of the range, separately for the opponent ahead of and behind the ego v
 the rate is computed as the number of detections associated with the opponent in each
 range interval divided by the time spent by the opponent in that interval. With the opponent ahead, both LiDAR pipelines detect it at close to the
 nominal rate of \SI{10}{Hz} up to about \SI{50}{m}, and the rate decreases gradually with
-the range, down to about \SI{100}{m} for both clustering and PointPillars.
+the range, down to about \SI{100}{m} for both Clustering and PointPillars.
 With the opponent behind, instead, the rate drops already beyond \SI{30}{m} and becomes
 negligible beyond 50--\SI{60}{m}. The degradation of the detection rate is due to the fact that, as the range increases,
 the opponent approaches the longitudinal axis of the ego vehicle and enters the blind
@@ -209,13 +209,13 @@ $e_y$ are analyzed separately.
 The analysis of the longitudinal component starts from the two LiDAR pipelines.
 Fig.~\ref{fig:det_long} shows their longitudinal error in a window of session
 07/26\_TUM: in both cases the error is centered on a constant bias, equal to
-\SI{0.40}{m} for the clustering and to \SI{0.36}{m} for PointPillars.  
+\SI{0.40}{m} for Clustering and to \SI{0.36}{m} for PointPillars.  
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_long_time.pdf}
     \caption[Longitudinal error of the LiDARs]{Longitudinal error of the LiDARs in a window of session 07/26\_TUM, with the mean
-    over the session: \SI{0.40}{m} for the clustering and \SI{0.36}{m} for PointPillars.}
+    over the session: \SI{0.40}{m} for Clustering and \SI{0.36}{m} for PointPillars.}
     \label{fig:det_long}
 \end{figure}
 
@@ -238,7 +238,7 @@ the camera is a different sensor with its own detection pipeline, an error share
 the LiDARs is necessarily related to the reference.
 The longitudinal component of the RaDAR is analyzed separately in
 Section~\ref{sec:macro}, since it does not show the same behavior. This is due to the
-fact that, unlike the LiDAR clustering, the position of the RaDAR detections is not
+fact that, unlike LiDAR Clustering, the position of the RaDAR detections is not
 compensated with respect to the observed side of the vehicle.
 
 \begin{figure}[H]
@@ -259,7 +259,7 @@ compensated with respect to the observed side of the vehicle.
         \cmidrule(lr){2-3}\cmidrule(lr){4-5}
         Sensor             & Mean [m] & Std [m] & Mean [m] & Std [m] \\
         \midrule
-        LiDAR clustering   & $0.41$   & $0.17$  & $-0.03$  & $0.18$  \\
+        LiDAR Clustering   & $0.41$   & $0.17$  & $-0.03$  & $0.18$  \\
         LiDAR PointPillars & $0.36$   & $0.13$  & $-0.07$  & $0.16$  \\
         Camera             & $0.35$   & $0.51$  & $-0.05$  & $0.37$  \\
         \bottomrule
@@ -282,7 +282,7 @@ are fitted with a straight line,
     \label{eq:det_lat_fit}
 \end{equation}
 whose slope $a$ is estimated through a least squares fit on the data. The fit gives a
-slope of \SI{0.60}{cm/m} for the clustering and \SI{0.58}{cm/m} for PointPillars. With
+slope of \SI{0.60}{cm/m} for Clustering and \SI{0.58}{cm/m} for PointPillars. With
 the opponent close to the ego vehicle, the resulting lateral error is negligible, but at
 \SI{100}{m} it reaches about \SI{0.6}{m}.
 
@@ -291,13 +291,13 @@ the opponent close to the ego vehicle, the resulting lateral error is negligible
     \includegraphics[width=\textwidth]{figures/ch4/det_lat_xrel.pdf}
     \caption[Lateral error of the LiDARs as a function of $x_{\mathrm{rel}}$]{Lateral error
     of the LiDARs as a function of $x_{\mathrm{rel}}$ in session 07/26\_TUM, with the least
-    squares fit: slope of \SI{0.60}{cm/m} for the clustering and \SI{0.58}{cm/m} for
+    squares fit: slope of \SI{0.60}{cm/m} for Clustering and \SI{0.58}{cm/m} for
     PointPillars.}
     \label{fig:det_lat}
 \end{figure}
 
-The same analysis on session 08/03\_Kinetiz gives a slope of \SI{0.56}{cm/m} for the
-clustering and \SI{0.52}{cm/m} for PointPillars, very close to the ones of the first
+The same analysis on session 08/03\_Kinetiz gives a slope of \SI{0.56}{cm/m} for
+Clustering and \SI{0.52}{cm/m} for PointPillars, very close to the ones of the first
 session. Interestingly, this behavior does not generalize to the other sensors. The slope
 of the RaDAR is close to zero in both sessions, while the one of the camera changes from
 \SI{1.23}{cm/m} in session 07/26\_TUM to \SI{-0.26}{cm/m} in session 08/03\_Kinetiz.
