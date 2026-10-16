@@ -1,9 +1,10 @@
-"""Statistics of the two sessions for Section 2.5 (Datasets)."""
+"""Statistics of the sessions for Section 4.2 (Dataset Analysis)."""
 import numpy as np, pandas as pd, glob, json
 # Folder with the CSV exports: <session>_gt.csv and <session>_<sensor>.csv
 U='data/'
 SES={'0726':(U+'20260726_ontrack_TUM_gt.csv','20260726_ontrack_TUM_'),
-     '0803':(U+'202600803_ontrack_KINETIZ_gt.csv','202600803_ontrack_KINETIZ_')}
+     '0803':(U+'202600803_ontrack_KINETIZ_gt.csv','202600803_ontrack_KINETIZ_'),
+     '1014':(U+'1014_yasnorth_00_eva_gt.csv','1014_yasnorth_00_eva_')}
 SENS=['lid_clust','lid_pp','rad_clust','cam_yolo']
 GATE=5.0; DT=0.1; EDGES=np.arange(0,210,10)
 RB=[0,25,50,75,100,125,150,np.inf]   # range bins for the detection-rate table

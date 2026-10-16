@@ -191,6 +191,12 @@ opponent behind up to \SI{150}{m}.
     \label{fig:ds_rate}
 \end{figure}
 
+The analysis is complemented with the data acquired during the test sessions carried out
+in October 2026 at the Yas Marina Circuit in Abu Dhabi, where two vehicles controlled by
+the team could be tested at the same time. In this way, the errors of the perception can
+be isolated from those related to the reference, and the analyses carried out on the
+datasets recorded at Imola can be validated.
+
 \FloatBarrier
 
 % =====================================================================
@@ -309,6 +315,15 @@ a rotation $\delta\psi$ of the measured positions produces a lateral error
 $e_y \simeq \delta\psi\,x_{\mathrm{rel}}$, exactly as observed. The same offset affects
 all three LiDARs because they are mounted on the same support. The trend is therefore
 compensated by rotating the LiDAR detections by $-\delta\psi$ in the ego frame.
+
+In the sessions at Yas Marina, the offset was compensated by rotating the LiDAR
+detections by \SI{0.33}{\degree} in the ego frame. In session 10/14\_00, the slope of
+the lateral error drops to \SI{-0.13}{cm/m} for Clustering and \SI{-0.12}{cm/m} for
+PointPillars, which corresponds to a residual rotation smaller than \SI{0.1}{\degree}.
+The trend is therefore no longer observed once compensated, which confirms that it was
+due to a calibration offset of the LiDARs.
+
+\FloatBarrier
 % =====================================================================
 \section{Macroscopic Correlations}
 \label{sec:macro}
