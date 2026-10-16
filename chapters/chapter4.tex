@@ -314,10 +314,18 @@ a rotation $\delta\psi$ of the measured positions produces a lateral error
 $e_y \simeq \delta\psi\,x_{\mathrm{rel}}$, exactly as observed. The same offset affects
 all three LiDARs because they are mounted on the same support. 
 
-In the sessions at Yas Marina, this calibration error was  compensated. In Session 10/14\_eva, the slope of
-the lateral error drops to \SI{-0.13}{cm/m} for Clustering and \SI{-0.12}{cm/m} for
-PointPillars, which corresponds to a residual rotation smaller than \SI{0.1}{\degree} making
-trend is therefore no longer significant.
+In the sessions at Yas Marina, this calibration error was compensated. As shown in
+Fig.~\ref{fig:det_lat_yas} for session 10/14\_eva, after the recalibration the trend of
+the lateral error with $x_{\mathrm{rel}}$ is negligible.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/ch4/det_lat_yas.pdf}
+    \caption[Lateral error of the LiDARs after the compensation]{Lateral error of the LiDARs
+    as a function of $x_{\mathrm{rel}}$ in session 10/14\_eva, after the compensation of the
+    calibration offset.}
+    \label{fig:det_lat_yas}
+\end{figure}
 
 \FloatBarrier
 % =====================================================================
