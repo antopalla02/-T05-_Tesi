@@ -512,7 +512,7 @@ residual position errors. The fit is performed separately for the longitudinal a
 components and for the opponent ahead of and behind the ego vehicle. The errors are
 computed as in Section~\ref{subsec:err_frames}.
 
-All the sessions are considered together, in order to obtain a homogeneous dataset. The
+All the sessions are considered together. The
 detections with the ego vehicle moving slower than \SI{2}{m/s} are excluded.
 
 Before the fit, the dependence of the mean error on the range, observed in
@@ -527,17 +527,12 @@ distribution, whose standard deviation is estimated as
 where $P_{16}$ and $P_{84}$ are the 16th and 84th percentiles of the residuals. For a
 Gaussian distribution, $\sigma_{68}$ coincides with the standard deviation, but it is much
 less sensitive to the tails. The standard deviation weights each residual by its square,
-so a small fraction of large errors, such as the detections of Clustering at the edge of
-the blind spot, can dominate it. $\sigma_{68}$ instead describes the core of the
-distribution, i.e.\ the noise of the sensor in nominal conditions, without requiring an
-arbitrary rejection threshold. For the same reason, the range trend is removed with the
-median of each interval rather than with the mean.
-
+so a small fraction of large errors, can dominate it. 
 Table~\ref{tab:sensor_noise} reports $\sigma_{68}$ and the classical standard deviation
 of each sensor, while the distributions of the residuals with the opponent ahead and
 behind, together with the fitted Gaussian distributions, are shown in
-Fig.~\ref{fig:gauss68_front} and Fig.~\ref{fig:gauss68_rear} in Appendix~\ref{app:lidar}. The LiDARs are
-the most accurate sensors, with $\sigma_{68}$ between \SI{0.10}{m} and \SI{0.14}{m} on
+Fig.~\ref{fig:gauss68_front} and Fig.~\ref{fig:gauss68_rear} in Appendix~\ref{app:lidar}. \\The LiDARs provide 
+the most accurate position measurement, with $\sigma_{68}$ between \SI{0.10}{m} and \SI{0.14}{m} on
 the longitudinal component and between \SI{0.12}{m} and \SI{0.24}{m} on the lateral one.
 The camera follows, with \SI{0.26}{m} and \SI{0.32}{m}, while the RaDAR has the largest
 longitudinal error, about \SI{0.65}{m}, and a lateral one comparable to the camera.
@@ -580,7 +575,7 @@ Rather than inflating the noise of all the measurements, these cases can be hand
 adapting $\mathbf{R}$ online, keeping $\sigma_{68}$ as the nominal value and increasing it
 only when the error of the sensor is larger.
 
-The resulting values describe the error of each sensor in the operating conditions in which
+Finally, it's important to point out that the resulting values describe the error of each sensor in the operating conditions in which
 the data were collected. They do not correspond to the accuracy declared in the datasheets,
 which refers to optimal conditions, and they would be different with a dataset of different
 characteristics. With the median of the range shifted to longer distances, e.g.\
