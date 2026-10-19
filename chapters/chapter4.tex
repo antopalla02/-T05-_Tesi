@@ -332,8 +332,7 @@ Fig.~\ref{fig:det_lat_yas}, the recalibration performed corrects the trend.
 \section{Repeatable Perception Errors of the Sensors}
 \label{sec:macro}
 
-Once the setup-related errors have been compensated, i.e.\ the offset related to the
-reference and the calibration offset of the LiDARs, the errors related to the working
+Once the setup-related errors have been compensated, the errors related to the working
 principle of each sensor and of its detection pipeline are analyzed, looking for the
 trends that repeat across the sessions. The
 analysis is organized by sensor. The two LiDAR pipelines are analyzed together, since
@@ -342,13 +341,11 @@ they process the same point clouds, while the RaDAR and the camera are treated s
 \subsection{LiDAR}
 \label{subsec:macro_lidar}
 
-The errors of the two LiDAR pipelines are analyzed as a function of the longitudinal
-position of the opponent, separately for each session at Imola and after the removal of
-the setup-related errors identified in Section~\ref{sec:deterministic}, i.e.\ the
-mean longitudinal error of the session and the linear trend of the lateral error.
+The errors of the two LiDAR pipelines are analyzed after the removal of the setup-related
+errors identified in Section~\ref{sec:deterministic}.
 Fig.~\ref{fig:lidar_clust_err} and Fig.~\ref{fig:lidar_pp_err} show the errors of
 Clustering and PointPillars, together with their mean and standard deviation in intervals
-of \SI{10}{m}. The analysis of the two sessions shows two different trends.
+of \SI{10}{m}.
 
 The errors of Clustering remain centered on zero, but their spread grows with the range.
 With the opponent ahead, the standard deviation of the lateral error increases from
@@ -357,16 +354,9 @@ With the opponent ahead, the standard deviation of the lateral error increases f
 at short range is comparable to the one observed with the opponent ahead. As the range
 increases, however, the opponent enters the blind spot of the rear wing, and beyond
 \SI{30}{m} the standard deviation reaches 0.33--\SI{0.62}{m} on both components. In both
-cases, the growth of the standard deviation is due to the reduced number of points of the
-opponent, either because it is farther or because it is partially occluded, which makes
-the detections more unstable. With few points, the visible corner and sides of the
-opponent are poorly defined, and the alignment of the vehicle model can switch between
-different configurations from one scan to the next.
-
-With the opponent behind, the samples with $|y_{\mathrm{rel}}| < \SI{2}{m}$ are excluded
-from the analysis of Clustering. In this region the opponent is in the blind spot caused
-by the rear wing, and the detections become intermittent and unstable. This is a limit of
-the coverage of the sensor rather than measurement noise.
+cases, whether the opponent is farther or partially occluded, the growth of the standard
+deviation is due to the reduced number of points returned by the sensor, which makes the
+detections more unstable.
 
 \begin{figure}[H]
     \centering
@@ -382,10 +372,10 @@ different way. The standard deviation of its errors remains almost constant, bel
 by a neural network, the opponent is identified consistently even when it is farther or
 only partially visible. What degrades is instead the reconstruction of the depth. The
 returned points lie only on the surfaces of the opponent facing the sensor, and the fewer
-they are, the more the bounding box collapses towards them, i.e.\ towards the ego
-vehicle. With the opponent behind, the shift is about \SI{0.25}{m} in session
+they are, the more the bounding box collapses towards them. With the opponent behind, the shift is about \SI{0.25}{m} in session
 07/26\_TUM and \SI{0.18}{m} in session 08/03\_Kinetiz, while with the opponent ahead it
-grows with the range, with a slope of \SI{0.17}{cm/m} and \SI{0.32}{cm/m} respectively.
+grows with the range, with a slope of \SI{0.17}{cm/m} and \SI{0.32}{cm/m} respectively. Overall, PointPillars
+tends to produce detections shifted towards the ego vehicle.
 
 \begin{figure}[H]
     \centering
@@ -405,10 +395,13 @@ interval behind reaches \SI{0.54}{m} longitudinally and \SI{0.58}{m} laterally, 
 excluding them it drops to \SI{0.14}{m} and \SI{0.24}{m}, comparable to the values of the
 other sessions.
 
-Fig.~\ref{fig:lidar_blindspot} shows the positions of the opponent behind the ego vehicle in
-which it is detected or not by the two LiDAR pipelines. As discussed above, inside the
-blind spot Clustering often fails to detect the opponent, while PointPillars, even with a
-partial view of the vehicle, identifies it in the same positions.
+Overall, the analysis shows that both Clustering and PointPillars are accurate and precise
+when the opponent is ahead. Their reliability decreases when the opponent is behind, and
+in these cases they need to be complemented by other sensors, i.e.\ the RaDAR.
+
+Fig.~\ref{fig:lidar_blindspot} shows how Clustering and PointPillars detect the opponent
+when it is behind the ego vehicle. PointPillars detects it more consistently but, as
+anticipated, its measurement is displaced by an offset.
 
 \begin{figure}[H]
     \centering
@@ -433,7 +426,7 @@ position of the opponent.
     \label{fig:radar_long}
 \end{figure}
 
-Compared with the LiDARs, the RaDAR detections are much sparser and more unstable. Already
+Compared with the LiDARs, the RaDAR detections are much sparser. Already
 at short range, the standard deviation of the longitudinal error is 0.42--\SI{0.51}{m},
 three to four times the one of the LiDARs, and it tends to increase with the range,
 although not monotonically, reaching 0.83--\SI{1.12}{m} behind and 0.71--\SI{0.82}{m}
@@ -486,7 +479,7 @@ as a function of the longitudinal position of the opponent, separately for each 
     \label{fig:camera_long}
 \end{figure}
 
-Unlike the other sensors, the dependence of the camera on the range appears mainly in the
+The dependence of the camera on the range appears mainly in the
 mean of the longitudinal error, which follows a U-shaped trend. At short range, below
 \SI{20}{m}, the detection is farther than the ground truth by about \SI{0.6}{m}. Between
 20 and \SI{60}{m}, i.e.\ in the operating range identified in
@@ -494,7 +487,7 @@ Section~\ref{subsec:det_long}, the mean error is close to zero, within
 $\pm\SI{0.1}{m}$, and the bias of the camera is comparable to the one of the LiDARs. Beyond this range, it increases again with the range and reaches
 0.25--\SI{0.40}{m} at 90--\SI{100}{m}. A linear fit of the error beyond \SI{40}{m} gives a
 slope of \SI{0.92}{cm/m} in session 07/26\_TUM and \SI{0.80}{cm/m} in session
-08/03\_Kinetiz. The standard deviation, instead,
+08/03\_Kinetiz. The standard deviation
 remains between 0.2 and \SI{0.5}{m}, without a clear trend with the range.
 
 The growth of the error with the range is related to the way the camera estimates the
