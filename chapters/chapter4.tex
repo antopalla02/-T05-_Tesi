@@ -8,8 +8,8 @@ under uses the information carried by the measurements, while one that is too sm
 weights them too much making the estimate too noisy.
 
 The chapter is divided into two parts. The first part aims at characterizing the
-measurement noise of the sensors. The errors of each source are analyzed, and their
-deterministic components, are identified and compensated: in this way,
+measurement noise of the sensors. The errors of each source are analyzed, the errors related to the
+setup are compensated and the repeatable trends of each sensor are identified, so that
 only the random part of the error has to be described by the measurement noise
 covariance, and each measurement is weighted correctly by the filter.
 
@@ -24,7 +24,7 @@ Section~\ref{sec:preprocessing} describes the pre-processing of the data, i.e.\ 
 reconstruction of the ground truth and the reference frames of the errors, and
 Section~\ref{sec:datasets} analyzes the datasets. Sections~\ref{sec:deterministic},
 \ref{sec:macro}, \ref{sec:gaussian_fit} and~\ref{sec:gauss_markov} address,
-respectively, the deterministic components of the errors, the intrinsic errors of the
+respectively, the setup-related errors, the repeatable perception errors of the
 sensors, the statistical characterization of their random part and their temporal
 structure.
 Section~\ref{sec:adaptive_r} presents the adaptive approach and
@@ -201,12 +201,13 @@ isolated.
 \FloatBarrier
 
 % =====================================================================
-\section{Compensation of the Deterministic Components}
+\section{Setup-Related Errors}
 \label{sec:deterministic}
 
-The deterministic components are the systematic and repeatable part of the measurement
-errors that, if present and identified, can be compensated . They are identified
-on session 07/26\_TUM, and validated on 08/03\_Kinetiz.
+The setup-related errors do not originate in the perception, but in the reference used
+for the comparison and in the calibration of the sensors. They are systematic and
+repeatable, and can therefore be compensated. They are identified on session 07/26\_TUM,
+and validated on 08/03\_Kinetiz.
 The errors are expressed in the ego frame, the longitudinal component $e_x$ and the lateral component
 $e_y$ are analyzed separately.
 
@@ -328,12 +329,13 @@ Fig.~\ref{fig:det_lat_yas}, the recalibration performed corrects the trend.
 
 \FloatBarrier
 % =====================================================================
-\section{Intrinsic Errors of the Sensors}
+\section{Repeatable Perception Errors of the Sensors}
 \label{sec:macro}
 
-Once the components external to the perception have been compensated, i.e.\ the offset
-related to the reference and the calibration offset of the LiDARs, the errors related to
-the working principle of each sensor and of its detection pipeline are analyzed. The
+Once the setup-related errors have been compensated, i.e.\ the offset related to the
+reference and the calibration offset of the LiDARs, the errors related to the working
+principle of each sensor and of its detection pipeline are analyzed, looking for the
+trends that repeat across the sessions. The
 analysis is organized by sensor. The two LiDAR pipelines are analyzed together, since
 they process the same point clouds, while the RaDAR and the camera are treated separately.
 
@@ -342,7 +344,7 @@ they process the same point clouds, while the RaDAR and the camera are treated s
 
 The errors of the two LiDAR pipelines are analyzed as a function of the longitudinal
 position of the opponent, separately for each session at Imola and after the removal of
-the deterministic components identified in Section~\ref{sec:deterministic}, i.e.\ the
+the setup-related errors identified in Section~\ref{sec:deterministic}, i.e.\ the
 mean longitudinal error of the session and the linear trend of the lateral error.
 Fig.~\ref{fig:lidar_clust_err} and Fig.~\ref{fig:lidar_pp_err} show the errors of
 Clustering and PointPillars, together with their mean and standard deviation in intervals
@@ -433,36 +435,41 @@ position of the opponent.
 
 Compared with the LiDARs, the RaDAR detections are much sparser and more unstable. Already
 at short range, the standard deviation of the longitudinal error is 0.42--\SI{0.51}{m},
-three to four times the one of the LiDARs. The detections with the opponent behind are
-more dispersed than the ones with the opponent ahead. At 50--\SI{60}{m}, for instance, the
-standard deviation is 0.68--\SI{0.90}{m} behind and 0.56--\SI{0.63}{m} ahead. The
-standard deviation also shows a partial trend with the range, since it tends to increase
-as the range grows, although not monotonically, reaching 0.83--\SI{1.12}{m} behind and
-0.71--\SI{0.82}{m} ahead at 90--\SI{100}{m}. This behavior has two
-causes. The first is the working principle of the sensor, which returns only a few
-reflection points for each target, with an angular resolution much coarser than the one of
-the LiDARs. The second is the way the detection is built. The reflection points are
-grouped by the clustering, and the detection is the centroid of the resulting cluster,
-with no compensation with respect to the observed side of the vehicle. Since the number of
-reflections and their distribution on the opponent change from one cycle to the next, and
-the reflections become fewer as the range increases, the centroid fluctuates
-significantly around the position of the vehicle.
+three to four times the one of the LiDARs, and it tends to increase with the range,
+although not monotonically, reaching 0.83--\SI{1.12}{m} behind and 0.71--\SI{0.82}{m}
+ahead at 90--\SI{100}{m}.
 
-The main characteristic of the RaDAR, however, is the dependence of the error on the
-surface of the opponent that reflects the radar waves, which results in two different
-longitudinal offsets with the opponent ahead and behind. With the opponent ahead, the
-detection is closer to the ego vehicle than the ground truth, and the magnitude of the
-error grows with the range, from \SI{-0.66}{m} in session 07/26\_TUM and \SI{-0.44}{m} in
-session 08/03\_Kinetiz at 10--\SI{20}{m} to \SI{-1.36}{m} and \SI{-1.06}{m} at
-90--\SI{100}{m}. With the opponent behind, instead, the mean error is small, mostly
-within $\pm\SI{0.25}{m}$ beyond \SI{20}{m}. When the opponent is
-behind, the RaDAR observes its front, i.e.\ the nose, the front wing, the wheels and the
-sidepods, a reflecting surface distributed along the vehicle, and the centroid of the
-cluster is close to its center. When the opponent is ahead, most of the radar waves hit
-the rear wing, a large surface at the rear end of the car, and the cluster is identified
-closer to the ego vehicle than the actual position of the opponent. Both the growth of the
-standard deviation and the two different offsets are validated on the sessions recorded at
-Yas Marina, as reported in Appendix~\ref{app:lidar}.
+The mean error is also different with the opponent ahead and behind, which results in two
+different longitudinal offsets. With the opponent ahead, the detection is closer to the
+ego vehicle than the ground truth, and the magnitude of the error grows with the range,
+from \SI{-0.66}{m} in session 07/26\_TUM and \SI{-0.44}{m} in session 08/03\_Kinetiz at
+10--\SI{20}{m} to \SI{-1.36}{m} and \SI{-1.06}{m} at 90--\SI{100}{m}. With the opponent
+behind, instead, the mean error is small, mostly within $\pm\SI{0.25}{m}$ beyond
+\SI{20}{m}.
+
+Both behaviors are related to the working principle of the sensor. The angular resolution
+of the RaDAR is much coarser than the one of the LiDARs, so the opponent is sampled with
+only a few reflection points. The detection is the centroid of the cluster of these
+points, and since their number and their distribution on the opponent change from one
+cycle to the next, the centroid fluctuates significantly around the position of the
+vehicle. This effect becomes more evident as the range increases, since the opponent
+returns even fewer reflections.
+
+The reflections also depend strongly on the surfaces of the opponent that face the sensor,
+which further increases the variability of the detections. On the mean error, this
+dependence produces the two different offsets, since the RaDAR observes two different
+parts of the vehicle with the opponent ahead and behind, and the centroid is not
+compensated with respect to the observed side. With the opponent ahead, most of the radar
+waves are reflected by the rear wing, a large surface at the rear end of the car and the
+closest to the sensor, so the detection is shifted towards the ego vehicle. With the
+opponent behind, the RaDAR observes its front, i.e.\ the nose, the front wing, the wheels
+and the sidepods, a reflecting surface distributed along the vehicle. The centroid of the
+cluster is then closer to the center of the vehicle, and the offset is smaller. Both the
+growth of the standard deviation and the two different offsets are validated on the
+sessions recorded at Yas Marina, as reported in Appendix~\ref{app:lidar}.
+
+Nevertheless, the rear RaDAR remains the only sensor that ensures the detection of the
+opponent behind up to \SI{150}{m}, covering the range that the LiDARs cannot reach.
 
 \subsection{Camera}
 \label{subsec:macro_camera}
@@ -504,20 +511,16 @@ Appendix~\ref{app:lidar}.
 \section{Statistical Characterization of the Random Errors}
 \label{sec:gaussian_fit}
 
-Once the deterministic components have been removed and the behavior of each sensor has
-been characterized, the uncertainty of its measurements can be quantified and used to tune
+Once the setup-related errors have been removed and the repeatable trends of each sensor
+have been characterized, the uncertainty of its measurements can be quantified and used to tune
 the measurement noise covariance matrix $\mathbf{R}$ of the filter. This uncertainty is
 expressed as a fixed standard deviation, obtained by fitting a Gaussian distribution to the
-residual position errors. The fit is performed
-separately for the longitudinal and lateral components and for the opponent ahead of and
-behind the ego vehicle. The errors are computed as in Section~\ref{subsec:err_frames}, and
-the lateral error is projected towards the ego vehicle, so that a positive value always
-corresponds to a detection displaced towards the ego vehicle, regardless of the side on
-which the opponent is.
+residual position errors. The fit is performed separately for the longitudinal and lateral
+components and for the opponent ahead of and behind the ego vehicle. The errors are
+computed as in Section~\ref{subsec:err_frames}.
 
-All the sessions are considered together, in order to obtain a homogeneous dataset. Only
-the detections with the ego vehicle moving faster than \SI{2}{m/s} and the opponent between
-10 and \SI{100}{m} are retained, a range extended to \SI{150}{m} for the RaDAR.
+All the sessions are considered together, in order to obtain a homogeneous dataset. The
+detections with the ego vehicle moving slower than \SI{2}{m/s} are excluded.
 
 Before the fit, the dependence of the mean error on the range, observed in
 Section~\ref{sec:macro} for the camera and for PointPillars, is compensated. The errors are
@@ -528,22 +531,72 @@ distribution, whose standard deviation is estimated as
     \sigma_{68} = \frac{P_{84} - P_{16}}{2},
     \label{eq:sigma68}
 \end{equation}
-where $P_{16}$ and $P_{84}$ are the 16th and 84th percentiles of the residuals. This
-estimate coincides with the standard deviation for a Gaussian distribution, but it is less
-sensitive to the tails. For the LiDARs, the detections inside the blind spot behind the
-ego vehicle are also included. Since they are only a small fraction of the samples behind,
-they have a negligible effect on the resulting $\sigma_{68}$. Finally, since the standard deviation of
-the RaDAR and of LiDAR Clustering increases with the distance, the resulting $\sigma_{68}$
-is an average over the considered range, weighted by the distribution of the samples.
-The estimated values are therefore representative of the operating conditions in which the
-data were collected, and in particular of the distribution of the relative distances
-between the two vehicles. With the samples concentrated at longer range, e.g.\ around
-80--\SI{90}{m}, the $\sigma_{68}$ of these sensors would be larger, whereas that of
-PointPillars, whose dispersion is almost independent of the range, would remain
-practically unchanged.
+where $P_{16}$ and $P_{84}$ are the 16th and 84th percentiles of the residuals. For a
+Gaussian distribution, $\sigma_{68}$ coincides with the standard deviation, but it is much
+less sensitive to the tails. The standard deviation weights each residual by its square,
+so a small fraction of large errors, such as the detections of Clustering at the edge of
+the blind spot, can dominate it. $\sigma_{68}$ instead describes the core of the
+distribution, i.e.\ the noise of the sensor in nominal conditions, without requiring an
+arbitrary rejection threshold. For the same reason, the range trend is removed with the
+median of each interval rather than with the mean.
 
-\TODO{Figure with the distributions of the residuals and the fitted Gaussians, and table
-with $\sigma_{68}$ for each sensor.}
+Table~\ref{tab:sensor_noise} reports $\sigma_{68}$ and the classical standard deviation
+of each sensor, while the distributions of the residuals with the opponent ahead and
+behind, together with the fitted Gaussian distributions, are shown in
+Fig.~\ref{fig:gauss68_front} and Fig.~\ref{fig:gauss68_rear} in Appendix~\ref{app:lidar}. The LiDARs are
+the most accurate sensors, with $\sigma_{68}$ between \SI{0.10}{m} and \SI{0.14}{m} on
+the longitudinal component and between \SI{0.12}{m} and \SI{0.24}{m} on the lateral one.
+The camera follows, with \SI{0.26}{m} and \SI{0.32}{m}, while the RaDAR has the largest
+longitudinal error, about \SI{0.65}{m}, and a lateral one comparable to the camera.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llcccc}
+\toprule
+ & & \multicolumn{2}{c}{Longitudinal $e_x$ [m]} & \multicolumn{2}{c}{Lateral $e_y$ [m]} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Sensor & Opponent & $\sigma_{68}$ & Std & $\sigma_{68}$ & Std \\
+\midrule
+LiDAR Clustering & Ahead & 0.11 (0.06--0.17) & 0.15 & 0.15 (0.11--0.21) & 0.20 \\
+ & Behind & 0.14 (0.09--0.43) & 0.28 & 0.24 (0.10--0.38) & 0.33 \\
+\midrule
+LiDAR PointPillars & Ahead & 0.11 (0.08--0.16) & 0.12 & 0.12 (0.09--0.16) & 0.14 \\
+ & Behind & 0.10 (0.07--0.15) & 0.11 & 0.13 (0.11--0.16) & 0.15 \\
+\midrule
+RaDAR & Ahead & 0.65 (0.52--0.73) & 0.68 & 0.32 (0.22--0.39) & 0.39 \\
+ & Behind & 0.68 (0.57--0.79) & 0.76 & 0.25 (0.19--0.31) & 0.32 \\
+\midrule
+Camera & Ahead & 0.26 (0.17--0.33) & 0.38 & 0.32 (0.25--0.38) & 0.43 \\
+\bottomrule
+\end{tabular}
+\caption{$\sigma_{68}$ and classical standard deviation of the residual errors, all
+sessions pooled. In brackets, the range of $\sigma_{68}$ across the sessions.}
+\label{tab:sensor_noise}
+\end{table}
+
+The comparison between the two estimators also verifies the Gaussian assumption. For
+PointPillars they differ by at most \SI{0.02}{m}, so its errors are close to Gaussian.
+For the other sensors the standard deviation is larger, by 5--\SI{30}{\percent} for the
+RaDAR, 35--\SI{45}{\percent} for the camera and up to \SI{100}{\percent} for Clustering
+with the opponent behind, which indicates heavy tails. These tails, however, are not spread
+uniformly over the data. They are concentrated in a small fraction of the samples and in
+identifiable conditions, i.e.\ the opponent at the edge of the blind spot for Clustering,
+the longer ranges for the RaDAR and Clustering, and the short range for the camera.
+Rather than inflating the noise of all the measurements, these cases can be handled by
+adapting $\mathbf{R}$ online, keeping $\sigma_{68}$ as the nominal value and increasing it
+only when the error of the sensor is larger.
+
+The resulting values describe the error of each sensor in the operating conditions in which
+the data were collected. They do not correspond to the accuracy declared in the datasheets,
+which refers to optimal conditions, and they would be different with a dataset of different
+characteristics. With the median of the range shifted to longer distances, e.g.\
+\SI{90}{m}, the standard deviation of the RaDAR and of LiDAR Clustering, which grows with
+the range, would be larger. Since the purpose of the analysis is the tuning of
+$\mathbf{R}$, i.e.\ weighting each sensor correctly in the filter, these values are
+nevertheless the appropriate ones, as they reflect the errors expected in the nominal
+operating conditions of the vehicle.
+
 
 % =====================================================================
 \section{Autocorrelation and Gauss-Markov Model}
