@@ -17,7 +17,7 @@ SENS = [('lid_clust', 'LiDAR Clustering', '#2ca02c'),
 CAM_LINE = '#a68400'
 GATE = 5.0
 CAM_NOM = (20.0, 60.0)  # nominal range of the camera [m]
-SCR = '/tmp/claude-0/-home-claude--t05--tesi/fe9c22f3-a0f7-524e-88e2-f943c23ad6f5/scratchpad/diag/'
+SCR = '/tmp/claude-0/-home-claude/fe9c22f3-a0f7-524e-88e2-f943c23ad6f5/scratchpad/'
 
 
 def load_det(f):
@@ -35,6 +35,7 @@ def errors(p, k):
     L = load_det(U + p + k + '.csv'); L = L[(L.ts >= gt.min()) & (L.ts <= gt.max())].copy()
     for q in ['x_rel', 'y_rel']:
         L['g_' + q] = np.interp(L.ts, gt, R[q].values)
+    L['v'] = np.interp(L.ts, gt, R.vx.values)
     L['ex'] = L.x - L.g_x_rel; L['ey'] = L.y - L.g_y_rel; L['e'] = np.hypot(L.ex, L.ey)
     return L[L.e < GATE].sort_values('e').drop_duplicates('msg').sort_values('ts')
 
@@ -47,7 +48,8 @@ for t in SES:
     ST[t] = {}
     for k, *_ in SENS:
         A = E[(t, k)]; c = np.polyfit(A.g_x_rel, A.ey, 1)
-        nom = A[(A.g_x_rel > CAM_NOM[0]) & (A.g_x_rel < CAM_NOM[1])]
+        # nominal conditions: opponent ahead, 20-60 m, moving faster than 2 m/s
+        nom = A[(A.g_x_rel > CAM_NOM[0]) & (A.g_x_rel < CAM_NOM[1]) & (A.v.abs() > 2.0)]
         ST[t][k] = dict(n=len(A), ex_mean=A.ex.mean(), ex_std=A.ex.std(),
                         ex_mean_nominal=nom.ex.mean(), ex_std_nominal=nom.ex.std(),
                         ey_slope_cm_per_m=100 * c[0], ey_intercept=c[1],
@@ -72,7 +74,7 @@ fig, axs = plt.subplots(2, 1, figsize=(6.3, 3.6), sharex=True)
 for ax, (k, lab, c) in zip(axs, LID):
     A = E[(T, k)]; A = A[(A.ts >= W[0]) & (A.ts <= W[1])]
     ax.scatter(A.ts, A.ex, s=3, c=c, alpha=0.45, linewidths=0, rasterized=True)
-    ax.axhline(ST[T][k]['ex_mean'], color=c, lw=1.6)
+    ax.axhline(ST[T][k]['ex_mean_nominal'], color=c, lw=1.6)
     ax.axhline(0, color='k', lw=0.5, ls=':')
     ax.set_ylim(-1.5, 1.5); ax.set_ylabel(r'$e_x$ [m]'); ax.set_title(lab, fontsize=9, pad=3)
     ax.grid(alpha=0.3, lw=0.4)
