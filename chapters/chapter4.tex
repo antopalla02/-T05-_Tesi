@@ -124,12 +124,23 @@ map, and the errors collected along the lap can be compared and aggregated consi
 \section{Dataset Analysis}
 \label{sec:datasets}
 
-This section provides an in-depth analysis of the datasets used to develop the
-characterization of the sensors. The two sessions, recorded on 26 July 2026 and on
-3 August 2026 and referred to in the following as session 07/26\_TUM and session 08/03\_Kinetiz, both
-took place at the Autodromo Internazionale Enzo e Dino Ferrari in Imola, with two
-different opponents, TUM and Kinetiz respectively. \\Their main characteristics are
-summarized in Table~\ref{tab:sessions}.
+This section analyzes the datasets used for the characterization of the sensors. The main
+considerations of the following sections derive from two sessions, recorded on 26 July
+2026 and on 3 August 2026 at the Autodromo Internazionale Enzo e Dino Ferrari in Imola,
+with two different opponents, TUM and Kinetiz, and referred to in the following as
+session 07/26\_TUM and session 08/03\_Kinetiz. These sessions are used to identify the
+setup-related errors, in Section~\ref{sec:deterministic}, and the global error trends of
+each sensor, in Section~\ref{sec:macro}.
+
+The data acquired during the test sessions carried out in October 2026 at the Yas Marina
+Circuit in Abu Dhabi are then used to validate these findings. In these sessions, the
+teams had the possibility to test with two vehicles at the same time. Using the state
+estimation of the team as reference, whose conventions on the reference frame and whose
+uncertainty are known, the errors of the perception pipeline can be isolated from those
+of the reference.
+
+The main characteristics of the two sessions at Imola are summarized in
+Table~\ref{tab:sessions}.
 
 \begin{table}[H]
     \centering
@@ -157,13 +168,13 @@ summarized in Table~\ref{tab:sessions}.
 Both sessions cover a wide range of dynamic conditions. The opponent travels at a median
 speed of about \SI{90}{km/h} and reaches more than \SI{150}{km/h}, alternating braking,
 cornering and traction phases along the lap. The two sessions also include several safe
-stops, during which the opponent is stationary; these intervals are of peculiar interest since they allow the errors to be
-characterized also in static conditions. Session 08/03\_Kinetiz contains also seven position swaps
-between the  vehicles. Overall, the combination of
+stops, during which the opponent is stationary; these intervals are of particular interest since they allow the errors to be
+characterized also in static conditions. Session 08/03\_Kinetiz also contains seven position swaps
+between the vehicles. Overall, the combination of
 safe stops, overtakes and laps at high speed ensures that the whole spectrum of the
 dynamics of interest is covered by the datasets.
 
-The sessions are also complementary in the relative geometry between the 
+The sessions are also complementary in the relative geometry between the
 vehicles. In session 07/26\_TUM the opponent is ahead of the ego vehicle for most of the time
 and moves mainly on its left, both when ahead and when behind, with a median lateral
 position of about \SI{6}{m}. In session 08/03\_Kinetiz the ego vehicle leads for most of the time,
@@ -177,7 +188,7 @@ range interval divided by the time spent by the opponent in that interval. With 
 nominal rate of \SI{10}{Hz} up to about \SI{50}{m}, and the rate decreases gradually with
 the range, down to about \SI{100}{m} for both Clustering and PointPillars.
 With the opponent behind, instead, the rate drops already beyond \SI{30}{m} and becomes
-negligible beyond 50--\SI{60}{m}.; this effect is due to the fact that, as the range increases,
+negligible beyond 50--\SI{60}{m}. This effect is due to the fact that, as the range increases,
 the opponent approaches the longitudinal axis of the ego vehicle and enters the blind
 spot caused by the rear wing (Section~\ref{subsec:lidar}). Only a small portion of the
 opponent remains visible, and the few points returned are often not enough to produce a detection.  The RaDAR, mounted below the rear wing, does not suffer from this limitation and keeps detecting the
@@ -189,14 +200,6 @@ opponent behind up to \SI{150}{m}.
     \caption{Detection rate as a function of the range, with the opponent ahead and behind.}
     \label{fig:ds_rate}
 \end{figure}
-
-The analysis conducted on these two datasets is complemented and validated with the data
-acquired during the test sessions carried out in October 2026 at the Yas Marina Circuit
-in Abu Dhabi. These sessions are of particular interest because two vehicles controlled
-by the same team could be tested at the same time. In this way, using the state
-estimation of the team as reference, the errors of the perception pipeline can be
-isolated.
-
 
 \FloatBarrier
 
