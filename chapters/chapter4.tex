@@ -2,8 +2,8 @@
 \label{ch:adaptive_r}
 
 In this chapter,  an in depth analysis and characterization of the measurement noise of the sensors introduced in
-Chapter~\ref{ch:tracking} is presented. The latter is of particular relevance mainly because the covariance of the measurement noise regulates the correction step of the Kalman
-filter and therefore the quality of the estimate; indeed, a covariance that is too large
+Chapter~\ref{ch:tracking} is presented. The latter is of particular relevance  because the covariance of the measurement noise regulates the correction step of the Kalman
+filter and, therefore, the quality of the estimate. A covariance that is too large
 under uses the information carried by the measurements, while one that is too small
 weights them too much making the estimate too noisy.
 
@@ -22,8 +22,7 @@ opponent is stationary.
 
 Section~\ref{sec:preprocessing} describes the pre-processing of the data, i.e.\ the
 reconstruction of the ground truth and the reference frames of the errors, and
-Section~\ref{sec:datasets} analyzes the datasets. The analysis then proceeds on
-successive levels. Section~\ref{sec:deterministic} addresses the errors related to the
+Section~\ref{sec:datasets} analyzes the datasets. Section~\ref{sec:deterministic} addresses the errors related to the
 setup, Section~\ref{sec:macro} the global error trends of each sensor, and
 Sections~\ref{sec:gaussian_fit} and~\ref{sec:gauss_markov} the residual errors, through
 their Gaussian fit and their local behavior.
@@ -51,14 +50,11 @@ the vehicle, its longitudinal speed and, when available, its longitudinal accele
 Since each team adopts its own format and reference system, the data are first brought
 into a common structure, compatible with the logs of the ego vehicle. The position and
 the heading of the opponent are roto-translated into the map frame of the ego vehicle, so that the two vehicles are
-described with respect to the same origin and orientation. When the estimate of the
-opponent refers to a point different from the one adopted for the ego vehicle, the
-position is also shifted along the longitudinal axis of the vehicle, so that both
-refer to the same point.
+described with respect to the same origin and orientation.
 
 When the longitudinal acceleration is measured by the
 inertial unit of the opponent, it is low-pass filtered with a zero-phase Butterworth
-filter, to remove the high-frequency content due to vibrations; otherwise, it is
+filter (2nd order filter); otherwise, it is
 obtained by differentiating the speed and smoothing the result with a Savitzky-Golay
 filter. The yaw rate, when not provided, is obtained in the same way from the heading.
 
@@ -90,15 +86,14 @@ projection of the relative velocity on the line of sight,
 \end{equation}
 with $v_o$ and $v_e$ the speeds of the two vehicles.
 
-It is important to note that the reference obtained in this way is not an exact ground truth. As stated at the beginning of the section, it coincides with the output of the state estimation pipeline of the opponent, and its quality is therefore strictly related to the performance of that pipeline: a degradation of the GNSS measurements, as well as any other error of the estimate, is directly inherited by the reference. Moreover, since each opponent adopts its own pipeline, the quality of the reference can differ from one opponent to another.
+It is important to note that the reference carries its own mistakes. As stated at the beginning of the section, it coincides with the output of the state estimation pipeline of the opponent, and its quality is therefore strictly related to the performance of that pipeline: a degradation of the GNSS measurements, as well as any other error of the estimate, is directly inherited by the reference. Moreover, since each opponent adopts its own pipeline, the quality of the reference can differ from one opponent to another.
 
 \subsection{Reference Frames of the Errors}
 \label{subsec:err_frames}
 
-The first step to compute the measurement errors is the association between the ground
-truth and the measurements of the sensors. Since the ground truth is available at
-a higher frequency than the detections, the first is
-linearly interpolated at the acquisition time of each detection. The measurement error is
+Once the reference has been reconstructed, to compute the measurement errors, we first need to associate the ground
+truth and the measurements of the sensors. The ground truth is available at
+a higher frequency than the detections, therefore, it is linearly interpolated at the acquisition time of each detection. The measurement error is
 then the difference between the position of the detection and the position of the
 opponent given by the ground truth at the same instant.
 
@@ -124,8 +119,8 @@ map, and the errors collected along the lap can be compared and aggregated consi
 \section{Dataset Analysis}
 \label{sec:datasets}
 
-This section analyzes the datasets used for the characterization of the sensors. The main
-considerations of the following sections derive from two sessions, recorded on 26 July
+This section provides an analysis of the main characteristics of the datasets used in
+the following sections. The main considerations derive from two sessions, recorded on 26 July
 2026 and on 3 August 2026 at the Autodromo Internazionale Enzo e Dino Ferrari in Imola,
 with two different opponents, TUM and Kinetiz, and referred to in the following as
 session 07/26\_TUM and session 08/03\_Kinetiz. These sessions are used to identify the
@@ -354,7 +349,7 @@ The errors of Clustering remain centered on zero, but their spread grows with th
 With the opponent ahead, the standard deviation of the lateral error increases from
 0.11--\SI{0.18}{m} to 0.39--\SI{0.48}{m}, and the one of the longitudinal error from
 0.13--\SI{0.17}{m} to 0.21--\SI{0.28}{m}. With the opponent behind, the standard deviation
-at short range is comparable to the one observed with the opponent ahead. As the range
+at short range is comparable to the one observed with the opponent ahead; as the range
 increases, however, the opponent enters the blind spot of the rear wing, and beyond
 \SI{30}{m} the standard deviation reaches 0.33--\SI{0.62}{m} on both components. In both
 cases, whether the opponent is farther or partially occluded, the growth of the standard
@@ -400,7 +395,7 @@ other sessions.
 
 Overall, the analysis shows that both Clustering and PointPillars are accurate and precise
 when the opponent is ahead. Their reliability decreases when the opponent is behind, and
-in these cases they need to be complemented by other sensors, i.e.\ the RaDAR.
+in these cases they need to be complemented with other sensors, i.e.\ the RaDAR.
 
 Fig.~\ref{fig:lidar_blindspot} shows how Clustering and PointPillars detect the opponent
 when it is behind the ego vehicle. PointPillars detects it more consistently but, as
@@ -538,7 +533,7 @@ accurate position measurement, with a standard deviation between \SI{0.11}{m} an
 the lateral one, the largest values being those of Clustering with the opponent behind.
 The camera has a standard deviation of \SI{0.38}{m} and \SI{0.43}{m}, while the RaDAR has
 the largest longitudinal error, 0.68--\SI{0.76}{m}, and a lateral one of
-0.32--\SI{0.39}{m}.
+0.32--\SI{0.39}{m}. Overall, the values identified are consistent with the analysis and the plots provided in the previous sections.
 
 \begin{table}[H]
 \centering
@@ -563,7 +558,7 @@ Camera & Ahead & 0.38 & 0.43 \\
 \label{tab:sensor_noise}
 \end{table}
 
-Finally, it is important to point out that the resulting values describe the error of each sensor in the operating conditions in which
+It is important to point out that the resulting values describe the error of each sensor in the operating conditions in which
 the data were collected. They do not correspond to the accuracy declared in the datasheets,
 which refers to optimal conditions, and they would be different with a dataset of different
 characteristics. With the median of the range shifted to longer distances, e.g.\
