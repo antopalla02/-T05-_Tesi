@@ -199,15 +199,9 @@ opponent behind up to \SI{150}{m}.
 \FloatBarrier
 
 % =====================================================================
-\section{Setup-Related Errors}
-\label{sec:deterministic}
+\section{Setup-Related Errors}\label{sec:deterministic}
 
-The setup-related errors do not originate in the perception, but in the reference used
-for the comparison and in the calibration of the sensors. They are systematic and
-repeatable, and can therefore be compensated. They are identified on session 07/26\_TUM,
-and validated on 08/03\_Kinetiz.
-The errors are expressed in the ego frame, the longitudinal component $e_x$ and the lateral component
-$e_y$ are analyzed separately.
+First of all, the errors related to the setup are taken into account. The latter, being systematic and repeatable, can be identified and compensated. 
 
 \subsection{Longitudinal Component}
 \label{subsec:det_long}
@@ -225,7 +219,7 @@ Fig.~\ref{fig:det_long} shows their longitudinal error in a window of session
     \label{fig:det_long}
 \end{figure}
 
-When the analysis is extended to session 08/03\_Kinetiz, the  offset changes: the mean
+Moving to session 08/03\_Kinetiz, the  offset changes: the mean
 longitudinal error is \SI{0.02}{m} for Clustering and \SI{0.09}{m} for PointPillars.
 The sensors and the detection pipelines are the same in the two
 sessions, while the opponent, and therefore the reference, changes. The first hypothesis is thus that the bias originates from the ground truth: if the
@@ -242,11 +236,6 @@ this range, the camera shares the same bias as the LiDARs in both sessions
 standard deviation of the error two to four times higher than the one of the LiDARs. The fact that the camera shares the same bias validates the starting hypothesis. Since
 the camera is a different sensor with its own detection pipeline, an error shared with
 the LiDARs is necessarily related to the reference.
-The longitudinal component of the RaDAR is analyzed separately in
-Section~\ref{sec:macro}, since it does not show the same behavior. This is due to the
-fact that, unlike LiDAR Clustering, the position of the RaDAR detections is not
-compensated with respect to the observed side of the vehicle.
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_cam_range.pdf}
@@ -279,7 +268,7 @@ compensated with respect to the observed side of the vehicle.
 \subsection{Lateral Component}
 \label{subsec:det_lat}
 
-Fig.~\ref{fig:det_lat} shows the lateral error of the LiDARs as a function of the
+ Fig.~\ref{fig:det_lat} shows the lateral error of the LiDARs as a function of the
 longitudinal position $x_{\mathrm{rel}}$ of the opponent, for session 07/26\_TUM. The
 error shows a clear linear dependence on $x_{\mathrm{rel}}$. For this reason, the errors
 are fitted with a straight line,
@@ -288,9 +277,7 @@ are fitted with a straight line,
     \label{eq:det_lat_fit}
 \end{equation}
 whose slope $a$ is estimated through a least squares fit on the data. The fit gives a
-slope of \SI{0.60}{cm/m} for Clustering and \SI{0.58}{cm/m} for PointPillars. With
-the opponent close to the ego vehicle, the resulting lateral error is negligible, but at
-\SI{100}{m} it reaches about \SI{0.6}{m}.
+slope of \SI{0.60}{cm/m} for Clustering and \SI{0.58}{cm/m} for PointPillars. 
 
 \begin{figure}[H]
     \centering
@@ -312,11 +299,10 @@ The fact that the trend is repeatable across the two datasets but observed only 
 LiDARs points to a cause related to the sensors rather than to the reference. The trend
 is compatible with a small calibration offset of about \SI{0.33}{\degree} in yaw, since
 a rotation $\delta\psi$ of the measured positions produces a lateral error
-$e_y \simeq \delta\psi\,x_{\mathrm{rel}}$, exactly as observed. The same offset affects
-all three LiDARs because they are mounted on the same support. 
+$e_y \simeq \delta\psi\,x_{\mathrm{rel}}$, exactly as observed. 
 
-In the sessions at Yas Marina,  as shown in
-Fig.~\ref{fig:det_lat_yas}, the recalibration performed corrects the trend.
+In the sessions at Yas Marina,  the behavior has been corrected, as shown in
+Fig.~\ref{fig:det_lat_yas}, confirming that it was a matter of calibration.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_lat_yas.pdf}
