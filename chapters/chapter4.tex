@@ -9,7 +9,7 @@ weights them too much making the estimate too noisy.
 
 The chapter is divided into two parts. The first part aims at characterizing the
 measurement noise of the sensors. The errors of each source are analyzed, the errors related to the
-setup are compensated and the repeatable trends of each sensor are identified, so that
+setup are compensated and the global trends of each sensor are identified, so that
 only the random part of the error has to be described by the measurement noise
 covariance, and each measurement is weighted correctly by the filter.
 
@@ -22,11 +22,11 @@ opponent is stationary.
 
 Section~\ref{sec:preprocessing} describes the pre-processing of the data, i.e.\ the
 reconstruction of the ground truth and the reference frames of the errors, and
-Section~\ref{sec:datasets} analyzes the datasets. Sections~\ref{sec:deterministic},
-\ref{sec:macro}, \ref{sec:gaussian_fit} and~\ref{sec:gauss_markov} address,
-respectively, the setup-related errors, the repeatable perception errors of the
-sensors, the statistical characterization of their random part and their temporal
-structure.
+Section~\ref{sec:datasets} analyzes the datasets. The analysis then proceeds on
+successive levels. Section~\ref{sec:deterministic} addresses the errors related to the
+setup, Section~\ref{sec:macro} the global error trends of each sensor, and
+Sections~\ref{sec:gaussian_fit} and~\ref{sec:gauss_markov} the residual errors, through
+their Gaussian fit and their local behavior.
 Section~\ref{sec:adaptive_r} presents the adaptive approach and
 Section~\ref{sec:ch4_results} the results.
 
@@ -329,7 +329,7 @@ Fig.~\ref{fig:det_lat_yas}, the recalibration performed corrects the trend.
 
 \FloatBarrier
 % =====================================================================
-\section{Repeatable Perception Errors of the Sensors}
+\section{Global Error Trends of the Sensors}
 \label{sec:macro}
 
 Once the setup-related errors have been compensated, the errors related to the working
@@ -501,10 +501,10 @@ Appendix~\ref{app:lidar}.
 \FloatBarrier
 
 % =====================================================================
-\section{Statistical Characterization of the Random Errors}
+\section{Gaussian Fit of the Residual Errors}
 \label{sec:gaussian_fit}
 
-Once the setup-related errors have been removed and the repeatable trends of each sensor
+Once the setup-related errors have been removed and the global trends of each sensor
 have been characterized, the uncertainty of its measurements can be quantified and used to tune
 the measurement noise covariance matrix $\mathbf{R}$ of the filter. This uncertainty is
 expressed as a fixed standard deviation, obtained by fitting a Gaussian distribution to the
@@ -518,64 +518,49 @@ detections with the ego vehicle moving slower than \SI{2}{m/s} are excluded.
 Before the fit, the dependence of the mean error on the range, observed in
 Section~\ref{sec:macro} for the camera and for PointPillars, is compensated. The errors are
 grouped into intervals of \SI{10}{m} of $|x_{\mathrm{rel}}|$, and the median of each
-interval is subtracted. The resulting residuals are then fitted with a Gaussian
-distribution, whose standard deviation is estimated as
+interval is subtracted. The standard deviation of the Gaussian distribution is then
+estimated as the sample standard deviation of the resulting residuals,
 \begin{equation}
-    \sigma_{68} = \frac{P_{84} - P_{16}}{2},
-    \label{eq:sigma68}
+    \sigma = \sqrt{\frac{1}{N-1}\sum_{i=1}^{N}\left(r_i - \bar{r}\right)^2},
+    \label{eq:sigma_std}
 \end{equation}
-where $P_{16}$ and $P_{84}$ are the 16th and 84th percentiles of the residuals. For a
-Gaussian distribution, $\sigma_{68}$ coincides with the standard deviation, but it is much
-less sensitive to the tails. The standard deviation weights each residual by its square,
-so a small fraction of large errors, can dominate it. 
-Table~\ref{tab:sensor_noise} reports $\sigma_{68}$ and the classical standard deviation
-of each sensor, while the distributions of the residuals with the opponent ahead and
-behind, together with the fitted Gaussian distributions, are shown in
-Fig.~\ref{fig:gauss68_front} and Fig.~\ref{fig:gauss68_rear} in Appendix~\ref{app:lidar}. \\The LiDARs provide 
-the most accurate position measurement, with $\sigma_{68}$ between \SI{0.10}{m} and \SI{0.14}{m} on
-the longitudinal component and between \SI{0.12}{m} and \SI{0.24}{m} on the lateral one.
-The camera follows, with \SI{0.26}{m} and \SI{0.32}{m}, while the RaDAR has the largest
-longitudinal error, about \SI{0.65}{m}, and a lateral one comparable to the camera.
+where $r_i$ are the $N$ residuals and $\bar{r}$ their mean.
+
+Table~\ref{tab:sensor_noise} reports the standard deviation of each sensor, while the
+distributions of the residuals with the opponent ahead and behind, together with the
+fitted Gaussian distributions, are shown in Fig.~\ref{fig:gauss68_front} and
+Fig.~\ref{fig:gauss68_rear} in Appendix~\ref{app:lidar}. The LiDARs provide the most
+accurate position measurement, with a standard deviation between \SI{0.11}{m} and
+\SI{0.28}{m} on the longitudinal component and between \SI{0.14}{m} and \SI{0.33}{m} on
+the lateral one, the largest values being those of Clustering with the opponent behind.
+The camera has a standard deviation of \SI{0.38}{m} and \SI{0.43}{m}, while the RaDAR has
+the largest longitudinal error, 0.68--\SI{0.76}{m}, and a lateral one of
+0.32--\SI{0.39}{m}.
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{llcccc}
+\begin{tabular}{llcc}
 \toprule
- & & \multicolumn{2}{c}{Longitudinal $e_x$ [m]} & \multicolumn{2}{c}{Lateral $e_y$ [m]} \\
-\cmidrule(lr){3-4}\cmidrule(lr){5-6}
-Sensor & Opponent & $\sigma_{68}$ & Std & $\sigma_{68}$ & Std \\
+Sensor & Opponent & Longitudinal $\sigma_x$ [m] & Lateral $\sigma_y$ [m] \\
 \midrule
-LiDAR Clustering & Ahead & 0.11 (0.06--0.17) & 0.15 & 0.15 (0.11--0.21) & 0.20 \\
- & Behind & 0.14 (0.09--0.43) & 0.28 & 0.24 (0.10--0.38) & 0.33 \\
+LiDAR Clustering & Ahead & 0.15 & 0.20 \\
+ & Behind & 0.28 & 0.33 \\
 \midrule
-LiDAR PointPillars & Ahead & 0.11 (0.08--0.16) & 0.12 & 0.12 (0.09--0.16) & 0.14 \\
- & Behind & 0.10 (0.07--0.15) & 0.11 & 0.13 (0.11--0.16) & 0.15 \\
+LiDAR PointPillars & Ahead & 0.12 & 0.14 \\
+ & Behind & 0.11 & 0.15 \\
 \midrule
-RaDAR & Ahead & 0.65 (0.52--0.73) & 0.68 & 0.32 (0.22--0.39) & 0.39 \\
- & Behind & 0.68 (0.57--0.79) & 0.76 & 0.25 (0.19--0.31) & 0.32 \\
+RaDAR & Ahead & 0.68 & 0.39 \\
+ & Behind & 0.76 & 0.32 \\
 \midrule
-Camera & Ahead & 0.26 (0.17--0.33) & 0.38 & 0.32 (0.25--0.38) & 0.43 \\
+Camera & Ahead & 0.38 & 0.43 \\
 \bottomrule
 \end{tabular}
-\caption{$\sigma_{68}$ and classical standard deviation of the residual errors, all
-sessions pooled. In brackets, the range of $\sigma_{68}$ across the sessions.}
+\caption{Standard deviation of the residual errors, all sessions pooled.}
 \label{tab:sensor_noise}
 \end{table}
 
-The comparison between the two estimators also verifies the Gaussian assumption. For
-PointPillars they differ by at most \SI{0.02}{m}, so its errors are close to Gaussian.
-For the other sensors the standard deviation is larger, by 5--\SI{30}{\percent} for the
-RaDAR, 35--\SI{45}{\percent} for the camera and up to \SI{100}{\percent} for Clustering
-with the opponent behind, which indicates heavy tails. These tails, however, are not spread
-uniformly over the data. They are concentrated in a small fraction of the samples and in
-identifiable conditions, i.e.\ the opponent at the edge of the blind spot for Clustering,
-the longer ranges for the RaDAR and Clustering, and the short range for the camera.
-Rather than inflating the noise of all the measurements, these cases can be handled by
-adapting $\mathbf{R}$ online, keeping $\sigma_{68}$ as the nominal value and increasing it
-only when the error of the sensor is larger.
-
-Finally, it's important to point out that the resulting values describe the error of each sensor in the operating conditions in which
+Finally, it is important to point out that the resulting values describe the error of each sensor in the operating conditions in which
 the data were collected. They do not correspond to the accuracy declared in the datasheets,
 which refers to optimal conditions, and they would be different with a dataset of different
 characteristics. With the median of the range shifted to longer distances, e.g.\
@@ -587,19 +572,262 @@ operating conditions of the vehicle.
 
 
 % =====================================================================
-\section{Autocorrelation and Gauss-Markov Model}
+\section{Local Behavior of the Residual Errors}
 \label{sec:gauss_markov}
 
-\TODO{}
+The Kalman filter assumes that the measurement errors are white, i.e.\ uncorrelated
+between different time instants. As introduced in Section~\ref{sec:tt_correction}, the
+measurement noise is modeled as a zero-mean Gaussian white sequence,
+\begin{equation}
+    \mathbb{E}\left[\mathbf{v}_k\,\mathbf{v}_j^\top\right] = \mathbf{R}_k\,\delta_{kj}.
+    \label{eq:white_noise}
+\end{equation}
+The residual errors obtained after the removal of the trends shown in the previous
+sections, however, still contain a local autocorrelated component, which contrasts with
+this assumption. The purpose of this section is to analyze this component, to model it
+and to compensate for it.
+
+\subsection{Autocorrelation and Power Spectral Density}
+\label{subsec:acf_psd}
+
+The local component is analyzed in the frequency domain, through the power spectral
+density (PSD) of the residual errors, and in the time domain, through their
+autocorrelation. Since the opponent is not always detected, the residuals of each sensor
+are first split into continuous segments, interrupted wherever two consecutive detections
+are more than \SI{0.55}{s} apart, each resampled on a uniform grid with the sampling
+period of the sensor and with its mean removed. The PSD $S_e(f)$ of each segment is
+estimated with the Welch method, with a Hann window of 128 samples and \SI{50}{\percent}
+overlap, and the spectra of all the segments are averaged. The
+autocorrelation is then derived from the resulting PSD through the Wiener--Khinchin
+theorem,
+\begin{equation}
+    R_e(\ell) = \int_{-\infty}^{+\infty} S_e(f)\, e^{\,j 2\pi f \ell}\, df,
+    \qquad
+    \rho_e(\ell) = \frac{R_e(\ell)}{R_e(0)},
+    \label{eq:wiener_khinchin}
+\end{equation}
+where $\ell$ is the time lag and $\rho_e$ the normalized autocorrelation.
+
+For sessions 07/26\_TUM and 10/14\_eva, with the opponent ahead, the PSD and the
+autocorrelation of the residual errors are shown in Fig.~\ref{fig:psd_acf} and summarized
+in Tables~\ref{tab:psd_sessions} and~\ref{tab:acf_sessions}. The PSD of the LiDARs and of
+the camera concentrate most of the power at low frequency, between about 60 and
+\SI{90}{\percent} below \SI{2}{Hz}, where they decrease approximately as $1/f^2$, and
+show a white floor beyond \SI{2}{Hz}. In the time domain, the autocorrelation decays
+gradually, is still between about 0.25 and 0.55 at \SI{0.5}{s} and vanishes only after
+1--\SI{2}{s}, so that the errors of consecutive detections are strongly correlated. The
+RaDAR has the highest PSD, consistent with its larger error, but the flattest spectrum,
+and its autocorrelation drops below 0.3 at \SI{0.5}{s}, i.e.\ its error is closer to a
+white sequence.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[PSD]{\includegraphics[width=0.49\textwidth]{figures/ch4/error_psd.pdf}}
+    \hfill
+    \subfloat[Autocorrelation]{\includegraphics[width=0.49\textwidth]{figures/ch4/error_acf.pdf}}
+    \caption{PSD and autocorrelation of the residual errors, opponent ahead, sessions
+    07/26\_TUM and 10/14\_eva.}
+    \label{fig:psd_acf}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llcccc}
+\toprule
+ & & \multicolumn{2}{c}{$P_{<1\,\mathrm{Hz}}$ [\%]} & \multicolumn{2}{c}{$P_{<2\,\mathrm{Hz}}$ [\%]} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Sensor & Axis & 07/26 & 10/14 & 07/26 & 10/14 \\
+\midrule
+LiDAR Clustering & Long. & 65 & 53 & 76 & 67 \\
+ & Lat. & 74 & 63 & 84 & 80 \\
+\midrule
+LiDAR PointPillars & Long. & 69 & 52 & 80 & 66 \\
+ & Lat. & 80 & 75 & 91 & 91 \\
+\midrule
+Camera & Long. & 65 & 44 & 78 & 62 \\
+ & Lat. & 74 & 80 & 84 & 89 \\
+\midrule
+RaDAR & Long. & 45 & 48 & 68 & 72 \\
+ & Lat. & 64 & 53 & 80 & 76 \\
+\bottomrule
+\end{tabular}
+\caption{Fraction of the power of the residual errors below 1 and \SI{2}{Hz}.}
+\label{tab:psd_sessions}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llcccccccc}
+\toprule
+ & & \multicolumn{2}{c}{$\ell=\SI{0.2}{s}$} & \multicolumn{2}{c}{$\ell=\SI{0.5}{s}$} & \multicolumn{2}{c}{$\ell=\SI{1}{s}$} & \multicolumn{2}{c}{$\ell=\SI{2}{s}$} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}
+Sensor & Axis & 07/26 & 10/14 & 07/26 & 10/14 & 07/26 & 10/14 & 07/26 & 10/14 \\
+\midrule
+LiDAR Clustering & Long. & 0.58 & 0.40 & 0.40 & 0.31 & 0.21 & 0.17 & 0.05 & $-$0.02 \\
+ & Lat. & 0.62 & 0.56 & 0.40 & 0.34 & 0.14 & 0.26 & $-$0.04 & 0.18 \\
+\midrule
+LiDAR PointPillars & Long. & 0.64 & 0.44 & 0.53 & 0.35 & 0.38 & 0.19 & 0.17 & 0.05 \\
+ & Lat. & 0.71 & 0.69 & 0.45 & 0.40 & 0.22 & 0.34 & 0.09 & 0.19 \\
+\midrule
+Camera & Long. & 0.50 & 0.37 & 0.24 & 0.31 & 0.10 & 0.16 & 0.00 & 0.02 \\
+ & Lat. & 0.73 & 0.72 & 0.52 & 0.56 & 0.23 & 0.35 & $-$0.03 & 0.10 \\
+\midrule
+RaDAR & Long. & 0.29 & 0.28 & 0.17 & 0.11 & 0.08 & 0.03 & 0.05 & $-$0.04 \\
+ & Lat. & 0.42 & 0.35 & 0.28 & 0.13 & 0.10 & 0.06 & 0.04 & $-$0.01 \\
+\bottomrule
+\end{tabular}
+\caption{Normalized autocorrelation $\rho_e(\ell)$ of the residual errors, opponent ahead.}
+\label{tab:acf_sessions}
+\end{table}
+
+The comparison between the two LiDAR pipelines gives an indication of the origin of this
+component. Since Clustering and PointPillars process the same point clouds, their errors
+at the same scan can be decomposed into a common mode and a differential mode,
+\begin{equation}
+    e_{\mathrm{c}} = \frac{e_{\mathrm{C}} + e_{\mathrm{PP}}}{2},
+    \qquad
+    e_{\mathrm{d}} = \frac{e_{\mathrm{C}} - e_{\mathrm{PP}}}{2},
+    \label{eq:common_mode}
+\end{equation}
+where $e_{\mathrm{C}}$ and $e_{\mathrm{PP}}$ are the errors of Clustering and
+PointPillars. Most of the low-frequency content is found in the common mode, i.e.\ the
+slow component is largely shared by the two pipelines. Its source is therefore not only
+the detection pipeline of each sensor, but also the way in which the point cloud is
+sampled and built. Since this component evolves slowly and affects both pipelines in the
+same way, it suggests a dependence on the relative geometry or on the relative kinematics
+of the two vehicles, which also vary slowly and determine how the opponent is sampled by
+the sensor.
+
+\subsection{Correlation with the Geometry}
+\label{subsec:corr_geometry}
+
+\TODO{Cross-correlation of the residuals with range, $y_{\mathrm{rel}}$, relative yaw:
+how much of the temporal correlation is explained by the slowly varying geometry.}
+
+\subsection{Gauss-Markov Model}
+\label{subsec:gauss_markov_model}
+
+Having excluded a dependence on the geometry, the low-frequency component is compensated
+by estimating it and removing it from the error, which isolates the white part. The error
+of each sensor and component is therefore modeled as the sum of an autocorrelated term
+$b_k$ and of a white term $w_k$,
+\begin{equation}
+    e_k = b_k + w_k,
+    \qquad
+    w_k \sim \mathcal{N}\!\left(0,\, \sigma_w^2\right),
+    \label{eq:gm_decomposition}
+\end{equation}
+where $b_k$ is a first-order Gauss-Markov process,
+\begin{equation}
+    b_{k+1} = \phi\, b_k + \eta_k,
+    \qquad
+    \phi = e^{-\Delta t/\tau},
+    \qquad
+    \eta_k \sim \mathcal{N}\!\left(0,\, \sigma_b^2\,(1-\phi^2)\right),
+    \label{eq:gm_process}
+\end{equation}
+with $\Delta t$ the sampling period and $\tau$ the correlation time. The variance of
+$\eta_k$ keeps the variance of $b_k$ equal to $\sigma_b^2$, so that the variance of the
+error is $\sigma_b^2 + \sigma_w^2$. Based on the PSD and on the autocorrelation, $\tau$ is
+set to \SI{1}{s} for all the sensors, for simplicity.
+
+Since $w_k$ is uncorrelated between consecutive samples, the covariance of two
+consecutive errors depends only on $b_k$. Following~\eqref{eq:gm_process}, $\sigma_b^2$ is
+estimated by least squares on the pairs of consecutive detections, and $\sigma_w^2$ is
+obtained by difference,
+\begin{equation}
+    \mathbb{E}\left[e_k\, e_{k+1}\right] = \phi_k\, \sigma_b^2
+    \;\Rightarrow\;
+    \hat{\sigma}_b^2 = \frac{\sum_k \phi_k\, e_k\, e_{k+1}}{\sum_k \phi_k^2},
+    \qquad
+    \hat{\sigma}_w^2 = \mathrm{Var}(e) - \hat{\sigma}_b^2,
+    \label{eq:gm_sigmas}
+\end{equation}
+where $\phi_k$ is computed with the actual time between the two detections.
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llcccc}
+\toprule
+ & & \multicolumn{2}{c}{$\sigma_b$ [m]} & \multicolumn{2}{c}{$\sigma_w$ [m]} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Sensor & Axis & 07/26 & 10/14 & 07/26 & 10/14 \\
+\midrule
+LiDAR Clustering & Long. & 0.15 & 0.09 & 0.09 & 0.08 \\
+ & Lat. & 0.21 & 0.13 & 0.12 & 0.08 \\
+\midrule
+LiDAR PointPillars & Long. & 0.13 & 0.08 & 0.05 & 0.07 \\
+ & Lat. & 0.14 & 0.12 & 0.05 & 0.04 \\
+\midrule
+Camera & Long. & 0.40 & 0.21 & 0.34 & 0.21 \\
+ & Lat. & 0.53 & 0.30 & 0.24 & 0.12 \\
+\midrule
+RaDAR & Long. & 0.45 & 0.30 & 0.53 & 0.51 \\
+ & Lat. & 0.35 & 0.17 & 0.32 & 0.22 \\
+\bottomrule
+\end{tabular}
+\caption{Standard deviations of the autocorrelated and white components of the residual
+errors, opponent ahead, $\tau = \SI{1}{s}$.}
+\label{tab:gm_sigmas}
+\end{table}
+
+Table~\ref{tab:gm_sigmas} reports $\sigma_b$ and $\sigma_w$. For the LiDARs and the
+camera $\sigma_b$ is larger than $\sigma_w$, i.e.\ most of the error is autocorrelated,
+while for the RaDAR the white term is comparable to or larger than the autocorrelated
+one, consistently with its faster decorrelation. The same split is found in all the
+sessions. Once the estimated $b_k$ is removed from the error, the residuals are correctly
+decorrelated, and their autocorrelation drops to about zero at all the lags, as shown in
+Table~\ref{tab:acf_gm}.
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llccc}
+\toprule
+Sensor & Axis & $\ell=\SI{0.2}{s}$ & $\ell=\SI{0.5}{s}$ & $\ell=\SI{1}{s}$ \\
+\midrule
+LiDAR Clustering & Long. & $-0.10$ to $+0.03$ & $-0.05$ to $+0.07$ & $-0.01$ to $+0.04$ \\
+ & Lat. & $-0.06$ to $+0.03$ & $-0.06$ to $+0.00$ & $-0.09$ to $+0.06$ \\
+\midrule
+LiDAR PointPillars & Long. & $-0.15$ to $-0.01$ & $-0.08$ to $+0.03$ & $-0.02$ to $+0.06$ \\
+ & Lat. & $-0.12$ to $+0.08$ & $-0.12$ to $+0.00$ & $-0.10$ to $+0.03$ \\
+\midrule
+Camera & Long. & $-0.09$ to $+0.07$ & $-0.08$ to $+0.09$ & $-0.03$ to $+0.09$ \\
+ & Lat. & $-0.07$ to $+0.04$ & $-0.01$ to $+0.16$ & $-0.01$ to $+0.06$ \\
+\midrule
+RaDAR & Long. & $-0.08$ to $+0.01$ & $-0.08$ to $-0.02$ & $-0.06$ to $+0.07$ \\
+ & Lat. & $-0.10$ to $+0.01$ & $-0.13$ to $+0.02$ & $-0.05$ to $+0.03$ \\
+\bottomrule
+\end{tabular}
+\caption{Normalized autocorrelation of the residual errors after the removal of the
+autocorrelated component, opponent ahead. Range across the sessions.}
+\label{tab:acf_gm}
+\end{table}
+
+\subsection{Low-Frequency Bias of the LiDARs}
+\label{subsec:lidar_lf_bias}
+
+\TODO{Not observable without an absolute reference, followed by the track. Effect on the
+innovations of camera and RaDAR, relative bias states with the LiDAR as reference.}
 
 % =====================================================================
-\section{Adaptive Measurement Covariance}
+\section{Adaptive Measurement Noise Covariance}
 \label{sec:adaptive_r}
 
-\TODO{}
+\TODO{Covariance matching on the decorrelated innovations, window length related to
+$\tau$, $\sigma$ of Section~\ref{sec:gaussian_fit} as nominal value.}
 
 % =====================================================================
 \section{Results}
 \label{sec:ch4_results}
 
-\TODO{}
+\TODO{Fixed $\mathbf{R}$ and adaptive $\mathbf{R}$. NEES/NIS with $\chi^2$ bounds, RMSE ahead/behind and per range, critical
+episodes, adaptive $\mathbf{R}$ vs $\sigma$(range), whiteness of the normalized
+innovations.}
