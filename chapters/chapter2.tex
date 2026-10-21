@@ -40,8 +40,7 @@ seasons at WeatherTech Raceway Laguna Seca (Fig.~\ref{fig:av24}).
 \paragraph{Abu Dhabi Autonomous Racing League.} The A2RL is organized by ASPIRE, and debuted in April 2024 at the
 Yas Marina Circuit, with a race between four autonomous cars. Unlike the IAC, it was
 conceived from the beginning for road circuits. In September 2026
-it raced for the first time at the Autodromo Internazionale Enzo e Dino Ferrari in Imola.
-track (Fig.~\ref{fig:eav24}).
+it raced for the first time at the Autodromo Internazionale Enzo e Dino Ferrari in Imola (Fig.~\ref{fig:eav24}).
 
 \begin{figure}[H]
     \centering
@@ -168,7 +167,7 @@ steer-by-wire system and the other actuators, together with the radio system for
 \section{Sensors}
 \label{sec:sensors}
 
-To perceive the surrounding environment, as anticipated in the previous section, each vehicle has been retrofitted with several sensors. The following section, describes the ones mounted on the Dallara AV-24 and EAV-25. For each type of
+To perceive the surrounding environment, as anticipated in the previous section, each vehicle has been retrofitted with several sensors. The following section describes the ones mounted on the Dallara AV-24 and EAV-25. For each type of
 sensor, the working principle and the main strengths and limitations are presented first;
 then, focusing on each vehicle, the main characteristics and performance of the specific ones mounted on it are described.
 
@@ -301,7 +300,7 @@ caused by the rear wing apply.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/ch2/eav24_lidar_fov.pdf}
-    \caption{Horizontal field of view of the LiDARs of the Dallara EAV-25..}
+    \caption{Horizontal field of view of the LiDARs of the Dallara EAV-25.}
     \label{fig:eav24_lidar_fov}
 \end{figure}
 
@@ -319,7 +318,7 @@ between the transmitted and the received signal is proportional to the range of 
 target. The direction of the target is obtained from the phase differences of the echo
 across the receiving antennas.
 
-The main strenght of the RaDAR, is the direct measure of the relative velocity. \\When the target
+The main strength of the RaDAR is the direct measure of the relative velocity. \\When the target
 moves with respect to the sensor, the phase of its echo changes from one ramp to the
 next by an amount proportional to the radial component of the relative velocity
 (Doppler effect):
@@ -344,7 +343,7 @@ Its position measurement, however, is less accurate than the one of the LiDARs, 
 \subsubsection{Dallara AV-24}
 
 The RaDAR coverage of the AV-24 is provided by two units of different models: a
-Continental ARS548~RDI, mounted above the cockpit and facing forward, and a ZF FRGen21,
+Continental ARS548~RDI, mounted above the cockpit and facing forward, and a ZF ProWave,
 mounted at the rear of the car and facing backward. Both are \SI{77}{GHz} imaging RaDARs,
 which return for each reflection point its range, azimuth, elevation and range rate.
 Their main characteristics are reported in Table~\ref{tab:radar_av24}.
@@ -357,7 +356,7 @@ Their main characteristics are reported in Table~\ref{tab:radar_av24}.
         \toprule
                                           & Front RaDAR                      & Rear RaDAR \\
         \midrule
-        Model                             & Continental ARS548 RDI           & ZF FRGen21 \\
+        Model                             & Continental ARS548 RDI           & ZF ProWave \\
         FoV (H $\times$ V)                & \SI{100}{\degree} $\times$ \SI{28}{\degree} (${<}\SI{100}{m}$) & \SI{90}{\degree} $\times$ \SI{30}{\degree} (\SI{150}{m}) \\
         Angular resolution (H $\times$ V) & --                               & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
         Angular accuracy (H $\times$ V)   & $\pm$0.1--\SI{0.5}{\degree} $\times$ $\pm\SI{0.1}{\degree}$ & 0.15--\SI{1}{\degree} $\times$ \SI{0.15}{\degree} \\
@@ -374,7 +373,7 @@ Their main characteristics are reported in Table~\ref{tab:radar_av24}.
 
 The ARS548~RDI detects targets up to \SI{300}{m}, within $\pm\SI{50}{\degree}$ in azimuth,
 works at \SI{20}{Hz} and measures relative speeds between $-\SI{400}{km/h}$ (approaching targets) and
-$+\SI{200}{km/h}$. \\For the FRGen21 the range mode can be selected: the
+$+\SI{200}{km/h}$. \\For the ProWave the range mode can be selected: the
 available modes go from a shorter to a longer range operation, and the range resolution
 decreases as the maximum range increases. It covers $\pm\SI{45}{\degree}$ in azimuth up to
 \SI{150}{m} and works at \SI{16.7}{Hz}. The RaDAR coverage is limited to two sectors, in
@@ -394,7 +393,7 @@ In our scenario, as for the LiDARs, the effective range of the RaDAR is shorter 
 
 \subsubsection{Dallara EAV-25}
 
-The EAV-25 mounts four ZF FRGen21 RaDARs, the same model mounted at the rear of the AV-24,
+The EAV-25 mounts four ZF ProWave RaDARs, the same model mounted at the rear of the AV-24,
 placed at the front, on the two sides and at the rear of the car. The sensor operates in
 the 76--\SI{77}{GHz} band and measures range, azimuth, elevation and range rate of each
 reflection point, with a fixed cycle time of \SI{60}{ms}, i.e.\ at \SI{16.7}{Hz}. As
@@ -408,7 +407,7 @@ reported in Table~\ref{tab:radar_eav24}.
     \footnotesize
     \begin{tabular}{>{\raggedright\arraybackslash}p{0.35\textwidth}>{\raggedright\arraybackslash}p{0.4\textwidth}}
         \toprule
-        Model                             & ZF FRGen21 \\
+        Model                             & ZF ProWave \\
         Units                             & 4 \\
         FoV (H $\times$ V)                & \SI{120}{\degree} (\SI{80}{m}), \SI{90}{\degree} (\SI{150}{m}) $\times$ \SI{30}{\degree} \\
         Angular resolution (H $\times$ V) & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\

@@ -29,7 +29,7 @@ the tracks, i.e.\ their creation, confirmation and deletion.
     \label{fig:tt_pipeline}
 \end{figure}
 
-First of all, section~\ref{sec:tt_perception} gives a brief overview of the perception pipelines, i.e.
+First of all, Section~\ref{sec:tt_perception} gives a brief overview of the perception pipelines, i.e.
 how the raw data of the sensors are processed to obtain the detections used by the
 tracking module. \\Then, following the structure of the EKF, Section~\ref{sec:tt_prediction}
 describes the prediction step. Section~\ref{sec:tt_association} explains how the
@@ -70,7 +70,7 @@ discarded. Since the LiDAR samples only the surfaces facing the sensor, the poin
 
 \paragraph{RaDAR.} At every cycle, each RaDAR returns a list of reflection points, each
 one described by its range, azimuth, elevation and range rate. The points at ranges and heights not
-compatible with a vehicle on track, are discarded, and the remaining ones are expressed
+compatible with a vehicle on track are discarded, and the remaining ones are expressed
 in the common reference frame and filtered with the map of the drivable area. The points are then clustered based on their position and range rate: reflections that
 are close to each other and share a similar radial velocity are gathered together, while
 points that are spatially close but move differently are separated. \\Each cluster
@@ -115,7 +115,7 @@ Since $f_d$ is nonlinear, it is linearized around the last estimate,
     \label{eq:tt_F_def}
 \end{equation}
 Given the estimate
-$\hat{\mathbf{x}}_k$ and its covariance $\mathbf{P}_k$ (which measures how uncertain is the estimate), the prediction step computes the a
+$\hat{\mathbf{x}}_k$ and its covariance $\mathbf{P}_k$ (which measures how uncertain the estimate is), the prediction step computes the a
 priori estimate and covariance at the next iteration, the first simply propagating through the motion model, the second one, accounting also for the
 contribution of the process noise.
 
@@ -140,7 +140,7 @@ any value of $\Delta t$ and is described in Section~\ref{subsec:tt_cca}.
 \subsection{Constant Curvature and Acceleration Model}
 \label{subsec:tt_cca}
 
-In the Tracking module, the motion of the opponent is described by a Constant Curvature and Acceleration (CCA)
+In the tracking module, the motion of the opponent is described by a Constant Curvature and Acceleration (CCA)
 model. The state of each opponent is defined as
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
@@ -241,7 +241,7 @@ model reduces to:
     \end{bmatrix},
     \label{eq:tt_cca_straight}
 \end{equation}
-the latter used when $|\kappa| < \SI{e-4}{m^{-1}}$ to avoid the division by zero.
+the latter used when $|\kappa| < \SI{e-4}{m^{-1}}$ to avoid the division by zero
 in~\eqref{eq:tt_cca_discrete}.
 
 Applying~\eqref{eq:tt_F_def} to~\eqref{eq:tt_cca_discrete}, the linearized state matrix
@@ -378,14 +378,14 @@ tracker after a latency made of a systematic part, related to the amount of proc
 applied to the raw data and thus larger for the LiDAR pipelines, and of a random part,
 related to the operation of the sensor itself. Since the latency differs from one source to another, a measurement may arrive after others acquired later, i.e.\ out of
 sequence; the phenomenon becomes more frequent as the number and the variety of the
-sources increase. In its classical formulation, the Kalman filter,prescribes that the measurements are
+sources increase. In its classical formulation, the Kalman filter prescribes that the measurements are
 processed in chronological order, so that a measurement arriving out of order cannot be
 used. \\The simplest solutions are either to discard the late
 measurements, losing the information they carry, or to buffer the measurements for a
 fixed interval and reorder them, at the price of a constant delay of the estimate.
 
 In the proposed tracker, OOSM are handled as soon as they arrive, by reprocessing the
-history of the whole tracker as shown in Fig.~\ref{fig:tt_oosm_timeline}  . 
+history of the whole tracker as shown in Fig.~\ref{fig:tt_oosm_timeline}.
 
 \begin{figure}[H]
     \centering
@@ -542,7 +542,7 @@ $\mathbf{z}_p = [x,\,y]^\top$, which is a linear function of the state,
     \begin{bmatrix}
         1 & 0 & 0 & 0 & 0 \\
         0 & 1 & 0 & 0 & 0
-    \end{bmatrix},
+    \end{bmatrix}.
     \label{eq:tt_h_pos}
 \end{equation}
 
