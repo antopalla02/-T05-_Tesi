@@ -279,16 +279,17 @@ used in the prediction of the covariance is
 All the quantities in~\eqref{eq:tt_F} and~\eqref{eq:tt_F_straight} are evaluated at the
 last estimate $\hat{\mathbf{x}}_k$.
 
-\paragraph{Process noise.} Two sources of uncertainty are considered. The first is the
-variation of the acceleration, which the model assumes constant: a white noise $w_a$ with
-spectral density $q_a$ acts on its derivative, so that the acceleration evolves as a
-random walk and can follow the braking and traction phases. The second is the
-uncertainty of the curvature read from the database: since the set of trajectories that
-the opponent may follow is used as prior information, this uncertainty is lower, but it is used to account for the small differences between
-the actual trajectory of the opponent and the one prescribed by the references; the latter
-is modeled as a white perturbation $w_\kappa$ of the curvature, with
-spectral density $q_\kappa$, acting on the yaw rate through $v\,w_\kappa$. \\The
-continuous-time model with process noise becomes
+\paragraph{Process noise.} Two sources of uncertainty constitute the process noise. The
+first is the
+variation of the acceleration, which the model assumes constant over the prediction
+interval. A white noise $w_a$, with spectral density $q_a$, acts on its derivative, so that
+the acceleration evolves as a random walk and can follow the braking and traction phases.
+The second is the uncertainty of the curvature read from the track database, which accounts
+for the small differences between the actual trajectory of the opponent and the reference
+ones. Since these trajectories are used as prior information, this uncertainty is lower,
+and it is modeled as a white perturbation $w_\kappa$ of the curvature, with spectral
+density $q_\kappa$, which acts on the yaw rate through $v\,w_\kappa$. The continuous-time
+model with process noise becomes
 \abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
 \abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
 \begin{equation}
@@ -305,7 +306,10 @@ continuous-time model with process noise becomes
     \label{eq:tt_noise}
 \end{equation}
 where $\mathbf{w} = [w_\kappa,\,w_a]^\top$ and $\mathbf{Q}_c$ is its spectral density
-matrix. The discrete-time process noise covariance is obtained through the exact
+matrix.
+
+Since the interval $\Delta t$ between two predictions is not constant, the discrete-time
+process noise covariance is recomputed at every prediction through the exact
 discretization of the noise, i.e.\ by integrating its effect over the prediction interval
 through the linearized dynamics,
 \abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
@@ -332,14 +336,27 @@ evaluated at the last estimate,
     \end{bmatrix}.
     \label{eq:tt_A}
 \end{equation}
-The integral is solved analytically, and the resulting closed-form expressions of the
-elements of $\mathbf{Q}_k$, which depend on $v$, $\psi$, $\kappa$ and $\Delta t$, are
-evaluated at every prediction. The result is a full $5 \times 5$ matrix: although the
-noise acts directly only on the acceleration and on the heading, it propagates
-indirectly to the other states through the integration of the dynamics. \\The two spectral
-densities $q_\kappa$ and $q_a$ are the tuning parameters of the model, and their ratio
-with respect to the measurement noise sets how much the filter relies on the prediction
-rather than on the measurements driving the Kalman gain in the correction step (Section \ref{sec:tt_correction}).
+The integral is solved analytically, by expressing the matrix exponential through its
+series,
+\abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
+\abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
+\begin{equation}
+    e^{\mathbf{A}\tau} = \sum_{i=0}^{\infty} \frac{(\mathbf{A}\tau)^i}{i!}
+    = \mathbf{I} + \mathbf{A}\tau + \mathbf{A}^2\frac{\tau^2}{2} + \mathbf{A}^3\frac{\tau^3}{6}
+    + \dots
+    \label{eq:tt_exp_series}
+\end{equation}
+Since the sampling time is small, the terms of order higher than three in $\Delta t$ are
+neglected. The resulting closed-form expressions of the elements of $\mathbf{Q}_k$, which
+depend on $v$, $\psi$, $\kappa$ and $\Delta t$, are derived in
+Appendix~\ref{app:process_noise}. Although the noise acts directly only on the
+acceleration and on the heading, it propagates to the other states through the
+integration of the dynamics.
+
+The two spectral densities $q_\kappa$ and $q_a$ are the tuning parameters of the model.
+Their ratio with respect to the measurement noise sets how much the filter relies on the
+prediction rather than on the measurements, through the Kalman gain in the correction step
+(Section~\ref{sec:tt_correction}).
 
 % =====================================================================
 \section{Data Association}

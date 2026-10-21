@@ -2,184 +2,50 @@
 \chapter*{Appendix A}
 \addcontentsline{toc}{chapter}{Appendix A}
 \markboth{Appendix A}{Appendix A}
-\label{app:lidar}
+\label{app:process_noise}
 
-\begin{table}[H]
-\centering
-\setlength{\tabcolsep}{1.6pt}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccc|ccccccccc}
-\toprule
- & \multicolumn{5}{c|}{Rear, $|x_{\mathrm{rel}}|$ [m]} & \multicolumn{9}{c}{Front, $x_{\mathrm{rel}}$ [m]} \\
-Session & 60--50 & 50--40 & 40--30 & 30--20 & 20--10 & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 \\
-\midrule
-07/26\_TUM & -- & 0.67 & 0.42 & 0.21 & 0.08 & 0.06 & 0.19 & 0.10 & 0.11 & 0.17 & 0.18 & 0.21 & 0.23 & 0.25 \\
-08/03\_Kinetiz & 0.38 & 0.30 & 0.32 & 0.15 & 0.16 & 0.18 & 0.16 & 0.15 & 0.15 & 0.15 & 0.20 & 0.21 & 0.24 & 0.21 \\
-10/12 (EVA+LIVIA) & -- & 0.28 & 0.22 & 0.09 & 0.04 & 0.04 & 0.04 & 0.17 & 0.06 & 0.07 & 0.09 & 0.08 & 0.08 & 0.16 \\
-10/13 (EVA+LIVIA) & -- & -- & -- & -- & -- & -- & -- & 0.17 & 0.17 & 0.10 & 0.07 & 0.11 & 0.21 & 0.19 \\
-10/14\_eva & -- & 0.15 & 0.12 & 0.14 & 0.54$^{*}$ & 0.10 & 0.08 & 0.08 & 0.10 & 0.10 & 0.12 & 0.16 & 0.15 & 0.13 \\
-10/14-02 (EVA+LIVIA) & -- & 0.38 & 0.21 & 0.12 & 0.07 & 0.08 & 0.08 & 0.11 & 0.13 & 0.08 & 0.12 & 0.13 & -- & -- \\
-10/14-04 (EVA) & -- & -- & 0.17 & 0.10 & 0.08 & 0.08 & 0.14 & 0.15 & 0.19 & 0.14 & 0.13 & 0.13 & 0.11 & 0.10 \\
-10/16 (EVA+LIVIA) & -- & -- & 0.29 & 0.19 & 0.20 & 0.06 & 0.07 & 0.10 & 0.10 & 0.09 & 0.11 & 0.14 & 0.15 & 0.10 \\
-\bottomrule
-\end{tabular}}
-\par\vspace{2pt}{\footnotesize $^{*}$ 10/14\_eva: at 10--20\,m behind the opponent is almost on the ego axis ($|y|\approx2$\,m, rear blind strip).}
-\caption{LiDAR Clustering: standard deviation of the longitudinal error $\sigma_x$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins).}
-\label{tab:clust_sx}
-\end{table}
-
-\begin{table}[H]
-\centering
-\setlength{\tabcolsep}{1.6pt}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccc|ccccccccc}
-\toprule
- & \multicolumn{5}{c|}{Rear, $|x_{\mathrm{rel}}|$ [m]} & \multicolumn{9}{c}{Front, $x_{\mathrm{rel}}$ [m]} \\
-Session & 60--50 & 50--40 & 40--30 & 30--20 & 20--10 & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 \\
-\midrule
-07/26\_TUM & -- & 0.54 & 0.35 & 0.19 & 0.08 & 0.09 & 0.19 & 0.13 & 0.13 & 0.20 & 0.25 & 0.27 & 0.30 & 0.43 \\
-08/03\_Kinetiz & 0.40 & 0.32 & 0.34 & 0.27 & 0.26 & 0.08 & 0.10 & 0.09 & 0.10 & 0.14 & 0.15 & 0.35 & 0.38 & 0.45 \\
-10/12 (EVA+LIVIA) & -- & 0.32 & 0.13 & 0.08 & 0.05 & 0.05 & 0.06 & 0.09 & 0.11 & 0.15 & 0.19 & 0.23 & 0.29 & 0.54 \\
-10/13 (EVA+LIVIA) & -- & -- & -- & -- & -- & -- & -- & 0.07 & 0.16 & 0.18 & 0.17 & 0.26 & 0.25 & 0.34 \\
-10/14\_eva & -- & 0.17 & 0.18 & 0.31 & 0.58$^{*}$ & 0.10 & 0.10 & 0.09 & 0.14 & 0.13 & 0.20 & 0.25 & 0.22 & 0.34 \\
-10/14-02 (EVA+LIVIA) & -- & 0.64 & 0.36 & 0.15 & 0.08 & 0.08 & 0.10 & 0.19 & 0.22 & 0.24 & 0.22 & 0.25 & -- & -- \\
-10/14-04 (EVA) & -- & -- & 0.38 & 0.23 & 0.10 & 0.05 & 0.11 & 0.22 & 0.11 & 0.16 & 0.26 & 0.25 & 0.22 & 0.26 \\
-10/16 (EVA+LIVIA) & -- & -- & 0.32 & 0.29 & 0.33 & 0.11 & 0.09 & 0.20 & 0.11 & 0.15 & 0.22 & 0.28 & 0.19 & 0.19 \\
-\bottomrule
-\end{tabular}}
-\par\vspace{2pt}{\footnotesize $^{*}$ 10/14\_eva: at 10--20\,m behind the opponent is almost on the ego axis ($|y|\approx2$\,m, rear blind strip).}
-\caption{LiDAR Clustering: standard deviation of the lateral error $\sigma_y$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins).}
-\label{tab:clust_sy}
-\end{table}
-
-\begin{table}[H]
-\centering
-\setlength{\tabcolsep}{1.6pt}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccc|ccccccccc}
-\toprule
- & \multicolumn{5}{c|}{Rear, $|x_{\mathrm{rel}}|$ [m]} & \multicolumn{9}{c}{Front, $x_{\mathrm{rel}}$ [m]} \\
-Session & 60--50 & 50--40 & 40--30 & 30--20 & 20--10 & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 \\
-\midrule
-07/26\_TUM & -- & $+0.28$ & $+0.24$ & $+0.26$ & $+0.15$ & $+0.01$ & $0.00$ & $-0.01$ & $-0.04$ & $-0.08$ & $-0.09$ & $-0.08$ & $-0.13$ & $-0.19$ \\
-08/03\_Kinetiz & $+0.30$ & $+0.29$ & $+0.26$ & $+0.24$ & $+0.13$ & $-0.01$ & $-0.02$ & $-0.03$ & $-0.14$ & $-0.16$ & $-0.20$ & $-0.29$ & $-0.28$ & $-0.23$ \\
-10/12 (EVA+LIVIA) & -- & $+0.37$ & $+0.36$ & $+0.30$ & $+0.23$ & $+0.09$ & $+0.07$ & $+0.01$ & $+0.01$ & $-0.02$ & $-0.02$ & $0.00$ & $-0.05$ & $-0.06$ \\
-10/13 (EVA+LIVIA) & -- & -- & -- & -- & -- & -- & -- & $0.00$ & $+0.04$ & $-0.01$ & $-0.01$ & $-0.04$ & $-0.08$ & $-0.11$ \\
-10/14\_eva & $+0.34$ & $+0.36$ & $+0.30$ & $+0.26$ & $+0.24$ & $+0.04$ & $+0.02$ & $0.00$ & $+0.01$ & $-0.01$ & $-0.01$ & $-0.05$ & $-0.09$ & $-0.10$ \\
-10/14-02 (EVA+LIVIA) & $+0.47$ & $+0.43$ & $+0.39$ & $+0.37$ & $+0.23$ & $+0.14$ & $+0.06$ & $0.00$ & $-0.01$ & $-0.03$ & $+0.09$ & $+0.08$ & $+0.05$ & -- \\
-10/14-04 (EVA) & -- & -- & $+0.30$ & $+0.29$ & $+0.24$ & $+0.07$ & $+0.02$ & $+0.02$ & $0.00$ & $-0.04$ & $-0.04$ & $-0.02$ & $-0.06$ & $-0.11$ \\
-10/16 (EVA+LIVIA) & $+0.43$ & $+0.40$ & $+0.37$ & $+0.33$ & $+0.28$ & $+0.04$ & $0.00$ & $+0.04$ & $-0.05$ & $-0.04$ & $-0.06$ & $-0.07$ & $-0.14$ & $-0.23$ \\
-\bottomrule
-\end{tabular}}
-\caption{LiDAR PointPillars: mean longitudinal error $e_x$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins). For the sessions at Yas Marina, the mean longitudinal error with the opponent ahead in 20--60\,m is subtracted.}
-\label{tab:pp_ex}
-\end{table}
-
-\begin{table}[H]
-\centering
-\setlength{\tabcolsep}{4pt}\small
-\begin{tabular}{lccccccccc}
-\toprule
-Session & \multicolumn{9}{c}{$|x_{\mathrm{rel}}|$ [m]} \\
-\cmidrule(l){2-10}
- & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 \\
-\midrule
-\multicolumn{10}{l}{\textit{Rear ($x_{\mathrm{rel}}<0$)}} \\
-07/26\_TUM & 0.42 & 0.57 & 0.64 & 0.75 & 0.90 & 0.69 & 0.92 & 0.92 & 1.12 \\
-08/03\_Kinetiz & 0.43 & 0.52 & 0.57 & 0.65 & 0.68 & 0.61 & 0.83 & 0.94 & 0.83 \\
-10/12 (EVA+LIVIA) & 0.42 & 0.56 & 0.59 & 0.62 & 0.74 & 0.75 & 0.77 & 0.95 & 0.74 \\
-10/13 (EVA+LIVIA) & -- & -- & 0.48 & 0.65 & 0.87 & 0.73 & 0.63 & 0.85 & 1.00 \\
-10/14\_eva & 0.44 & 0.50 & 0.62 & 0.65 & 0.61 & 0.63 & 0.49 & -- & -- \\
-10/14-02 (EVA+LIVIA) & 0.62 & 0.58 & 0.61 & 0.63 & 0.65 & 0.70 & 0.60 & 0.61 & 0.79 \\
-10/14-04 (EVA) & 0.46 & 0.57 & 0.64 & 0.60 & 0.76 & -- & -- & -- & -- \\
-10/16 (EVA+LIVIA) & 0.46 & 0.51 & 0.70 & 0.74 & 0.84 & 0.88 & 0.90 & 1.03 & 0.92 \\
-\midrule
-\multicolumn{10}{l}{\textit{Front ($x_{\mathrm{rel}}>0$)}} \\
-07/26\_TUM & 0.44 & 0.45 & 0.52 & 0.58 & 0.63 & 0.65 & 0.62 & 0.77 & 0.71 \\
-08/03\_Kinetiz & 0.51 & 0.53 & 0.53 & 0.53 & 0.56 & 0.59 & 0.68 & 0.82 & 0.82 \\
-10/12 (EVA+LIVIA) & 0.39 & 0.51 & 0.54 & 0.62 & 0.63 & 0.68 & 0.68 & 0.80 & 0.76 \\
-10/13 (EVA+LIVIA) & -- & -- & -- & 0.57 & 0.62 & 0.72 & 0.64 & 0.80 & 0.67 \\
-10/14\_eva & 0.35 & 0.45 & 0.49 & 0.54 & 0.59 & 0.66 & 0.73 & 0.93 & 0.91 \\
-10/14-02 (EVA+LIVIA) & 0.46 & 0.50 & 0.48 & 0.56 & 0.49 & 0.53 & 0.55 & 0.79 & 0.71 \\
-10/14-04 (EVA) & -- & 0.32 & 0.42 & 0.53 & 0.52 & 0.48 & 0.48 & 0.73 & 0.66 \\
-10/16 (EVA+LIVIA) & 0.68 & 0.57 & 0.53 & 0.63 & 0.75 & 0.83 & 0.91 & 0.86 & 0.63 \\
-\bottomrule
-\end{tabular}
-\caption{RaDAR: standard deviation of the longitudinal error $\sigma_x$ [m] vs $|x_{\mathrm{rel}}|$ (10\,m bins).}
-\label{tab:rad_sx}
-\end{table}
-
-\begin{table}[H]
-\centering
-\setlength{\tabcolsep}{4pt}\small
-\begin{tabular}{lccccccccc}
-\toprule
-Session & \multicolumn{9}{c}{$|x_{\mathrm{rel}}|$ [m]} \\
-\cmidrule(l){2-10}
- & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 \\
-\midrule
-\multicolumn{10}{l}{\textit{Rear ($x_{\mathrm{rel}}<0$)}} \\
-07/26\_TUM & $+0.31$ & $+0.05$ & $-0.14$ & $-0.16$ & $-0.16$ & $+0.17$ & $-0.14$ & $-0.05$ & $-0.11$ \\
-08/03\_Kinetiz & $+0.55$ & $+0.10$ & $+0.23$ & $+0.05$ & $+0.19$ & $+0.20$ & $+0.22$ & $+0.12$ & $+0.14$ \\
-10/12 (EVA+LIVIA) & $+0.29$ & $+0.18$ & $+0.25$ & $+0.22$ & $+0.51$ & $+0.40$ & $+0.33$ & $+0.47$ & $+0.15$ \\
-10/13 (EVA+LIVIA) & -- & -- & $+0.20$ & $+0.20$ & $+0.16$ & $+0.31$ & $+0.36$ & $+0.16$ & $+0.21$ \\
-10/14\_eva & $+0.57$ & $+0.26$ & $+0.13$ & $+0.17$ & $+0.24$ & $+0.50$ & $+0.19$ & -- & -- \\
-10/14-02 (EVA+LIVIA) & $+0.34$ & $+0.35$ & $+0.30$ & $+0.36$ & $+0.34$ & $+0.55$ & $+0.74$ & $+0.60$ & $+0.62$ \\
-10/14-04 (EVA) & $+0.81$ & $+0.59$ & $+0.34$ & $+0.51$ & $+0.49$ & -- & -- & -- & -- \\
-10/16 (EVA+LIVIA) & $+0.85$ & $+0.77$ & $+0.57$ & $+0.61$ & $+0.48$ & $+0.75$ & $+0.64$ & $+0.43$ & $+0.51$ \\
-\midrule
-\multicolumn{10}{l}{\textit{Front ($x_{\mathrm{rel}}>0$)}} \\
-07/26\_TUM & $-0.66$ & $-0.84$ & $-0.79$ & $-0.86$ & $-1.00$ & $-0.99$ & $-1.00$ & $-1.05$ & $-1.36$ \\
-08/03\_Kinetiz & $-0.44$ & $-0.47$ & $-0.57$ & $-0.82$ & $-0.76$ & $-0.76$ & $-0.92$ & $-0.95$ & $-1.06$ \\
-10/12 (EVA+LIVIA) & $-0.35$ & $-0.35$ & $-0.61$ & $-0.50$ & $-0.57$ & $-0.46$ & $-0.53$ & $-0.63$ & $-0.97$ \\
-10/13 (EVA+LIVIA) & -- & -- & -- & $-0.63$ & $-0.52$ & $-0.48$ & $-0.64$ & $-0.80$ & $-0.98$ \\
-10/14\_eva & $-1.33$ & $-0.87$ & $-0.83$ & $-0.69$ & $-0.73$ & $-0.69$ & $-0.69$ & $-0.65$ & $-1.01$ \\
-10/14-02 (EVA+LIVIA) & $-0.50$ & $-0.36$ & $-0.63$ & $-0.68$ & $-0.76$ & $-0.52$ & $-0.41$ & $-0.53$ & $-0.81$ \\
-10/14-04 (EVA) & -- & $-1.01$ & $-1.16$ & $-1.23$ & $-1.38$ & $-1.12$ & $-0.96$ & $-1.46$ & $-1.70$ \\
-10/16 (EVA+LIVIA) & $-0.18$ & $-0.38$ & $-0.28$ & $-0.52$ & $-0.77$ & $-0.45$ & $-0.52$ & $-0.92$ & $-1.18$ \\
-\bottomrule
-\end{tabular}
-\caption{RaDAR: mean longitudinal error $e_x$ [m] vs $|x_{\mathrm{rel}}|$ (10\,m bins). For the sessions at Yas Marina, the offset of the reference, estimated as the mean longitudinal error of PointPillars with the opponent ahead in 20--60\,m, is subtracted.}
-\label{tab:rad_ex}
-\end{table}
-
-\begin{table}[H]
-\centering
-\setlength{\tabcolsep}{4pt}\small
-\begin{tabular}{lccccccccc|c}
-\toprule
-Session & \multicolumn{9}{c|}{$x_{\mathrm{rel}}$ [m]} & Trend \\
-\cmidrule(lr){2-10}
- & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 & [cm/m] \\
-\midrule
-07/26\_TUM & $+0.58$ & $-0.03$ & $-0.08$ & $-0.03$ & $+0.07$ & $+0.28$ & $+0.36$ & $+0.38$ & $+0.40$ & $+0.92$ \\
-08/03\_Kinetiz & $+0.64$ & $+0.10$ & $-0.09$ & $-0.06$ & $+0.04$ & $+0.18$ & $+0.19$ & $+0.30$ & $+0.25$ & $+0.80$ \\
-10/12 (EVA) & -- & $-0.25$ & $-0.25$ & $-0.03$ & $+0.14$ & $+0.46$ & $+0.53$ & $+0.55$ & $+0.62$ & $+1.43$ \\
-10/13 (EVA) & -- & -- & $-0.20$ & $+0.15$ & $+0.23$ & $+0.39$ & $+0.44$ & $+0.44$ & $+0.51$ & $+0.70$ \\
-10/14\_eva & $+0.29$ & $+0.25$ & $+0.01$ & $+0.10$ & $+0.21$ & $+0.36$ & $+0.44$ & $+0.46$ & $+0.59$ & $+1.15$ \\
-10/14-02 (EVA+LIVIA) & $+1.15$ & $-0.03$ & $-0.12$ & $+0.04$ & $+0.22$ & $+0.43$ & $+0.57$ & $+0.60$ & $+0.60$ & $+1.48$ \\
-10/14-04 (EVA) & $+0.70$ & $+0.23$ & $+0.05$ & $-0.12$ & $+0.13$ & $+0.46$ & $+0.53$ & $+0.52$ & $+0.57$ & $+1.20$ \\
-10/16 (EVA+LIVIA) & $+0.44$ & $+0.20$ & $+0.17$ & $+0.07$ & $+0.22$ & $+0.39$ & $+0.44$ & $+0.47$ & $+0.47$ & $+0.94$ \\
-\bottomrule
-\end{tabular}
-\caption{Camera: mean longitudinal error $e_x$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins, opponent
-ahead). For the sessions at Yas Marina, the offset of the reference, estimated from
-PointPillars, is subtracted. Trend: linear slope of $e_x$ for $x_{\mathrm{rel}} \geq 40$\,m.}
-\label{tab:cam_x}
-\end{table}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/ch4/gauss68_front_detrended.pdf}
-    \caption{Distributions of the residual errors with the opponent ahead and fitted
-    Gaussian distributions.}
-    \label{fig:gauss68_front}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/ch4/gauss68_rear_detrended.pdf}
-    \caption{Distributions of the residual errors with the opponent behind and fitted
-    Gaussian distributions.}
-    \label{fig:gauss68_rear}
-\end{figure}
+Starting from the Jacobian $\mathbf{A}$ of~\eqref{eq:tt_A}, the matrix exponential is
+\begin{equation}
+    \renewcommand{\arraystretch}{1.6}
+    e^{\mathbf{A}\tau} =
+    \begin{bmatrix}
+        1 & 0 & \tau\cos\psi - \tfrac{1}{2}\kappa v\tau^2\sin\psi
+          & \tfrac{1}{2}\tau^2\cos\psi - \tfrac{1}{6}\kappa v\tau^3\sin\psi & -v\tau\sin\psi \\
+        0 & 1 & \tau\sin\psi + \tfrac{1}{2}\kappa v\tau^2\cos\psi
+          & \tfrac{1}{2}\tau^2\sin\psi + \tfrac{1}{6}\kappa v\tau^3\cos\psi & \phantom{-}v\tau\cos\psi \\
+        0 & 0 & 1 & \tau & 0 \\
+        0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & \kappa\tau & \tfrac{1}{2}\kappa\tau^2 & 1
+    \end{bmatrix}.
+    \label{eq:app_exp}
+\end{equation}
+and~\eqref{eq:tt_Q_def}, with $\mathbf{G}$ and $\mathbf{Q}_c$ of~\eqref{eq:tt_noise}, gives
+\begin{equation}
+    \mathbf{Q}_k =
+    \begin{bmatrix}
+        q_{11} & q_{12} & 0      & q_{14} & q_{15} \\
+        q_{12} & q_{22} & 0      & q_{24} & q_{25} \\
+        0      & 0      & q_{33} & q_{34} & 0      \\
+        q_{14} & q_{24} & q_{34} & q_{44} & q_{45} \\
+        q_{15} & q_{25} & 0      & q_{45} & q_{55}
+    \end{bmatrix},
+    \label{eq:app_Q}
+\end{equation}
+\begin{equation}
+    \renewcommand{\arraystretch}{2}
+    \begin{aligned}
+        q_{11} &= \tfrac{1}{3}\,q_\kappa v^4 \sin^2\psi\,\Delta t^3, &
+        q_{12} &= -\tfrac{1}{3}\,q_\kappa v^4 \sin\psi\cos\psi\,\Delta t^3, \\
+        q_{22} &= \tfrac{1}{3}\,q_\kappa v^4 \cos^2\psi\,\Delta t^3, &
+        q_{14} &= \tfrac{1}{6}\,q_a \cos\psi\,\Delta t^3, \\
+        q_{24} &= \tfrac{1}{6}\,q_a \sin\psi\,\Delta t^3, &
+        q_{15} &= -\tfrac{1}{2}\,q_\kappa v^3 \sin\psi\,\Delta t^2, \\
+        q_{25} &= \tfrac{1}{2}\,q_\kappa v^3 \cos\psi\,\Delta t^2, &
+        q_{33} &= \tfrac{1}{3}\,q_a\,\Delta t^3, \\
+        q_{34} &= \tfrac{1}{2}\,q_a\,\Delta t^2, &
+        q_{44} &= q_a\,\Delta t, \\
+        q_{45} &= \tfrac{1}{6}\,\kappa\,q_a\,\Delta t^3, &
+        q_{55} &= q_\kappa v^2\,\Delta t.
+    \end{aligned}
+    \label{eq:app_Q_elements}
+\end{equation}
