@@ -13,16 +13,16 @@
 % main chain
 \node[mod] (oosm) {OOSM\\handling};
 \node[io, left=20mm of oosm] (perc) {Perception\\pipelines};
-\node[ekf, right=9mm of oosm] (pred) {Prediction\\(CCA model)};
-\node[mod, right=9mm of pred] (assoc) {Data association\\(Mahalanobis,\\Munkres)};
+\node[ekf, right=9mm of oosm] (pred) {Prediction};
+\node[mod, right=9mm of pred] (assoc) {Data association};
 \node[ekf, right=12mm of assoc] (upd) {Update\\(correction)};
 \node[blk, minimum width=16mm, right=9mm of upd] (tracks) {Tracks};
-\node[mod, below=9mm of upd] (mgmt) {Track management\\(creation, confirmation,\\deletion)};
+\node[mod, below=9mm of upd] (mgmt) {Track management};
 
 % external inputs and output
-\node[io, above=9mm of perc] (raw) {Sensors\\(LiDAR, RaDAR,\\camera)};
+\node[io, above=9mm of perc] (raw) {Sensors};
 \node[io, above=9mm of pred] (db) {Track\\database};
-\node[io, above=9mm of assoc] (ego) {Ego state\\(estimation)};
+\node[io, above=9mm of assoc] (ego) {Ego state};
 \node[io, above=9mm of tracks] (plan) {Planning};
 
 % data flow

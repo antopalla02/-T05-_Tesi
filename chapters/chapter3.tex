@@ -29,9 +29,9 @@ the tracks, i.e.\ their creation, confirmation and deletion.
     \label{fig:tt_pipeline}
 \end{figure}
 
-Section~\ref{sec:tt_perception} gives a brief overview of the perception pipelines, i.e.\
+First of all, section~\ref{sec:tt_perception} gives a brief overview of the perception pipelines, i.e.
 how the raw data of the sensors are processed to obtain the detections used by the
-tracking module. Then, following the structure of the EKF, Section~\ref{sec:tt_prediction}
+tracking module. \\Then, following the structure of the EKF, Section~\ref{sec:tt_prediction}
 describes the prediction step. Section~\ref{sec:tt_association} explains how the
 measurements that arrive out of sequence are handled and how each detection is associated with the corresponding track, through the Mahalanobis distance gating and the
 Munkres algorithm. Section~\ref{sec:tt_correction} presents the measurement models and the
@@ -40,12 +40,10 @@ Finally, Section~\ref{sec:tt_management} describes how the life cycle of the tra
 managed.
 
 % =====================================================================
-\section{Perception Measurements}
+\section{Perception output}
 \label{sec:tt_perception}
 
-The target tracking module does not process the raw data of the sensors, but the
-detections produced by the perception pipelines; therefore, a brief description of how
-the data are processed is given first. Since each type of sensor is present in more
+Since each type of sensor is present in more
 units on the vehicle, the data of the sensors of the same type are first synchronized and brought into a common reference frame through the roto-translations
 given by their extrinsic calibration. Each family of sensors is then processed by a
 dedicated pipeline, running as an independent process, and all the pipelines publish
@@ -66,26 +64,16 @@ point of the closest trajectory.
 first, and the remaining ones are filtered with the
 map of the drivable area, so that only the points inside the track are kept. These points are joined into clusters by a density-based clustering algorithm (DBSCAN),
 and the clusters whose extent is not compatible with the dimensions of a car are
-discarded. Since the LiDAR samples only the surfaces facing the sensor, the
-center of the vehicle does not coincide with the centroid of the points of the cluster:
-the visible corner closest to the sensor is identified, and the center is obtained by
-aligning to the visible sides a model of the vehicle with its nominal dimensions.
+discarded. Since the LiDAR samples only the surfaces facing the sensor, the points of the cluster depend on which part of the vehicle is visible, and their centroid is shifted towards the visible corner or side. For this reason, once the visible corner is identified, the cluster is shifted according to the nominal dimensions of the vehicle, so that its position corresponds to the center of the vehicle.
 
-\subparagraph{PointPillars.} PointPillars is a deep neural network for three-dimensional object detection in point
-clouds. The merged cloud is divided into vertical columns, the pillars, whose points are
-encoded into features and processed by the network as an image; for each detected object,
-the network returns an oriented three-dimensional bounding box, i.e.\ its center,
-dimensions and heading, together with a confidence score. Having
-learned the shape of the vehicle from the training data, the network can estimate its
-center and heading also when the vehicle is only partially visible.
+\subparagraph{PointPillars.} Starting from the same point cloud as Clustering, PointPillars processes it with a deep neural network for three-dimensional object detection. The cloud is divided into vertical columns, the pillars, whose points are encoded into features and processed by the network as an image. For each detected object, the network returns an oriented three-dimensional bounding box, i.e. its center, dimensions and heading, together with a confidence score. Since the network learns the shape of the vehicle from the training data, it can estimate the center and the heading of the vehicle also when it is only partially visible.
 
 \paragraph{RaDAR.} At every cycle, each RaDAR returns a list of reflection points, each
-one described by its range, azimuth, elevation and range rate, together with indicators
-of the quality of the reflection. The points of low quality, or at ranges and heights not
+one described by its range, azimuth, elevation and range rate. The points at ranges and heights not
 compatible with a vehicle on track, are discarded, and the remaining ones are expressed
 in the common reference frame and filtered with the map of the drivable area. The points are then clustered based on their position and range rate: reflections that
 are close to each other and share a similar radial velocity are gathered together, while
-points that are spatially close but move differently are separated. Each cluster
+points that are spatially close but move differently are separated. \\Each cluster
 generates a detection whose position is the centroid of its points and whose range rate
 is their mean.
 
@@ -212,8 +200,7 @@ integrals can be solved in closed form. For acceleration, speed and heading,
     \end{aligned}
     \label{eq:tt_cca_vapsi}
 \end{equation}
-while, since $\mathrm{d}\psi = \kappa\,v\,\mathrm{d}t$, the integrals of the position
-reduce to integrals in the heading,
+
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
     \begin{aligned}
@@ -255,7 +242,7 @@ model reduces to:
     \end{bmatrix},
     \label{eq:tt_cca_straight}
 \end{equation}
-which is used when $|\kappa| < \SI{e-4}{m^{-1}}$ to avoid the division by zero
+the latter used when $|\kappa| < \SI{e-4}{m^{-1}}$ to avoid the division by zero.
 in~\eqref{eq:tt_cca_discrete}.
 
 Applying~\eqref{eq:tt_F_def} to~\eqref{eq:tt_cca_discrete}, the linearized state matrix
@@ -373,16 +360,16 @@ the distances of the associated pairs.
 Each detection is stamped with the acquisition time of the sensor data, and reaches the
 tracker after a latency made of a systematic part, related to the amount of processing
 applied to the raw data and thus larger for the LiDAR pipelines, and of a random part,
-related to the operation of the sensor itself. Since the latency differs from one source to another, a measurement may arrive after others acquired later, e.g.\ a LiDAR detection after a RaDAR detection, i.e.\ out of
+related to the operation of the sensor itself. Since the latency differs from one source to another, a measurement may arrive after others acquired later, i.e.\ out of
 sequence; the phenomenon becomes more frequent as the number and the variety of the
-sources increase. The classical Kalman filter, however, prescribes that the measurements are
+sources increase. In its classical formulation, the Kalman filter,prescribes that the measurements are
 processed in chronological order, so that a measurement arriving out of order cannot be
-used in the standard way. The simplest solutions are either to discard the late
+used. \\The simplest solutions are either to discard the late
 measurements, losing the information they carry, or to buffer the measurements for a
 fixed interval and reorder them, at the price of a constant delay of the estimate.
 
 In the proposed tracker, OOSM are handled as soon as they arrive, by reprocessing the
-history of the whole tracker. 
+history of the whole tracker as shown in Fig.~\ref{fig:tt_oosm_timeline}  . 
 
 \begin{figure}[H]
     \centering
@@ -416,7 +403,7 @@ The main drawback of the reprocessing is its computational cost: the state of al
 tracks has to be stored for every entry of the history, and a single late measurement may
 require several measurements to be processed again, a number that grows with the delay of
 the late measurement.
-To keep it limited, the measurements whose delay exceeds a maximum threshold are
+\\To keep it limited, the measurements whose delay exceeds a maximum threshold are
 discarded, since the older the measurements, the lower their benefit to the current estimate and
 the more expensive their reprocessing. For the same reason, the history keeps only the
 last seconds of data, removing the oldest entries.

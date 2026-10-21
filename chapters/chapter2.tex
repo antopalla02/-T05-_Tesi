@@ -15,8 +15,7 @@ evaluate the algorithms presented in the following chapters.
 Section~\ref{sec:operating_conditions} introduces the two competitions.
 Section~\ref{sec:av24} and Section~\ref{sec:eav24} introduce the
 two racecars together with their sensors. Section~\ref{sec:sensors} presents the working principle of the
-exteroceptive sensors (LiDARs, RaDARs and cameras) used for opponent tracking and the
-units mounted on the two vehicles. Finally,
+sensors used for opponent tracking and their setup on the two vehicles. 
 Section~\ref{sec:sw_arch} outlines the software architecture.
 
 % =====================================================================
@@ -28,9 +27,8 @@ Section~\ref{sec:sw_arch} outlines the software architecture.
 the Indianapolis Motor Speedway, preceded since 2019 by a series of competitions in
 simulated environments. All the teams compete with the same vehicle, provided by the organizers. Historically, the events have been held mainly on oval tracks, such as the
 Indianapolis Motor Speedway, the Las Vegas Motor Speedway, and the Texas Motor Speedway. Since
-2023 the series has also raced on road courses, starting from Monza, and in the last two
-seasons it has raced at WeatherTech Raceway Laguna Seca (Fig.~\ref{fig:av24}), where in
-2026 it held its first head-to-head competition on a road course.
+2023 the series has also raced on road courses, starting from Monza, and from the last two
+seasons at WeatherTech Raceway Laguna Seca (Fig.~\ref{fig:av24}).
 
 \begin{figure}[H]
     \centering
@@ -39,8 +37,7 @@ seasons it has raced at WeatherTech Raceway Laguna Seca (Fig.~\ref{fig:av24}), w
     \label{fig:av24}
 \end{figure}
 
-\paragraph{Abu Dhabi Autonomous Racing League.} The A2RL is organized by ASPIRE, part of
-the Advanced Technology Research Council of Abu Dhabi, and debuted in April 2024 at the
+\paragraph{Abu Dhabi Autonomous Racing League.} The A2RL is organized by ASPIRE, and debuted in April 2024 at the
 Yas Marina Circuit, with a race between four autonomous cars. Unlike the IAC, it was
 conceived from the beginning for road circuits. In September 2026
 it raced at the Autodromo Internazionale Enzo e Dino Ferrari in Imola, with five cars on
@@ -56,13 +53,12 @@ track (Fig.~\ref{fig:eav24}).
 \paragraph{Formats.} Both championships include single-vehicle and multi-target formats.
 In single-vehicle formats, such as time trials and qualifying, each car is alone on track
 and is ranked on its fastest lap: the focus is entirely on driving the vehicle
-autonomously at the limits of its dynamic capabilities. In multi-target formats, instead,
-the vehicle shares the track with other cars. In the IAC, the passing competition tests
-the interaction between two vehicles in a head-to-head elimination bracket, in which an
-attacking car tries to overtake a defending one. In the A2RL, several cars race together on the same track during
-the sprint races and the main race.
+autonomously at the limits of its dynamic capabilities. In multi-target formats, such as races, instead,
+the vehicle shares the track with other cars. 
+In addition to the standard race formats, the IAC has recently introduced the passing competition, a format specifically designed to promote the interaction between the vehicles. In each head-to-head round of an elimination bracket, the trailing vehicle, which is given more power, aims to overtake the leading one, which in turn aims to defend its position.
 
-Overall, in both competitions the cars race above \SI{250}{km/h}, close to their
+
+Overall, in both competitions, the cars race above \SI{250}{km/h}, close to their
 dynamic limits and, in the multi-target formats, in close proximity to each other:
 conditions that are hard to reproduce elsewhere, and therefore valuable for testing
 autonomous driving.
@@ -104,9 +100,9 @@ collected in Table~\ref{tab:av24}.
 Several modifications have been introduced on the original car to enable autonomous
 driving. The bodywork has been modified to host the exteroceptive sensors used for the
 perception of the environment and of the opponents, three LiDARs, two RaDARs and six
-cameras, described in Section~\ref{sec:sensors}. This set of sensors is chosen to make the perception robust and redundant: combining
-sensors with different working principles and distributing them around the whole vehicle
-overcomes the limitations of the single sensors. The state of the ego vehicle is estimated from GNSS
+cameras, described in Section~\ref{sec:sensors}.
+This sensor suite allows the opponent vehicle to be perceived reliably and consistently. It is chosen specifically to make the perception robust and redundant, by fusing sensors with different working principles and strengths, so as to overcome the limitations of each of them. \\
+The state of the ego vehicle is estimated from GNSS
 receivers and from proprioceptive sensors: a VectorNav VN-310 GNSS/INS, which includes an
 inertial measurement unit, and two NovAtel PwrPak7 receivers provide position, attitude,
 velocity and acceleration measurements, while the wheel speed
@@ -131,7 +127,7 @@ Unlike the AV-24, the EAV-25 is conceived for road circuits; therefore, the vehi
 designed for high performance in heavy braking, in slow and fast corners and, in
 general, in more challenging dynamical conditions. The power unit is a turbocharged
 \SI{2.0}{l} four-cylinder engine delivering about \SI{450}{hp}, which can be raised
-temporarily to about \SI{550}{hp} with the push-to-pass, coupled with a
+temporarily to about \SI{550}{hp} enabling the push-to-pass, coupled with a
 longitudinal six-speed sequential gearbox, which brings the car to a top speed of about
 \SI{300}{km/h}. The main characteristics of the vehicle are summarized in
 Table~\ref{tab:eav24}.
@@ -173,10 +169,9 @@ other actuators, together with the radio system for the communication with race 
 \section{Sensors}
 \label{sec:sensors}
 
-This section describes the sensors mounted on the Dallara AV-24 and EAV-25. For each type of
+To perceive the surrounding environment, as anticipated in the previous section, each vehicle has been retrofitted with several sensors. The following section, describes the ones mounted on the Dallara AV-24 and EAV-25. For each type of
 sensor, the working principle and the main strengths and limitations are presented first;
-then, focusing on each vehicle, the main characteristics and performance of the specific
-sensors mounted on it are described.
+then, focusing on each vehicle, the main characteristics and performance of the specific ones mounted on it are described.
 
 % ---------------------------------------------------------------------
 \subsection{LiDAR}
@@ -207,7 +202,7 @@ with respect to the longitudinal axis. The Iris operates at a wavelength of \SI{
 with a dual-scanning optical system, which sweeps the field of view at 640 lines per
 second: the number of scan lines in each frame therefore depends on the frame rate, and
 at the \SI{10}{Hz} used in the application each frame contains 64 lines. The vertical
-field of view, up to \SI{26}{\degree}, and the distribution of the scan lines within it
+field of view and the distribution of the scan lines within it
 can be configured in real time, choosing between uniform scan patterns, in which the lines
 are evenly spaced, and non-uniform ones, for instance Gaussian, which concentrate the
 lines around the horizon. The main characteristics of the sensor are reported in
@@ -233,8 +228,7 @@ Table~\ref{tab:lidar_av24}.
     \label{tab:lidar_av24}
 \end{table}
 
-Each unit covers \SI{120}{\degree} in azimuth, so that the three LiDARs together cover
-almost the whole horizontal plane around the vehicle (Fig.~\ref{fig:av24_lidar_fov}). To give an idea of the density of the point cloud,
+To give an idea of the density of the point cloud,
 consider for example an opponent with the dimensions of the AV-24 reported in
 Table~\ref{tab:av24}, i.e.\ \SI{1.93}{m} wide and \SI{1.16}{m} high, \SI{50}{m} straight
 ahead of the sensor and seen from behind: it covers an angle of
@@ -245,12 +239,12 @@ points on its rear. In the vertical direction, with a uniform pattern over
 crossed by about 3 lines, for a total of about 55 points per frame; with a pattern that
 concentrates the lines around the horizon, the number of lines on the opponent, and thus
 of points, increases accordingly. 
+Each unit covers \SI{120}{\degree} in azimuth, so that the three LiDARs together cover
+almost the whole horizontal plane around the vehicle (Fig.~\ref{fig:av24_lidar_fov}).
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/ch2/av24_lidar_fov.pdf}
-    \caption{Horizontal field of view of the LiDARs of the Dallara AV-24. The radius of
-    the sectors is not to scale, and the occlusion caused by the rear wing is not
-    represented.}
+    \caption{Horizontal field of view of the LiDARs of the Dallara AV-24.}
     \label{fig:av24_lidar_fov}
 \end{figure}
 
@@ -266,8 +260,7 @@ and more evident as the opponent aligns with the longitudinal axis of the ego ve
 
 The EAV-25 is equipped with three Innovusion Falcon Kinetic LiDARs: one at the front of
 the cockpit, facing forward, and two on the sides of the cockpit, oriented at
-$\pm\SI{120}{\degree}$ with respect to the longitudinal axis. The Falcon Kinetic is a
-semi-solid-state LiDAR, also operating at \SI{1550}{nm}, which scans up to 1500 lines
+$\pm\SI{120}{\degree}$ with respect to the longitudinal axis. The Falcon Kinetic operates at \SI{1550}{nm},  scanning up to 1500 lines
 per second and is used at \SI{10}{Hz}. Its angular resolution is
 \SI{0.18}{\degree} $\times$ \SI{0.24}{\degree} and can be increased to
 \SI{0.09}{\degree} $\times$ \SI{0.08}{\degree} in a specific region of interest of
@@ -303,7 +296,7 @@ reported in Table~\ref{tab:eav24}, i.e.\ \SI{1.93}{m} wide and \SI{0.97}{m} high
 \SI{2.2}{\degree} $\times$ \SI{1.1}{\degree}. Outside the region of interest, it is sampled
 by about 12 points on each scan line and by 4--5 lines, i.e.\ about 55 points per frame;
 inside the region of interest, by about 24 points on each of about 14 lines, i.e.\ more
-than 300 points. The three
+than 300 points. \\The three
 LiDARs, oriented at \SI{120}{\degree} from each other, nominally cover the whole
 horizontal plane (Fig.~\ref{fig:eav24_lidar_fov}).
 The same considerations made for the AV-24 on the effective range and on the blind spot
@@ -312,9 +305,7 @@ caused by the rear wing apply.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/ch2/eav24_lidar_fov.pdf}
-    \caption{Horizontal field of view of the LiDARs of the Dallara EAV-25. The radius of
-    the sectors is not to scale, and the occlusion caused by the rear wing is not
-    represented.}
+    \caption{Horizontal field of view of the LiDARs of the Dallara EAV-25..}
     \label{fig:eav24_lidar_fov}
 \end{figure}
 
@@ -342,19 +333,23 @@ next by an amount proportional to the radial component of the relative velocity
     \dot\rho = \frac{\lambda\,\Delta\varphi}{4\pi\,T_c},
     \label{eq:doppler}
 \end{equation}
-where $\lambda$ is the wavelength of the carrier, $T_c$ the time between two consecutive
-ramps and $\Delta\varphi$ the phase difference of the echo between them; equivalently,
-the echo is shifted in frequency by $|f_D| = 2|\dot\rho|/\lambda$ (Doppler shift). The
+where:
+\begin{itemize}
+    \item $\lambda$ denotes the carrier wavelength;
+    \item $T_c$ denotes the time between two consecutive ramps;
+    \item $\Delta\varphi$ denotes the phase increment of the received echo.
+\end{itemize}
+Equivalently, the received echo exhibits a Doppler frequency shift $|f_D| = 2|\dot\rho|/\lambda$. The
 RaDAR therefore measures the \emph{range rate} $\dot\rho$, the rate of change of the
 distance between the two vehicles, within a single scan.
-Radio waves are also much less attenuated than light, so
+\\Radio waves are also much less attenuated than light, so
 the RaDAR detects a vehicle at larger distances than the LiDAR and extends the distance
 at which an opponent is visible. For the same reason, it is also much less sensitive to
 adverse weather, and its operation is guaranteed both during day and night.
 
 Its position measurement, however, is less accurate than that of the LiDAR. The RaDAR does not reconstruct the three-dimensional shape of the target: the
-echoes come from a few points on the most reflective parts of the vehicle. Its angular resolution is also considerably
-coarser than that of LiDARs and cameras.
+echoes come from a few points on the most reflective parts of the vehicle. Moreover, its angular resolution is also considerably
+coarser than that of LiDARs.
 
 \subsubsection{Dallara AV-24}
 
@@ -379,7 +374,7 @@ Their main characteristics are reported in Table~\ref{tab:radar_av24}.
         Range resolution                  & \SI{0.22}{m}                     & \SI{0.21}{m} / \SI{0.41}{m} / \SI{0.77}{m} \\
         Relative speed range              & $-111$ to $+\SI{56}{m/s}$        & -- \\
         Range rate resolution             & \SI{0.1}{m/s}                    & \SI{0.1}{m/s} \\
-        Update rate                       & \SI{20}{Hz}                      & \SI{16.7}{Hz} \\
+        Update rate                       & \SI{16.7}{Hz}                      & \SI{16.7}{Hz} \\
         \bottomrule
     \end{tabular}
     \caption{Main characteristics of the RaDARs mounted on the Dallara AV-24.}
@@ -387,9 +382,8 @@ Their main characteristics are reported in Table~\ref{tab:radar_av24}.
 \end{table}
 
 The ARS548~RDI detects targets up to \SI{300}{m}, within $\pm\SI{50}{\degree}$ in azimuth,
-measures relative speeds between $-\SI{111}{m/s}$ (approaching targets) and
-$+\SI{56}{m/s}$, and covers its whole field of view in a cycle time of about
-\SI{50}{ms}, i.e.\ at \SI{20}{Hz}. For the FRGen21 the range mode can be selected: the
+measures relative speeds between $-\SI{400}{km/h}$ (approaching targets) and
+$+\SI{200}{km/h}$. For the FRGen21 the range mode can be selected: the
 available modes go from a shorter to a longer range operation, and the range resolution
 decreases as the maximum range increases. It covers $\pm\SI{45}{\degree}$ in azimuth up to
 \SI{150}{m} and works at \SI{16.7}{Hz}. The RaDAR coverage is limited to two sectors, in
@@ -405,12 +399,12 @@ RaDAR covers the blind spot of the LiDARs.
     \label{fig:av24_radar_fov}
 \end{figure}
 
-In our case scenario, the effective range is also more limited than the nominal one, and
+In our case scenario, as for the LiDARs, the effective range is  more limited than the nominal one, and
 the RaDAR measures the opponent consistently up to about \SI{150}{m}. The echoes come
-from a few reflective parts of the opponent, such as the wheels, the wings and the
-metallic components: since the measured position depends on the reflectivity of the
+from a few reflective parts of the opponent, such as the nose , the wings and the
+metallic components. Moreover,  since the measured position depends on the reflectivity of the
 target, it is related to the surface that the opponent exposes to the sensor, and
-therefore to the relative geometry between the two vehicles. Walls, bridges and guardrails along the track can also reflect the RaDAR signals, generating false detections.
+therefore to the relative geometry between the two vehicles. 
 
 \subsubsection{Dallara EAV-25}
 
@@ -446,7 +440,7 @@ The horizontal field of view reported in Table~\ref{tab:radar_eav24} is the nomi
 each unit. In the application, the region of interest of each RaDAR is limited to
 $\pm\SI{45}{\degree}$ around its boresight, so that the four sectors do not overlap and
 together cover the whole horizontal plane around the vehicle
-(Fig.~\ref{fig:eav24_radar_fov}). This choice also allows the blind spot of the LiDARs
+(Fig.~\ref{fig:eav24_radar_fov}). This configuration choice also allows the blind spot of the LiDARs
 behind the car to be recovered efficiently by the rear RaDAR.
 
 \begin{figure}[H]
@@ -457,8 +451,6 @@ behind the car to be recovered efficiently by the rear RaDAR.
     \label{fig:eav24_radar_fov}
 \end{figure}
 
-The same considerations made for the AV-24 on the effective range, on the reflection
-points and on the reflections of walls, bridges and guardrails apply.
 
 % ---------------------------------------------------------------------
 \subsection{Cameras}
@@ -472,7 +464,7 @@ image. The three-dimensional position of the vehicle is then reconstructed from 
 bounding box, with the knowledge of the calibration of the cameras.
 
 Cameras are strongly affected by the environmental conditions. Being
-passive sensors, they depend on the ambient light, so that the quality of the images
+passive sensors, for example, they depend on the ambient light, so that the quality of the images
 changes with the brightness of the scene, as well as with the weather. Since the depth is not measured directly but reconstructed from the image, its accuracy
 degrades as the distance of the target increases.
 
@@ -551,15 +543,10 @@ fusing the measurements of the GNSS receivers, of the inertial units and of the
 proprioceptive sensors. Its output is used by the perception, planning and control
 modules.
 
-\paragraph{Perception.} The perception module turns the raw data of LiDARs, RaDARs and
-cameras into a description of the vehicles around the ego car. A first stage processes
-the data of each sensor separately: point clouds, RaDAR reflections and images are
-filtered, the points belonging to other vehicles are isolated and a list of
-\emph{detections} is produced, each one containing the position of a vehicle and, for
-the RaDAR, its range rate. The detections of the different sensors are then passed to
+\paragraph{Perception.}The perception module turns the raw data of LiDARs, RaDARs and cameras into a description of the vehicles around the ego car. For each sensor, the raw data are processed into a list of detections, each containing the position of a vehicle and, for the RaDAR, also its range rate. The detections of the different sensors are then passed to
 the \emph{target tracking} module, which associates them over time with the vehicles
 already known, fuses the information coming from the different sensors and estimates
-the state of each opponent, including quantities that are not measured directly. The result is
+the state of each opponent. The result is
 the list of the opponents with their estimated state, which is the output of perception towards planning. The target
 tracking module is the subject of this thesis and is described in detail in
 Chapter~\ref{ch:tracking}.
