@@ -114,9 +114,8 @@ Since $f_d$ is nonlinear, it is linearized around the last estimate,
     \mathbf{F}_k = \left.\frac{\partial f_d}{\partial \mathbf{x}}\right|_{\hat{\mathbf{x}}_k,\,\mathbf{u}_k}.
     \label{eq:tt_F_def}
 \end{equation}
-The estimated state $\hat{\mathbf{x}}$ is associated with a measure of its uncertainty,
-represented by the covariance matrix $\mathbf{P}$ of the filter. Given the estimate
-$\hat{\mathbf{x}}_k$ and its covariance $\mathbf{P}_k$, the prediction step computes the a
+Given the estimate
+$\hat{\mathbf{x}}_k$ and its covariance $\mathbf{P}_k$ (which measures how uncertain is the estimate), the prediction step computes the a
 priori estimate and covariance at the next iteration, the first simply propagating through the motion model, the second one, accounting also for the
 contribution of the process noise.
 
