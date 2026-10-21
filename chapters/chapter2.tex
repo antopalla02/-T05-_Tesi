@@ -107,9 +107,9 @@ receivers and from proprioceptive sensors: a VectorNav VN-310 GNSS/INS, which in
 inertial measurement unit, and two NovAtel PwrPak7 receivers provide position, attitude,
 velocity and acceleration measurements, while the wheel speed
 and steering angle sensors measure the motion of the wheels and the steering input. The cockpit, no longer occupied by the driver, hosts the on-board
-computer, a dSPACE AUTERA AutoBox with a 12-core Intel Xeon CPU and an NVIDIA A5000 GPU,
-which processes the data of the sensors and translates them into the commands for the
-drive-by-wire actuators of steering, throttle, brake and gear. Finally, a radio system
+computer, which runs the autonomous driving software, processing the data of the sensors
+and translating them into the commands for the drive-by-wire actuators of steering,
+throttle, brake and gear. Finally, a radio system
 with dedicated antennas connects the car to the base station, which receives the
 telemetry and sends the race control signals.
 
@@ -159,9 +159,8 @@ in Section~\ref{sec:sensors}. The state of the ego vehicle is estimated from a
 dual-antenna VectorNav VN-310 RTK-GNSS/INS, which includes an inertial measurement unit,
 from a Kistler SF~Motion, an optical sensor that measures the longitudinal and lateral
 ground speed, and from the wheel speed sensors. The cockpit hosts the
-on-board computer, with a 16-core AMD EPYC 7313P CPU and an NVIDIA RTX 6000 Ada GPU,
-which runs the autonomous driving software and commands the steer-by-wire system and the
-other actuators, together with the radio system for the communication with race control.
+on-board computer, which runs the autonomous driving software and commands the
+steer-by-wire system and the other actuators, together with the radio system for the communication with race control.
 
 \FloatBarrier
 
@@ -360,12 +359,13 @@ Their main characteristics are reported in Table~\ref{tab:radar_av24}.
         \midrule
         Model                             & Continental ARS548 RDI           & ZF FRGen21 \\
         FoV (H $\times$ V)                & \SI{100}{\degree} $\times$ \SI{28}{\degree} (${<}\SI{100}{m}$) & \SI{90}{\degree} $\times$ \SI{30}{\degree} (\SI{150}{m}) \\
-        Angular resolution (H $\times$ V) & 1.2--\SI{1.68}{\degree} $\times$ \SI{2.3}{\degree} & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
+        Angular resolution (H $\times$ V) & --                               & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
+        Angular accuracy (H $\times$ V)   & $\pm$0.1--\SI{0.5}{\degree} $\times$ $\pm\SI{0.1}{\degree}$ & 0.15--\SI{1}{\degree} $\times$ \SI{0.15}{\degree} \\
         Maximum range                     & \SI{300}{m}                      & \SI{95}{m} / \SI{190}{m} / \SI{350}{m} \\
         Range resolution                  & \SI{0.22}{m}                     & \SI{0.21}{m} / \SI{0.41}{m} / \SI{0.77}{m} \\
         Relative speed range              & $-400$ to $+\SI{200}{km/h}$        & -- \\
         Range rate resolution             & \SI{0.1}{m/s}                    & \SI{0.1}{m/s} \\
-        Update rate                       & \SI{16.7}{Hz}                      & \SI{16.7}{Hz} \\
+        Update rate                       & \SI{20}{Hz}                       & \SI{16.7}{Hz} \\
         \bottomrule
     \end{tabular}
     \caption{Main characteristics of the RaDARs mounted on the Dallara AV-24.}
@@ -373,7 +373,7 @@ Their main characteristics are reported in Table~\ref{tab:radar_av24}.
 \end{table}
 
 The ARS548~RDI detects targets up to \SI{300}{m}, within $\pm\SI{50}{\degree}$ in azimuth,
-measures relative speeds between $-\SI{400}{km/h}$ (approaching targets) and
+works at \SI{20}{Hz} and measures relative speeds between $-\SI{400}{km/h}$ (approaching targets) and
 $+\SI{200}{km/h}$. \\For the FRGen21 the range mode can be selected: the
 available modes go from a shorter to a longer range operation, and the range resolution
 decreases as the maximum range increases. It covers $\pm\SI{45}{\degree}$ in azimuth up to
