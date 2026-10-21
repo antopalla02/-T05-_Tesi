@@ -40,7 +40,7 @@ seasons at WeatherTech Raceway Laguna Seca (Fig.~\ref{fig:av24}).
 \paragraph{Abu Dhabi Autonomous Racing League.} The A2RL is organized by ASPIRE, and debuted in April 2024 at the
 Yas Marina Circuit, with a race between four autonomous cars. Unlike the IAC, it was
 conceived from the beginning for road circuits. In September 2026
-it raced at the Autodromo Internazionale Enzo e Dino Ferrari in Imola, with five cars on
+it raced for the first time at the Autodromo Internazionale Enzo e Dino Ferrari in Imola.
 track (Fig.~\ref{fig:eav24}).
 
 \begin{figure}[H]
@@ -293,10 +293,7 @@ Table~\ref{tab:lidar_eav24}.
 In the same example made for the AV-24, an opponent with the dimensions of the EAV-25
 reported in Table~\ref{tab:eav24}, i.e.\ \SI{1.93}{m} wide and \SI{0.97}{m} high,
 \SI{50}{m} straight ahead and seen from behind, covers about
-\SI{2.2}{\degree} $\times$ \SI{1.1}{\degree}. Outside the region of interest, it is sampled
-by about 12 points on each scan line and by 4--5 lines, i.e.\ about 55 points per frame;
-inside the region of interest, by about 24 points on each of about 14 lines, i.e.\ more
-than 300 points. \\The three
+\SI{2.2}{\degree} $\times$ \SI{1.1}{\degree}. The number of points with which the opponent is sampled depends on whether it lies inside or outside the region of interest. Inside it, the opponent is crossed by about 14 scan lines, each returning about 24 points, for more than 300 points per frame. Outside it, the opponent is crossed by 4–5 scan lines of about 12 points each, for about 55 points per frame. \\The three
 LiDARs, oriented at \SI{120}{\degree} from each other, nominally cover the whole
 horizontal plane (Fig.~\ref{fig:eav24_lidar_fov}).
 The same considerations made for the AV-24 on the effective range and on the blind spot
@@ -323,7 +320,7 @@ between the transmitted and the received signal is proportional to the range of 
 target. The direction of the target is obtained from the phase differences of the echo
 across the receiving antennas.
 
-The RaDAR measures the relative velocity directly. When the target
+The main strenght of the RaDAR, is the direct measure of the relative velocity. \\When the target
 moves with respect to the sensor, the phase of its echo changes from one ramp to the
 next by an amount proportional to the radial component of the relative velocity
 (Doppler effect):
@@ -337,19 +334,13 @@ where:
 \begin{itemize}
     \item $\lambda$ denotes the carrier wavelength;
     \item $T_c$ denotes the time between two consecutive ramps;
-    \item $\Delta\varphi$ denotes the phase increment of the received echo.
-\end{itemize}
-Equivalently, the received echo exhibits a Doppler frequency shift $|f_D| = 2|\dot\rho|/\lambda$. The
-RaDAR therefore measures the \emph{range rate} $\dot\rho$, the rate of change of the
-distance between the two vehicles, within a single scan.
-\\Radio waves are also much less attenuated than light, so
-the RaDAR detects a vehicle at larger distances than the LiDAR and extends the distance
-at which an opponent is visible. For the same reason, it is also much less sensitive to
-adverse weather, and its operation is guaranteed both during day and night.
+    \item $\Delta\varphi$ denotes the phase shift of the received echo.
 
-Its position measurement, however, is less accurate than that of the LiDAR. The RaDAR does not reconstruct the three-dimensional shape of the target: the
-echoes come from a few points on the most reflective parts of the vehicle. Moreover, its angular resolution is also considerably
-coarser than that of LiDARs.
+\end{itemize}
+
+RaDARs emit radio waves, with a wavelength much longer than the light of LiDARs. These waves are less attenuated by dust, fog and rain, which makes the sensor robust to adverse weather and extends its detection range beyond the one of LiDARs.
+
+Its position measurement, however, is less accurate than the one of the LiDARs, for two reasons. First, its angular resolution is considerably coarser, so the vehicle is sampled with fewer points. Second, the RaDAR does not reconstruct the three-dimensional shape of the target, but derives its position from the echoes of the most reflective surfaces of the vehicle.
 
 \subsubsection{Dallara AV-24}
 
@@ -372,7 +363,7 @@ Their main characteristics are reported in Table~\ref{tab:radar_av24}.
         Angular resolution (H $\times$ V) & 1.2--\SI{1.68}{\degree} $\times$ \SI{2.3}{\degree} & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
         Maximum range                     & \SI{300}{m}                      & \SI{95}{m} / \SI{190}{m} / \SI{350}{m} \\
         Range resolution                  & \SI{0.22}{m}                     & \SI{0.21}{m} / \SI{0.41}{m} / \SI{0.77}{m} \\
-        Relative speed range              & $-111$ to $+\SI{56}{m/s}$        & -- \\
+        Relative speed range              & $-400$ to $+\SI{200}{km/h}$        & -- \\
         Range rate resolution             & \SI{0.1}{m/s}                    & \SI{0.1}{m/s} \\
         Update rate                       & \SI{16.7}{Hz}                      & \SI{16.7}{Hz} \\
         \bottomrule
@@ -383,7 +374,7 @@ Their main characteristics are reported in Table~\ref{tab:radar_av24}.
 
 The ARS548~RDI detects targets up to \SI{300}{m}, within $\pm\SI{50}{\degree}$ in azimuth,
 measures relative speeds between $-\SI{400}{km/h}$ (approaching targets) and
-$+\SI{200}{km/h}$. For the FRGen21 the range mode can be selected: the
+$+\SI{200}{km/h}$. \\For the FRGen21 the range mode can be selected: the
 available modes go from a shorter to a longer range operation, and the range resolution
 decreases as the maximum range increases. It covers $\pm\SI{45}{\degree}$ in azimuth up to
 \SI{150}{m} and works at \SI{16.7}{Hz}. The RaDAR coverage is limited to two sectors, in
@@ -399,12 +390,7 @@ RaDAR covers the blind spot of the LiDARs.
     \label{fig:av24_radar_fov}
 \end{figure}
 
-In our case scenario, as for the LiDARs, the effective range is  more limited than the nominal one, and
-the RaDAR measures the opponent consistently up to about \SI{150}{m}. The echoes come
-from a few reflective parts of the opponent, such as the nose , the wings and the
-metallic components. Moreover,  since the measured position depends on the reflectivity of the
-target, it is related to the surface that the opponent exposes to the sensor, and
-therefore to the relative geometry between the two vehicles. 
+In our scenario, as for the LiDARs, the effective range of the RaDAR is shorter than the nominal one, and the opponent is detected consistently only up to about 150 m. The main reason is that the radio waves are reflected only by a few parts of the opponent, such as the nose, the wings and the metallic components.
 
 \subsubsection{Dallara EAV-25}
 
@@ -440,8 +426,8 @@ The horizontal field of view reported in Table~\ref{tab:radar_eav24} is the nomi
 each unit. In the application, the region of interest of each RaDAR is limited to
 $\pm\SI{45}{\degree}$ around its boresight, so that the four sectors do not overlap and
 together cover the whole horizontal plane around the vehicle
-(Fig.~\ref{fig:eav24_radar_fov}). This configuration choice also allows the blind spot of the LiDARs
-behind the car to be recovered efficiently by the rear RaDAR.
+(Fig.~\ref{fig:eav24_radar_fov}). The configuration of the RaDARs also allows the blind spot of the LiDARs
+behind the car to be covered efficiently.
 
 \begin{figure}[H]
     \centering
@@ -487,7 +473,6 @@ Its main characteristics are reported in Table~\ref{tab:cam_av24}.
         Image sensor       & Sony IMX265 \\
         Resolution         & $2064 \times 1544$ pixels \\
         Maximum frame rate & \SI{37.6}{fps} \\
-        Arrangement        & front stereo pair (baseline \SI{0.36}{m}), two side cameras at $\pm\SI{100}{\degree}$, two roll hoop cameras (forward and backward) \\
         \bottomrule
     \end{tabular}
     \caption{Main characteristics of the cameras mounted on the Dallara AV-24.}
@@ -513,7 +498,6 @@ main characteristics are reported in Table~\ref{tab:cam_eav24}.
         Image sensor       & Sony IMX728 \\
         Resolution         & $3857 \times 2177$ pixels \\
         Maximum frame rate & \SI{45}{fps} \\
-        Arrangement        & front stereo pair (baseline \SI{0.32}{m}), two side cameras, three rear cameras (two on the roll hoop, one at the rear end) \\
         \bottomrule
     \end{tabular}
     \caption{Main characteristics of the cameras mounted on the Dallara EAV-25.}
