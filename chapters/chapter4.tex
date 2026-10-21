@@ -35,8 +35,7 @@ Section~\ref{sec:preprocessing} describes the pre-processing of the data and
 Section~\ref{sec:datasets} the datasets. The three steps of the analysis correspond to
 Sections~\ref{sec:deterministic}, \ref{sec:macro} and~\ref{sec:gauss_markov},
 respectively. Section~\ref{sec:meas_cov} then presents the static and the adaptive
-measurement noise covariance, whose results are discussed in
-Section~\ref{sec:ch4_results}.
+measurement noise covariance.
 
 % =====================================================================
 \section{Preliminaries}
@@ -878,13 +877,51 @@ operating conditions of the vehicle.
 \subsection{Covariance Matching}
 \label{sec:adaptive_r}
 
-\TODO{Covariance matching: $\mathbf{R}$ adapted online around the innovations of the
-filter, with the static value of Section~\ref{sec:gaussian_fit} as nominal value.}
+The nominal value of $\mathbf{R}$ derived in the previous section is an average over the
+operating conditions in which the data were collected. In some situations it can therefore
+be undersized, when the quality of the measurement degrades, e.g.\ in the blind spot, with
+a partial occlusion of the opponent or at long range, as shown in Section~\ref{sec:macro},
+or oversized, when the measurement is better than on average. For this reason, the nominal
+value is complemented, and compared, with a covariance matching technique, which adapts
+$\mathbf{R}$ online using the innovations of the filter. In this way, $\mathbf{R}$ follows
+the instantaneous quality of the measurement, increasing when it degrades and decreasing
+when it is good, and the filter becomes robust also to situations not represented in the
+data used for the nominal value.
 
-% =====================================================================
-\section{Results}
-\label{sec:ch4_results}
+For a Kalman filter, the covariance of the innovations $\boldsymbol{\nu}_k$ is
+\begin{equation}
+    \mathbf{S}_k = \mathbb{E}\left[\boldsymbol{\nu}_k\,\boldsymbol{\nu}_k^\top\right]
+    = \mathbf{H}\,\mathbf{P}_{k|k-1}\,\mathbf{H}^\top + \mathbf{R}_k.
+    \label{eq:cm_innov_cov}
+\end{equation}
+For a consistent filter, the covariance of the measurement errors is therefore obtained
+from the one of the innovations, minus the share due to the uncertainty of the filter,
+\begin{equation}
+    \mathbf{R}_k = \mathbf{S}_k - \mathbf{H}\,\mathbf{P}_{k|k-1}\,\mathbf{H}^\top.
+    \label{eq:cm_R}
+\end{equation}
+With large innovations and a small $\mathbf{P}$, $\mathbf{R}$ increases, since the
+measurement is worse than assumed, while with small innovations and a small $\mathbf{P}$,
+$\mathbf{R}$ is small. The formulation, however, does not exclude the case in which
+$\mathbf{R}$ becomes negative definite, when the innovations are smaller than predicted by
+the uncertainty of the filter. For this reason, a lower bound is imposed on the diagonal
+elements of $\mathbf{R}$.
 
-\TODO{Fixed $\mathbf{R}$ and adaptive $\mathbf{R}$. NEES/NIS with $\chi^2$ bounds, RMSE ahead/behind and per range, critical
-episodes, adaptive $\mathbf{R}$ vs $\sigma$(range), whiteness of the normalized
-innovations.}
+The fundamental assumption of the method is that the innovations are a zero-mean, white
+sequence, uncorrelated between different time instants, so that each of them is
+representative of the uncertainty of the measurement itself. The covariance
+$\mathbf{S}_k$ can then be estimated from the product
+$\boldsymbol{\nu}_k\,\boldsymbol{\nu}_k^\top$ of each new innovation, and the information
+of the past innovations is retained through a mixing coefficient $\alpha \in (0,1)$,
+\begin{equation}
+    \hat{\mathbf{R}}_k = \alpha\,\hat{\mathbf{R}}_{k-1}
+    + (1-\alpha)\left(\boldsymbol{\nu}_k\,\boldsymbol{\nu}_k^\top
+    - \mathbf{H}\,\mathbf{P}_{k|k-1}\,\mathbf{H}^\top\right).
+    \label{eq:cm_R_alpha}
+\end{equation}
+The value of $\alpha$ determines how rapidly $\hat{\mathbf{R}}_k$ changes. A larger value
+keeps it close to the nominal value, while a smaller one updates it frequently with the
+new information. The value adopted is chosen so that $\hat{\mathbf{R}}_k$ adapts to the
+actual quality of the measurements, while filtering the noise of the single innovations.
+The recursion is initialized with the nominal value of Section~\ref{sec:gaussian_fit}, and
+it is run separately for each sensor.
