@@ -152,8 +152,8 @@ Session & \multicolumn{9}{c|}{$x_{\mathrm{rel}}$ [m]} & Trend \\
 \cmidrule(lr){2-10}
  & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 & [cm/m] \\
 \midrule
-07/26\_TUM & $+0.58$ & $-0.03$ & $-0.08$ & $-0.03$ & $+0.07$ & $+0.28$ & $+0.36$ & $+0.38$ & $+0.40$ & $+0.92$ \\
-08/03\_Kinetiz & $+0.64$ & $+0.10$ & $-0.09$ & $-0.06$ & $+0.04$ & $+0.18$ & $+0.19$ & $+0.30$ & $+0.25$ & $+0.80$ \\
+07/26\_TUM & $+0.58$ & $-0.03$ & $-0.08$ & $-0.03$ & $+0.07$ & $+0.28$ & $+0.36$ & $+0.38$ & $+0.40$ & $+1.00$ \\
+08/03\_Kinetiz & $+0.64$ & $+0.10$ & $-0.09$ & $-0.06$ & $+0.04$ & $+0.18$ & $+0.19$ & $+0.30$ & $+0.25$ & $+0.66$ \\
 10/12 (EVA) & -- & $-0.25$ & $-0.25$ & $-0.03$ & $+0.14$ & $+0.46$ & $+0.53$ & $+0.55$ & $+0.62$ & $+1.43$ \\
 10/13 (EVA) & -- & -- & $-0.20$ & $+0.15$ & $+0.23$ & $+0.39$ & $+0.44$ & $+0.44$ & $+0.51$ & $+0.70$ \\
 10/14\_eva & $+0.29$ & $+0.25$ & $+0.01$ & $+0.10$ & $+0.21$ & $+0.36$ & $+0.44$ & $+0.46$ & $+0.59$ & $+1.15$ \\
@@ -164,22 +164,15 @@ Session & \multicolumn{9}{c|}{$x_{\mathrm{rel}}$ [m]} & Trend \\
 \end{tabular}
 \caption{Camera: mean longitudinal error $e_x$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins, opponent
 ahead). For the sessions at Yas Marina, the offset of the reference, estimated from
-PointPillars, is subtracted. Trend: linear slope of $e_x$ for $x_{\mathrm{rel}} \geq 40$\,m.}
+PointPillars, is subtracted. Trend: slope~\eqref{eq:macro_slope} of $e_x$ between 40 and 100\,m.}
 \label{tab:cam_x}
 \end{table}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/ch4/gauss68_front_detrended.pdf}
-    \caption{Distributions of the residual errors with the opponent ahead and fitted
-    Gaussian distributions.}
-    \label{fig:gauss68_front}
-\end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/ch4/gauss68_rear_detrended.pdf}
-    \caption{Distributions of the residual errors with the opponent behind and fitted
-    Gaussian distributions.}
-    \label{fig:gauss68_rear}
+    \includegraphics[width=\textwidth]{figures/ch4/gauss_std_all_sessions.pdf}
+    \caption{Distributions of the residual errors of all the sessions and fitted Gaussian
+    distributions.}
+    \label{fig:gauss_all}
 \end{figure}
