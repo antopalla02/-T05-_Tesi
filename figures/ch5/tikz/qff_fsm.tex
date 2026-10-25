@@ -1,0 +1,24 @@
+% Finite state machine of the maneuver flag (Chapter 5, feed-forward process noise).
+\begin{tikzpicture}[
+    font=\footnotesize,
+    >={Stealth[length=2mm]},
+    state/.style={circle, draw, thick, minimum size=21mm, align=center, font=\footnotesize},
+    tr/.style={->, thick},
+    lab/.style={font=\scriptsize, align=center, fill=white, inner sep=1.5pt}
+]
+\node[state, fill=black!5] (OFF) at (0,0) {\textbf{OFF}\\[2pt] $\mathbf{Q}_k = \mathbf{Q}_{\mathrm{nom}}$};
+\node[state, fill=black!15] (ON) at (6,0) {\textbf{ON}\\[2pt] $\mathbf{Q}_k = \lambda\,\mathbf{Q}_{\mathrm{nom}}$};
+
+% initial state
+\coordinate (S) at (-2.6,0);
+\fill (S) circle (2pt);
+\draw[tr] (S) -- (OFF);
+
+% transitions
+\draw[tr] (OFF) to[bend left=22] node[lab, above]{$|j_k| > j_{\mathrm{on}}$} (ON);
+\draw[tr] (ON) to[bend left=22] node[lab, below]{$|j_k| < j_{\mathrm{off}}$} (OFF);
+
+% self loops
+\draw[tr] (OFF) to[out=120, in=60, looseness=5] node[lab, above]{$|j_k| \le j_{\mathrm{on}}$} (OFF);
+\draw[tr] (ON) to[out=120, in=60, looseness=5] node[lab, above]{$|j_k| \ge j_{\mathrm{off}}$} (ON);
+\end{tikzpicture}
