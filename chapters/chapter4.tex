@@ -27,9 +27,7 @@ The second part works on the compensated errors and addresses the tuning of
 $\mathbf{R}$. A static value, representative of the behavior of each sensor, is proposed
 first. Then, a covariance matching technique is introduced, which adapts $\mathbf{R}$
 online using the information contained in the innovations of the filter, in order to
-handle the local trends of the standard deviation of the measurement errors. These can
-increase, e.g.\ due to a partial occlusion of the opponent or to a degradation of the
-sensors, or decrease, e.g.\ when the opponent is stationary.
+handle the local trends of the standard deviation of the measurement errors. 
 
 Section~\ref{sec:preprocessing} describes the pre-processing of the data and
 Section~\ref{sec:datasets} the datasets. The three steps of the analysis correspond to
@@ -94,7 +92,7 @@ projection of the relative velocity on the line of sight,
 \end{equation}
 with $v_o$ and $v_e$ the speeds of the two vehicles.
 
-It is important to note that the reference carries its own mistakes. As stated at the beginning of the section, it coincides with the output of the state estimation pipeline of the opponent, and its quality is therefore strictly related to the performance of that pipeline: a degradation of the GNSS measurements, as well as any other error of the estimate, is directly inherited by the reference. Moreover, since each opponent adopts its own pipeline, the quality of the reference can differ from one opponent to another.
+It is important to note that the reference carries its own mistakes. \\As stated at the beginning of the section, it coincides with the output of the state estimation pipeline of the opponent, and its quality is therefore strictly related to the performance of that pipeline: a degradation of the GNSS measurements, as well as any other error of the estimate, is directly inherited by the reference. Moreover, since each opponent adopts its own pipeline, the quality of the reference can differ from one opponent to another.
 
 \subsection{Error Computation}
 \label{subsec:err_frames}
@@ -171,9 +169,8 @@ Table~\ref{tab:sessions}.
 Both sessions cover a wide range of dynamic conditions. The opponent travels at a median
 speed of about \SI{90}{km/h} and reaches more than \SI{150}{km/h}, alternating braking,
 cornering and traction phases along the lap. The two sessions also include several safe
-stops, during which the opponent is stationary; these intervals are of particular interest since they allow the errors to be
-characterized also in static conditions. Session 08/03\_Kinetiz also contains seven position swaps
-between the vehicles. Overall, the combination of
+stops and position swaps
+between the vehicles. The combination of
 safe stops, overtakes and laps at high speed ensures that the whole spectrum of the
 dynamics of interest is covered by the datasets.
 
@@ -184,7 +181,7 @@ position of about \SI{6}{m}. In session 08/03\_Kinetiz the ego vehicle leads for
 and the opponent moves mainly on its right, with a median lateral position of about
 \SI{-6}{m}.
 
-Fig.~\ref{fig:ds_rate} shows the detection rate of each sensor as a
+Finally, Fig.~\ref{fig:ds_rate} shows the detection rate of each sensor as a
 function of the range, separately for the opponent ahead of and behind the ego vehicle;
 the rate is computed as the number of detections associated with the opponent in each
 range interval divided by the time spent by the opponent in that interval. With the opponent ahead, both LiDAR pipelines detect it at close to the
@@ -860,7 +857,7 @@ RaDAR & Ahead & 0.68 & 0.39 \\
 Camera & Ahead & 0.38 & 0.43 \\
 \bottomrule
 \end{tabular}
-\caption{Standard deviation of the residual errors, all sessions pooled.}
+\caption{Standard deviation of the residual errors, all sessions.}
 \label{tab:sensor_noise}
 \end{table}
 
