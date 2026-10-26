@@ -30,10 +30,11 @@ filter.
 \section{The Idea}
 \label{sec:qff_idea}
 
-The approach acts on the process noise covariance $\mathbf{Q}_k$, which represents the
-uncertainty of the motion model, i.e.\ how much the actual motion of the opponent is
-expected to differ from the predicted one. In the prediction step, the process noise is added to the covariance propagated through
-the motion model,
+The idea behind the feed-forward approach presented in this chapter starts from how the
+process noise covariance $\mathbf{Q}_k$ influences the gain of the Kalman filter. The
+process noise represents the uncertainty of the motion model, i.e.\ how much the actual
+motion of the opponent is expected to differ from the predicted one. In the prediction
+step, it is added to the covariance propagated through the motion model,
 \begin{equation}
     \mathbf{P}_{k+1|k} = \mathbf{F}_k\,\mathbf{P}_{k|k}\,\mathbf{F}_k^\top + \mathbf{Q}_k,
     \label{eq:qff_pred_cov}
@@ -53,35 +54,36 @@ with a predicted variance $P$ and a measurement noise variance $R$, the gain red
 which ranges between zero, when the prediction is much more accurate than the
 measurement, and one, when the measurement is much more accurate than the prediction.
 Increasing $\mathbf{Q}_k$ increases $P$ and therefore $K$, so that the corrected state
-moves away from the prediction and towards the measurement. The process noise is
-therefore the parameter that sets how much the filter trusts the motion model with respect
-to the measurements.
-
-Through the off-diagonal terms of $\mathbf{P}_{k+1|k}$, the effect is not limited to the
-measured position. The process noise of the CCA model acts on the acceleration and on the
-curvature (Section~\ref{subsec:tt_cca}), and a larger uncertainty on these states allows
-the correction of the position to be transferred more quickly to the speed and to the
+moves away from the prediction and towards the measurement. Through the off-diagonal
+terms of $\mathbf{P}_{k+1|k}$, the effect is not limited to the measured position. The
+process noise of the CCA model acts on the acceleration and on the curvature
+(Section~\ref{subsec:tt_cca}), and a larger uncertainty on these states allows the
+correction of the position to be transferred more quickly to the speed and to the
 acceleration, which are not measured directly by the LiDARs and by the camera.
 
-A constant process noise has to balance two opposite requirements. A small value gives a
-smooth estimate when the dynamics of the opponent changes slowly, but a slow response at
-the beginning of a maneuver. A large value gives a fast response during the maneuvers,
-but a noisy estimate in the rest of the lap. For this reason, the process noise is not
-increased permanently, but only when a maneuver is detected, through a feed-forward logic
-based on the estimate of the jerk of the opponent. In this way, the filter adapts its
-process noise to the current conditions.
+By varying $\mathbf{Q}_k$, different behaviors of the filter are therefore obtained. A
+large process noise leads to a large gain and therefore to a more reactive filter, which
+follows the changes of the dynamics quickly but returns a noisy estimate. A small process
+noise, instead, keeps the gain small, and the filter remains anchored to the prediction,
+with a smoother estimate that is often delayed with respect to the true state.
+
+A fixed process noise is therefore not always suited to the local behavior of the
+opponent, and the feed-forward approach is introduced for this reason. When a maneuver is
+detected, the process noise is adjusted accordingly, and the filter adapts its gain to
+the current conditions.
 
 % =====================================================================
 \section{Nominal Process Noise Tuning}
 \label{sec:qff_nominal}
 
-As shown in the previous section, the process noise directly affects the estimate of the
-filter. Its nominal value $\mathbf{Q}_{\mathrm{nom}}$, i.e.\ the spectral densities $q_a$
-and $q_\kappa$ of Section~\ref{subsec:tt_cca}, has therefore to be chosen to balance how
-much the filter corrects the prediction with the measurements, i.e.\ how reactive it is
-to the changes of the dynamics, against how noisy the estimate is. This value is the
-starting point of the feed-forward approach, in which it is multiplied by an inflation
-factor during the maneuvers.
+Preliminary to the feed-forward approach is the tuning of the nominal value
+$\mathbf{Q}_{\mathrm{nom}}$ of the process noise, i.e.\ of the spectral densities $q_a$
+and $q_\kappa$ of Section~\ref{subsec:tt_cca}. The choice is made by testing different
+values of the process noise and selecting the one that gives a good starting point on the
+trade-off introduced in the previous section, between the reactivity of the filter to
+the changes of the dynamics and the noise of the estimate. This value is the baseline of
+the feed-forward approach, in which it is multiplied by an inflation factor during the
+maneuvers.
 
 \TODO{Figures with the estimate obtained with different values of the process noise, and
 their effect on the quality of the estimate.}
@@ -90,8 +92,9 @@ their effect on the quality of the estimate.}
 \section{Feed-Forward Formulation}
 \label{sec:qff_formulation}
 
-The process noise covariance is switched between its nominal value and an inflated one,
-depending on a flag that indicates whether the opponent is performing a maneuver,
+Going into the details of the formulation, as anticipated, the process noise covariance is
+switched between its nominal value and an inflated one, depending on a flag that detects
+the beginning of a maneuver,
 \begin{equation}
     \mathbf{Q}_k =
     \begin{cases}
@@ -118,9 +121,8 @@ by the finite state machine of Fig.~\ref{fig:qff_fsm}. The flag is activated whe
 magnitude of the jerk exceeds the upper threshold, and it is deactivated only when it
 falls below the lower one. Between the two thresholds, the flag keeps its previous state,
 so that small oscillations of the jerk around a single threshold do not switch it
-repeatedly. The thresholds are set to $j_{\mathrm{on}} = \SI{15}{m/s^3}$ and
-$j_{\mathrm{off}} = \SI{10}{m/s^3}$, and the inflation factor to
-$\lambda = $~\TODO{value}.
+repeatedly. The values of the thresholds and of the inflation factor are reported in
+Section~\ref{sec:qff_implementation}.
 
 \begin{figure}[H]
     \centering
@@ -133,35 +135,39 @@ $\lambda = $~\TODO{value}.
 \section{Jerk Estimation}
 \label{sec:qff_jerk}
 
-The jerk is not measured directly by the sensors, and it is therefore derived from the
-estimated acceleration.
+The jerk is not measured directly by the sensors, and it is obtained by differentiating
+and filtering the estimated acceleration. The filtering limits the amplification of the
+high-frequency noise caused by the differentiation. Two families of filters are
+considered, frequency-based and time-domain ones.
 
-Since the jerk is the derivative of a noisy signal, the differentiation has to be
-combined with a filtering, which limits the amplification of the high-frequency noise.
-Two families of filters are considered, frequency-based and time-domain ones.
-
-\paragraph{Frequency-based filters.} In this family, the acceleration is essentially
-differentiated and filtered with a low-pass filter. Two filters are considered. The first
-is the first-order low-pass filter, which combined with the derivative gives the dirty
-derivative, i.e.\ a differentiator band-limited by a pole with time constant $\tau$,
+\paragraph{Frequency-based filters.} In this family, the acceleration is differentiated
+and filtered with a low-pass filter. Both filters can be written as the product of the
+derivative and of a low-pass filter $L(s)$,
 \begin{equation}
-    H(s) = \frac{s}{1 + \tau s}.
+    H(s) = s\,L(s).
+    \label{eq:qff_diff}
+\end{equation}
+Among the filters considered is the first-order low-pass filter, which combined with the
+derivative gives the dirty derivative, i.e.\ a differentiator band-limited by a pole with
+time constant $\tau$,
+\begin{equation}
+    H_1(s) = \frac{s}{1 + \tau s}.
     \label{eq:qff_dirty}
 \end{equation}
-The second is the Butterworth filter, which is essentially a second-order filter, with
-magnitude response
+The second is the Butterworth filter of the second order, with cutoff frequency
+$\omega_c$, whose combination with the derivative gives
 \begin{equation}
-    |H(j\omega)|^2 = \frac{1}{1 + \left(\omega/\omega_c\right)^{2n}},
-    \qquad n = 2,
+    H_2(s) = \frac{s\,\omega_c^2}{s^2 + \sqrt{2}\,\omega_c\, s + \omega_c^2}.
     \label{eq:qff_butter}
 \end{equation}
-where $\omega_c$ is the cutoff frequency, followed by the numerical derivative. Being of
-the second order, the Butterworth filter guarantees a faster roll-off than the first-order
-filter, and therefore a better attenuation of the disturbances above the cutoff
-frequency, while keeping a flat pass band.
+Both transfer functions behave as a differentiator below the cutoff frequency. Above it,
+$|H_1|$ tends to the constant $1/\tau$, while $|H_2|$ decreases by \SI{20}{dB} per decade.
+Being of the second order, the Butterworth filter therefore guarantees a better
+attenuation of the disturbances above the cutoff frequency, while keeping a flat pass
+band. With $\tau = \SI{0.064}{s}$, the cutoff frequency of the first-order filter is
+$1/(2\pi\tau) \simeq \SI{2.5}{Hz}$, the same adopted for the Butterworth filter.
 
-\TODO{Figure: magnitude response of the first-order low-pass filter and of the Butterworth
-filter.}
+\TODO{Figure: Bode diagram of the transfer functions $H_1$ and $H_2$.}
 
 \paragraph{Time-domain filters.} In this family, the differentiated acceleration is
 filtered by interpolating the signal with a polynomial of degree $n$ over a moving window
@@ -173,42 +179,49 @@ the center of the window. In a real-time application, this would require using b
 past and the future samples of the signal, which are not available online. For this
 reason, this family is discarded.
 
-The jerk estimated with the dirty derivative, with $\tau = \SI{0.064}{s}$, and with the
-Butterworth filter, with $f_c = \SI{2.5}{Hz}$, is compared with the jerk obtained by
-differentiating the acceleration of the ground truth with a Savitzky--Golay filter, which
-can be applied since the comparison is carried out offline. The comparison also includes
-the two thresholds of Fig.~\ref{fig:qff_fsm}.
+The jerk estimated with the dirty derivative and with the Butterworth filter is compared
+with the jerk obtained by differentiating the acceleration of the ground truth with a
+Savitzky--Golay filter, which can be applied since the comparison is carried out offline.
 
 \TODO{Figure: jerk estimated with the dirty derivative and with the Butterworth filter,
 compared with the jerk of the ground truth.}
 
 Both estimates detect the main transitions of the acceleration, i.e.\ the beginning and
-the end of the braking phases, where the jerk exceeds the upper threshold. Between the
-maneuvers, the noise of the estimate remains mostly below the lower threshold, but some
-peaks still cross it.
+the end of the braking phases. Between the maneuvers, the noise of the estimate is
+smaller, but some peaks remain. The comparison and the plots of the jerk are also used
+to tune the activation thresholds of the flag, so that the main transitions exceed the
+upper threshold while the noise between the maneuvers remains mostly below the lower one.
 
 % =====================================================================
 \section{Implementation}
 \label{sec:qff_implementation}
 
-The feed-forward approach is implemented with two filters that evolve in parallel, for
-each track, and process the same measurements. The first is the classical filter of
-Chapter~\ref{ch:tracking}, whose process noise is switched by the hysteresis logic of
-Fig.~\ref{fig:qff_fsm}. Its state is the one published to the planning module. The second
-is used only to estimate the jerk and, therefore, to activate and deactivate the maneuver
-flag.
+In the tracking module, the feed-forward approach is implemented with two filters that
+evolve in parallel for each track and process the same measurements. The first is the
+main filter of Chapter~\ref{ch:tracking}, whose process noise is switched by the
+hysteresis logic of Fig.~\ref{fig:qff_fsm}, and whose state is published to the planning
+module. The second, auxiliary, filter has the same structure, i.e.\ the EKF with the CCA
+model, but its process noise is constant and inflated, and it is used only to estimate the
+jerk and, therefore, to drive the maneuver flag.
 
-The jerk is estimated from a parallel filter, and not from the first one, because of the
-delay of the latter. With its process noise tuned at the nominal value, the first filter
-reacts to the changes of the dynamics with the delay that the method aims to reduce. A
-jerk computed from its acceleration would inherit this delay, and it would not allow the
-flag to be activated when the maneuver begins. The parallel filter, instead, has the same
-structure, i.e.\ the EKF with the CCA model, but its process noise is permanently
-inflated. Its acceleration follows the changes of the dynamics with a smaller delay, at
-the cost of a noisier estimate, and the jerk derived from it can activate the flag at the
-beginning of the maneuver. Moreover, since the process noise of the parallel filter does
-not depend on the flag, the jerk that drives the flag is not affected by the switching of
-the process noise of the first filter. The complete procedure is reported in Algorithm~\ref{alg:qff}.
+The jerk is not computed from the main filter for two reasons. The first is its delay.
+With the nominal process noise, the main filter reacts to the changes of the dynamics with
+the lag that the method aims to reduce, and a jerk derived from its acceleration would
+inherit it, activating the flag only when the maneuver is already in progress. The
+acceleration of the auxiliary filter, instead, follows the changes of the dynamics with a
+smaller delay, at the cost of a noisier estimate, which is acceptable since it is used
+only for the detection. The second reason is the coupling between the flag and the
+estimate. If the jerk were derived from the main filter, the activation of the flag would
+inflate the process noise of the same filter, making its acceleration noisier and its
+jerk larger, which would in turn keep the flag active. The detection would then depend on
+its own output, in a feedback loop. Since the process noise of the auxiliary filter does
+not depend on the flag, the detection is decoupled from the switching, and the process
+noise of the main filter is set in feed-forward.
+
+The thresholds of the hysteresis are set to $j_{\mathrm{on}} = \SI{15}{m/s^3}$ and
+$j_{\mathrm{off}} = \SI{10}{m/s^3}$, and the inflation factor to
+$\lambda = $~\TODO{value}. The jerk is estimated with \TODO{filter adopted}. The complete
+procedure is reported in Algorithm~\ref{alg:qff}.
 
 \begin{algorithm}[!htbp]
 \caption{Feed-forward process noise, for a single track.}
@@ -217,8 +230,8 @@ the process noise of the first filter. The complete procedure is reported in Alg
 \REQUIRE nominal process noise $\mathbf{Q}_{\mathrm{nom}}$, inflation factor $\lambda$,
 thresholds $j_{\mathrm{on}}$ and $j_{\mathrm{off}}$, previous flag $f_{k-1}$
 \FORALL{measurements $\mathbf{z}_{k+1}$ associated with the track}
-    \STATE update the parallel filter with $\mathbf{z}_{k+1}$ \COMMENT{higher process noise}
-    \STATE $a_{k+1} \leftarrow$ acceleration of the parallel filter
+    \STATE update the auxiliary filter with $\mathbf{z}_{k+1}$ \COMMENT{inflated process noise}
+    \STATE $a_{k+1} \leftarrow$ acceleration of the auxiliary filter
     \STATE $j_{k+1} \leftarrow$ filtered derivative of $a_{k+1}$ \COMMENT{\eqref{eq:qff_dirty} or \eqref{eq:qff_butter}}
     \IF{$|j_{k+1}| > j_{\mathrm{on}}$}
         \STATE $f_{k+1} \leftarrow 1$
@@ -258,21 +271,12 @@ during the whole braking phase.
 
 \TODO{Figure: detail of a braking phase.}
 
-The feed-forward approach is also compared with a filter in which the process noise is
-permanently increased. The constant process noise gives a similar reactivity during the
-maneuvers, but its acceleration is noisier in the phases in which the dynamics of the
-opponent changes slowly. The feed-forward approach, instead, increases the process noise
-only when it is needed, and keeps the nominal behavior of the filter in the rest of the
-lap.
-
-\TODO{Figure: comparison with a constant increased process noise.}
-
 Overall, the feed-forward process noise makes the filter more reactive, and improves the
 estimate of the acceleration and of the speed during the maneuvers, with a smaller lag
 with respect to the ground truth.
 
 The quality of the jerk estimate is the main limitation of the method. It depends on the
-quality of the acceleration of the parallel filter and, therefore, on the accuracy of the
+quality of the acceleration of the auxiliary filter and, therefore, on the accuracy of the
 measurements, above all of the range rate of the RaDAR. Moreover, the jerk is derived from
 the speed through a double differentiation, so it inherits the delay of the acceleration
 estimate and amplifies its noise. The thresholds remain the only parameter
