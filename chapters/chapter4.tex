@@ -24,8 +24,7 @@ to the calibration and to the working principle of each sensor, and then
 characterizes the remaining error in the time and frequency domains. The second addresses
 the tuning of $\mathbf{R}$, first with a static value representative of each sensor and
 then with a covariance matching technique, which adapts it online from the innovations of
-the filter. Section~\ref{sec:preprocessing} describes how the errors are computed and,
-finally, the datasets used and their characteristics. The analysis of the errors is
+the filter. \\Section~\ref{sec:preprocessing} describes how the errors are computed and, the datasets used and their characteristics. The analysis of the errors is
 developed in Sections~\ref{sec:deterministic}, \ref{sec:macro} and~\ref{sec:gauss_markov},
 while Section~\ref{sec:meas_cov} presents the static and the adaptive measurement noise
 covariance. Finally, Section~\ref{sec:ch4_future} outlines the future developments.
@@ -43,9 +42,7 @@ the characteristics of the datasets.
 \label{sec:gt}
 
 The reference for the state of the opponent is the state estimated by the opponent
-vehicle itself. During the sessions, each team records the output of its own state
-estimation, based on RTK-GNSS receivers and inertial units, and shares it after the
-session. For each sample, the data contain the timestamp, the position and the heading of
+vehicle itself. For each sample, the data contain the timestamp, the position and the heading of
 the vehicle, its longitudinal speed and, when available, its longitudinal acceleration.
 Since each team adopts its own format and reference system, the data are first brought
 into a common structure, compatible with the logs of the ego vehicle. The position and
@@ -71,7 +68,7 @@ by the heading $\psi_e$ of the ego vehicle,
 \end{equation}
 where $\mathbf{p}_o$, $\mathbf{p}_e$ and $\psi_o$, $\psi_e$ are the positions and the
 headings of opponent and ego vehicle in the map frame, and $\mathbf{R}(\cdot)$ is the
-rotation matrix defined in~\eqref{eq:tt_R_rot}. The range is the distance between the
+rotation matrix defined in~\eqref{eq:tt_R_rot}. \\The range is computed as the distance between the
 two vehicles, $\rho = \|\mathbf{p}_o - \mathbf{p}_e\|$, and the range rate is the
 projection of the relative velocity on the line of sight,
 \begin{equation}
@@ -84,17 +81,17 @@ projection of the relative velocity on the line of sight,
 \end{equation}
 with $v_o$ and $v_e$ the speeds of the two vehicles.
 
-The reference, however, is not free of errors. Since it coincides with the output of the
+Finally, it is important to highlight that, the reference, is not free of errors. Since it coincides with the output of the
 state estimation of the opponent, its quality depends on the performance of that
-estimate, and a degradation of the GNSS measurements, as well as any other error of the
+estimate, and, for example, a degradation of the GNSS measurements, as well as any other error of the
 estimate, is directly inherited by the reference. Moreover, since each team adopts its own
 estimation, the quality of the reference can differ from one opponent to another.
 
 \subsection{Error Computation}
 \label{subsec:err_frames}
 
-Once the reference has been reconstructed, the ground truth is associated with the
-measurements of the sensors. Since it is available at a higher frequency than the
+Once the ground truth has been reconstructed, the latter is associated with the
+measurements of the sensors in order to compute the errors. \\Since it is available at a higher frequency than the
 detections, the ground truth is linearly interpolated at the acquisition time of each
 detection, and the measurement error is defined as the difference between the position of the detection and the position of the
 opponent given by the ground truth at the same instant.
@@ -164,7 +161,7 @@ Table~\ref{tab:sessions}.
 Both sessions cover the whole spectrum of the dynamics of interest, with an opponent that
 travels at a median speed of about \SI{90}{km/h}, reaches more than \SI{150}{km/h} and
 alternates braking, cornering and traction phases along the lap, together with several safe
-stops and position swaps between the vehicles. They are also complementary in the relative
+stops and position swaps between the vehicles. The sessions are also complementary in the relative
 geometry, which makes it possible to characterize the sensors when they observe the
 opponent from different perspectives. In session 07/26\_TUM the opponent is ahead of the
 ego vehicle for most of the time and moves mainly on its left, with a median lateral
@@ -177,15 +174,14 @@ The rate is computed as the number of detections associated with the opponent in
 range interval divided by the time spent by the opponent in that interval, and is shown
 in Fig.~\ref{fig:ds_rate} separately for the opponent ahead of and behind the ego vehicle.
 
-For the LiDARs, the figure clearly shows that the opponent is detected less often when it is
-behind than when it is ahead. With the opponent ahead, both Clustering and PointPillars
+With the opponent ahead, both Clustering and PointPillars
 detect it consistently within \SI{50}{m}, while the rate decreases beyond, up to about
 \SI{100}{m}. With the opponent behind, the effect of the blind spot caused by the rear wing
 is evident (Section~\ref{subsec:lidar}). Up to \SI{30}{m} the opponent, which in the
 sessions moves at a lateral position of about \SI{6}{m}, is visible, while as it moves away
 it approaches the longitudinal axis of the ego vehicle and enters the blind spot, where the
-detections drop. For the RaDAR this effect is less pronounced, and the sensor, mounted below
-the rear wing, extends the range of detection up to about \SI{150}{m} also behind the ego
+detections drop. \\For the RaDAR, the detection rate is independent of the position of the opponent vehicle, as it is mounted below
+the rear wing. Its main advantage, therefore, is that it extends the range of detection up to about \SI{150}{m} also behind the ego
 vehicle, covering the blind spot of the LiDARs.
 
 \begin{figure}[H]
@@ -200,12 +196,10 @@ vehicle, covering the blind spot of the LiDARs.
 % =====================================================================
 \section{Reference and Calibration Errors}\label{sec:deterministic}
 
-The first components of the error to be identified are those related to the setup. As
+The first sources of errors to be identified are those related to the setup. \\As
 will be shown in the following, two components are identified, one related to the calibration of
-the sensors and one related to the reference used to compute the errors. Unlike the trends
-of Section~\ref{sec:macro}, they are not related to how each sensor measures the opponent,
-but to the setup in which the measurements are collected, and, being systematic and
-repeatable, they can be identified and compensated. The longitudinal component is analyzed first, and then the lateral one.
+the sensors and one related to the reference. Being systematic and
+repeatable, both can be identified and compensated. The longitudinal component is analyzed first, and then the lateral one.
 
 \subsection*{Longitudinal Component}
 \label{subsec:det_long}
@@ -217,9 +211,7 @@ bias. Fig.~\ref{fig:det_long} shows the error of the two pipelines in a window o
 ego vehicle in the range 20--\SI{60}{m}, the mean error is \SI{0.41}{m} for Clustering and
 \SI{0.36}{m} for PointPillars. In session 08/03\_Kinetiz it is close to zero, with
 \SI{-0.03}{m} and \SI{-0.07}{m}, while in session 10/14\_eva, recorded at Yas Marina, it
-is about \SI{0.2}{m} (Table~\ref{tab:det_long}). Within each session, the two pipelines
-show a similar bias.
-
+is about \SI{0.2}{m} (Table~\ref{tab:det_long}). 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_long_time.pdf}
@@ -232,16 +224,15 @@ The hypothesis on the origin of this bias comes from a closer analysis of sessio
 10/14\_eva. As anticipated in Section~\ref{sec:datasets}, having access to both the
 perception of the ego vehicle and the state estimation of the opponent, used to build the
 reference, the two could be analyzed separately. It emerged that the bias is compatible
-with the fact that the former returns the geometric center of the vehicle, while the latter
-refers to its center of mass. This inconsistency produces a constant longitudinal offset,
-which is not related to the perception but simply to a choice of conventions, and it can
+with the fact that the perception returns the geometric center of the vehicle, while the estimation
+refers to its center of mass. This difference produces a constant longitudinal offset,
+which is not related to the quality of the perception but simply to a choice of conventions, and it can
 also be at the origin of the different biases of the other two sessions, since different
 teams may refer their state estimate to different points of the vehicle.
 
 The hypothesis is also supported by the behavior of the camera. In the range
 20--\SI{60}{m}, where its error does not depend on the range (Fig.~\ref{fig:det_cam}), the
-mean error of the camera is compatible with the one of the LiDARs, within its larger
-variability (Table~\ref{tab:det_long}). The camera also measures the geometric center of
+mean error of the camera is compatible with the one of the LiDARs, within its larger standard deviation (Table~\ref{tab:det_long}). The camera also measures the geometric center of
 the vehicle, by reconstructing its bounding box, but through a different algorithm, and
 finding the same bias further supports the idea that its origin lies in the reference.
 
@@ -306,10 +297,8 @@ The same analysis on session 08/03\_Kinetiz gives a slope of \SI{0.56}{cm/m} for
 Clustering and \SI{0.52}{cm/m} for PointPillars, very close to the ones of the first
 session, while the slope of the RaDAR is close to zero in both sessions and the one of the
 camera changes from \SI{1.23}{cm/m} in session 07/26\_TUM to \SI{-0.26}{cm/m} in session
-08/03\_Kinetiz. Since the trend is repeatable across the two datasets but observed only on
-the LiDARs, its cause is related to these sensors rather than to the reference. It is
-compatible with a calibration offset of about \SI{0.33}{\degree} in yaw, since a rotation
-$\delta\psi$ of the measured positions produces a lateral error
+08/03\_Kinetiz. \\Since the trend is repeatable across the two datasets but observed only on
+the LiDARs, its cause is related to these sensors rather than to the reference and it's compatible with a calibration offset of about \SI{0.33}{\degree} in yaw that produces a lateral error
 $e_y \simeq \delta\psi\,x_{\mathrm{rel}}$.
 
 Following the hypothesis formulated on the data recorded at Imola, a recalibration of the
@@ -444,13 +433,6 @@ which shifts the detection towards the ego vehicle. With the opponent behind, th
 observes the nose, the front wing, the wheels and the sidepods, i.e.\ a reflecting surface
 distributed along the car, and the offset is smaller.
 
-Overall, the measurements of the RaDAR are less precise and more dispersed than those of
-the LiDARs. Nevertheless, its detections reach up to \SI{150}{m} also with the opponent
-behind (Fig.~\ref{fig:ds_rate}), covering the range that the LiDARs cannot reach because
-of the blind spot of the rear wing. The rear RaDAR is therefore the only sensor that
-ensures the detection of the opponent behind at long range, and its measurement is
-complementary to the one of the LiDARs.
-
 Both the growth of the standard deviation and the two different offsets are validated on
 the sessions recorded at Yas Marina, as reported in Appendix~\ref{app:lidar}.
 
@@ -534,8 +516,8 @@ magnitude of the discrete Fourier transform,
     U = \frac{1}{N}\sum_{n=0}^{N-1} w_n^2,
     \label{eq:periodogram}
 \end{equation}
-with $\Delta t$ the sampling period. Since a single periodogram is a noisy estimate, the
-PSD is obtained by averaging the periodograms of the segments,
+with $\Delta t$ the sampling period. To obtain a more robust estimator, the
+PSD is obtained by averaging the periodograms of the segments
 \begin{equation}
     S_e(f) = \frac{1}{K}\sum_{i=1}^{K} P_i(f).
     \label{eq:welch}
@@ -550,8 +532,7 @@ errors is shown in Fig.~\ref{fig:psd_acf} and summarized in Table~\ref{tab:psd_s
 The LiDARs and the camera have the largest low-frequency contribution, with
 44--\SI{80}{\percent} of the power below \SI{1}{Hz} and 62--\SI{91}{\percent} below
 \SI{2}{Hz}, so that their error is dominated by low frequencies. The RaDAR has on average
-the smallest, with 45--\SI{64}{\percent} of the power below \SI{1}{Hz}, although its PSD is
-not flat either.
+the smallest, with 45--\SI{64}{\percent} of the power below \SI{1}{Hz}.
 
 \begin{figure}[H]
     \centering
@@ -748,7 +729,7 @@ autocorrelation of the residuals, the bias can be reconstructed.
 
 The correlation time is chosen from the values of Table~\ref{tab:acf_sessions}, and a value
 of $\tau = \SI{1}{s}$ is adopted for all the sensors, for simplicity. It does not represent
-the optimal value for each sensor, but it proves to be an effective choice. When the model
+the optimal value for each sensor, but it proves to be an effective choice. \\ Indeed, when the model
 is applied offline to the detrended errors and the estimated bias is removed, the
 residuals become white, with a normalized autocorrelation of about zero at all the lags,
 as reported in Table~\ref{tab:acf_gm}.
