@@ -503,6 +503,11 @@ detections without interruptions, longer segments, of 256 or 512 samples, would 
 number of segments available for the average. For the same reason, consecutive windows
 overlap by \SI{50}{\percent}, which increases the number of periodograms to be averaged.
 
+As a consequence, the analysis is limited to the segments in which the opponent is ahead.
+With the opponent behind, the detections of the LiDARs are interrupted by the blind spot of
+the rear wing, so that the continuous segments are too short to estimate the PSD. For the RaDAR, which also covers
+the rear sector, the errors with the opponent behind lead to similar results. The camera only provides data with the opponent ahead
+
 For sessions 07/26\_TUM and 10/14\_eva with the opponent ahead, the PSD of the residual
 errors is shown in Fig.~\ref{fig:psd} and summarized in Table~\ref{tab:psd_sessions}.
 The LiDARs and the camera have the largest low-frequency contribution, with
