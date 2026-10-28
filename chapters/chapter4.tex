@@ -198,15 +198,15 @@ The analysis starts from the longitudinal error of the LiDARs. Three sessions ar
 considered, 07/26\_TUM, 08/03\_Kinetiz and 10/14\_eva, and each of them shows a different
 bias. Fig.~\ref{fig:det_long} shows the error of the two pipelines in a window of session
 07/26\_TUM. In nominal operating conditions, i.e.\ with the opponent moving ahead of the
-ego vehicle in the range 20--\SI{60}{m}, the mean error is \SI{0.41}{m} for Clustering and
+ego vehicle in the range 20--\SI{60}{m}, the mean error is \SI{0.40}{m} for Clustering and
 \SI{0.36}{m} for PointPillars. In session 08/03\_Kinetiz it is close to zero, with
-\SI{-0.03}{m} and \SI{-0.07}{m}, while in session 10/14\_eva, recorded at Yas Marina, it
+\SI{-0.04}{m} and \SI{-0.07}{m}, while in session 10/14\_eva, recorded at Yas Marina, it
 is about \SI{0.2}{m} (Table~\ref{tab:det_long}). 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_long_time.pdf}
     \caption[Longitudinal error of the LiDARs]{Longitudinal error of the LiDARs in a window of session 07/26\_TUM, with the mean
-    in nominal conditions: \SI{0.41}{m} for Clustering and \SI{0.36}{m} for PointPillars.}
+    in nominal conditions: \SI{0.40}{m} for Clustering and \SI{0.36}{m} for PointPillars.}
     \label{fig:det_long}
 \end{figure}
 
@@ -243,13 +243,12 @@ finding the same bias further supports the idea that its origin lies in the refe
         \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
         Sensor             & Mean [m] & Std [m] & Mean [m] & Std [m] & Mean [m] & Std [m] \\
         \midrule
-        LiDAR Clustering   & $0.41$ & $0.13$ & $-0.03$ & $0.16$ & $0.24$ & $0.10$ \\
+        LiDAR Clustering   & $0.40$ & $0.16$ & $-0.04$ & $0.17$ & $0.23$ & $0.11$ \\
         LiDAR PointPillars & $0.36$ & $0.12$ & $-0.07$ & $0.16$ & $0.17$ & $0.10$ \\
-        Camera             & $0.34$ & $0.41$ & $-0.03$ & $0.30$ & $0.31$ & $0.26$ \\
+        Camera             & $0.32$ & $0.51$ & $-0.06$ & $0.35$ & $0.30$ & $0.29$ \\
         \bottomrule
     \end{tabular}
-    \caption{Longitudinal error in nominal operating conditions, i.e.\ opponent ahead in 20--60\,m
-    (3-sigma rejection in each 10\,m bin, no offset of the reference compensated).}
+    \caption{Longitudinal error in nominal operating conditions, i.e.\ opponent ahead in 20--60\,m (10\,m bins).}
     \label{tab:det_long}
 \end{table}
 
@@ -328,16 +327,16 @@ identified at Imola are validated, are reported in Appendix~\ref{app:lidar}.
 
 The errors of Clustering remain centered on zero, but their spread grows with the range,
 above all on the lateral component. With the opponent ahead, the lateral standard
-deviation in the sessions at Imola increases from 0.08--\SI{0.09}{m} at 10--\SI{20}{m} to
+deviation in the sessions at Imola increases from 0.08--\SI{0.11}{m} at 10--\SI{20}{m} to
 0.39--\SI{0.43}{m} at 90--\SI{100}{m}, while the longitudinal one grows less, from
-0.05--\SI{0.18}{m} to 0.21--\SI{0.25}{m}. This behavior is related to the angular
+0.06--\SI{0.19}{m} to 0.21--\SI{0.27}{m}. This behavior is related to the angular
 resolution of the sensor, since the spacing between adjacent points grows linearly with the
 range, so that the farther the opponent, the fewer and sparser the points on it, and the
 less reliable the identification of the vehicle. The effect is larger on
 the lateral component, which, with the opponent ahead, depends directly on the angular
 position of the points.
 
-With the opponent behind, the standard deviation reaches 0.30--\SI{0.69}{m} beyond
+With the opponent behind, the standard deviation reaches 0.33--\SI{0.69}{m} beyond
 \SI{30}{m}. Here, the quality of the detections is limited by the blind spot caused by the
 rear wing, which occludes the view of the LiDARs towards the back of the car
 (Section~\ref{subsec:lidar}). At short range the opponent, which moves at a lateral offset
@@ -364,7 +363,7 @@ opponent facing the sensor and, the fewer they are, the more the bounding box co
 towards them. With the opponent behind, the mean error is positive, between 0.13 and
 \SI{0.30}{m} in the sessions at Imola, and it grows as the opponent moves away, while with
 the opponent ahead it is close to zero at short range and becomes negative as the range
-increases, reaching \SI{-0.19}{m} and \SI{-0.23}{m} at 90--\SI{100}{m}. 
+increases, reaching \SI{-0.18}{m} and \SI{-0.23}{m} at 90--\SI{100}{m}. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/lidar_pointpillars_errors.pdf}
@@ -388,16 +387,16 @@ position of the opponent, separately for each session.
 \end{figure}
 
 Compared with the LiDARs, the RaDAR detections are much sparser. Already
-at short range, the standard deviation of the longitudinal error is 0.42--\SI{0.52}{m},
+at short range, the standard deviation of the longitudinal error is 0.45--\SI{0.51}{m},
 three to four times the one of the LiDARs, and it tends to increase with the range,
-although not monotonically, reaching 0.83--\SI{1.12}{m} behind and 0.71--\SI{0.82}{m}
+although not monotonically, reaching 0.85--\SI{1.12}{m} behind and 0.77--\SI{0.82}{m}
 ahead at 90--\SI{100}{m}.
 
 The mean error differs with the opponent ahead and behind, which results in two different
 longitudinal offsets, but in both cases it is directed towards the ego vehicle, with a trend
 and a magnitude that depend on the session (Table~\ref{tab:rad_ex}). With the opponent
-ahead, it is negative and tends to grow with the range, from \SI{-0.67}{m} and
-\SI{-0.44}{m} at 10--\SI{20}{m} in sessions 07/26\_TUM and 08/03\_Kinetiz to \SI{-1.36}{m}
+ahead, it is negative and tends to grow with the range, from \SI{-0.65}{m} and
+\SI{-0.43}{m} at 10--\SI{20}{m} in sessions 07/26\_TUM and 08/03\_Kinetiz to \SI{-1.31}{m}
 and \SI{-1.06}{m} at 90--\SI{100}{m}. With the opponent behind, it is positive and, on
 average, smaller.
 
@@ -432,7 +431,7 @@ mean of the longitudinal error, which follows a U-shaped trend. At short range, 
 \SI{20}{m}, the detection is farther than the ground truth by about \SI{0.6}{m}. Between
 20 and \SI{60}{m}, i.e.\ in the operating range identified in
 Section~\ref{subsec:det_long}, the mean error is close to zero, within
-$\pm\SI{0.1}{m}$, and the bias of the camera is comparable to the one of the LiDARs. Beyond this range, it increases again, with a dependence that, from \SI{40}{m} on, is
+about $\pm\SI{0.1}{m}$, and the bias of the camera is comparable to the one of the LiDARs. Beyond this range, it increases again, with a dependence that, from \SI{40}{m} on, is
 linear. It is quantified by the slope $m$ of the least squares line fitted to the $N$
 detections in a range interval $x_a \le x_{\mathrm{rel}} \le x_b$,
 \begin{equation}
@@ -444,8 +443,8 @@ detections in a range interval $x_a \le x_{\mathrm{rel}} \le x_b$,
     \label{eq:macro_slope}
 \end{equation}
 where $\bar{x}_{\mathrm{rel}}$ and $\bar{e}_x$ are the means over the interval. Between 40
-and \SI{100}{m}, the slope is \SI{0.92}{cm/m} in session 07/26\_TUM and
-\SI{0.81}{cm/m} in session 08/03\_Kinetiz. The standard deviation
+and \SI{100}{m}, the slope is \SI{1.06}{cm/m} in session 07/26\_TUM and
+\SI{0.67}{cm/m} in session 08/03\_Kinetiz. The standard deviation
 remains between 0.2 and \SI{0.5}{m}, without a clear trend with the range.
 
 The growth of the error with the range is related to the way the camera estimates the
@@ -453,7 +452,7 @@ depth, which is obtained from the size of the bounding box in the image
 (Section~\ref{sec:tt_perception}). As the opponent moves away, it spans fewer pixels and
 its bounding box is estimated too small, so that the opponent is placed farther than it
 actually is. The same trend is observed in the sessions recorded at Yas Marina, with slopes
-between \SI{0.70}{cm/m} and \SI{1.49}{cm/m} (Appendix~\ref{app:lidar}), so that it can be
+between \SI{0.80}{cm/m} and \SI{1.51}{cm/m} (Appendix~\ref{app:lidar}), so that it can be
 compensated with the linear model~\eqref{eq:macro_slope}. Alternatively, the dependence on
 the range can be corrected by using as a prior the depth provided by another sensor, such as the LiDAR.
 
@@ -546,8 +545,7 @@ RaDAR & Long. & 45 & 48 & 68 & 72 \\
  & Lat. & 64 & 53 & 80 & 76 \\
 \bottomrule
 \end{tabular}
-\caption{Fraction of the power of the residual errors below 1 and \SI{2}{Hz}, computed over the band
-0--\SI{5}{Hz} for all the sensors.}
+\caption{Fraction of the power of the residual errors below 1 and \SI{2}{Hz}.}
 \label{tab:psd_sessions}
 \end{table}
 
