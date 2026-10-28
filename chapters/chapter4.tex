@@ -19,24 +19,23 @@ information carried by the measurements, while one that is too small weights the
 and makes the estimate noisy.
 
 The chapter is divided into two parts. The first analyzes the measurement errors,
-identifying and compensating their deterministic contributions, related to the reference,
-to the calibration and to the working principle of each sensor, and then
+identifying and compensating their deterministic contributions, and then
 characterizing the remaining error in the time and frequency domains. The second addresses
 the tuning of $\mathbf{R}$, first with a static value representative of each sensor and
 then with a covariance matching technique, which adapts it online from the innovations of
 the filter. \\Section~\ref{sec:preprocessing} describes how the errors are computed and, the datasets used and their characteristics. The analysis of the errors is
 developed in Sections~\ref{sec:deterministic}, \ref{sec:macro} and~\ref{sec:gauss_markov},
 while Section~\ref{sec:meas_cov} presents the static and the adaptive measurement noise
-covariance. Finally, Section~\ref{sec:ch4_future} outlines the future developments.
+covariance. Finally, Section~\ref{sec:ch4_future} outlines possible future developments.
 
 % =====================================================================
 \section{Preliminaries}
 \label{sec:preprocessing}
 
 Before the analysis of the characteristics of the measurement errors, the preliminary
-sections explain how the errors are computed, i.e.\ how the reference of the opponent is
-built and how the detections are associated with it to compute their mismatch, and present
-the characteristics of the datasets.
+sections explain how the errors are computed, in particular,  how the ground truth is obtained
+and how the detections are associated with it to compute their mismatch, and present
+the characteristics of the datasets used.
 
 \subsection{Ground Truth Reconstruction}
 \label{sec:gt}
@@ -49,12 +48,12 @@ into a common structure, compatible with the logs of the ego vehicle. The positi
 the heading of the opponent are roto-translated into the map frame of the ego vehicle.
 
 When the longitudinal acceleration is measured by the inertial unit of the opponent, it is
-low-pass filtered with a second-order zero-phase Butterworth filter. Otherwise, it is
+low-pass filtered with a second-order zero-phase Butterworth filter; otherwise, it is
 obtained by differentiating the speed and smoothing the result with a Savitzky-Golay
 filter. The yaw rate, when not provided, is obtained in the same way from the heading.
 
 To compute the relative geometry of the two vehicles, each sample of the opponent is
-associated with the sample of the ego vehicle with the closest timestamp. For each pair of
+associated with the sample of the ego vehicle with the closest timestamp, then for each pair of
 synchronized samples, the position of
 the opponent in the frame of the ego vehicle is obtained by rotating the relative position
 by the heading $\psi_e$ of the ego vehicle,
@@ -103,7 +102,7 @@ where $\mathbf{p}_{\mathrm{det}}$ and $\mathbf{p}_{\mathrm{gt}}$ are the positio
 detection and of the ground truth in the map frame, and $\psi_e$ is the heading of the ego
 vehicle, consistently with~\eqref{eq:gt_rel}. This frame is attached to the ego vehicle,
 so its axes keep the same meaning along the whole lap, with $x_{\mathrm{rel}}$ always
-positive ahead  and $y_{\mathrm{rel}}$ positive to the left. As a
+positive ahead  and $y_{\mathrm{rel}}$ positive to the left; as a
 consequence, $e_x$ is always the error along the longitudinal direction of the ego vehicle
 and $e_y$ the lateral one, regardless of the absolute orientation of the vehicles in the
 map, and the errors collected along the lap can be compared and aggregated consistently.
@@ -151,15 +150,14 @@ Table~\ref{tab:sessions}.
 Both sessions cover the whole spectrum of the dynamics of interest, with an opponent that
 travels at a median speed of about \SI{90}{km/h}, reaches more than \SI{150}{km/h} and
 alternates braking, cornering and traction phases along the lap, together with several safe
-stops and position swaps between the vehicles. The sessions are also complementary in the relative
+stops and position swaps between the vehicles; the sessions are also complementary in the relative
 geometry, which makes it possible to characterize the sensors when they observe the
 opponent from different perspectives. In session 07/26\_TUM the opponent is ahead of the
 ego vehicle for most of the time and moves mainly on its left, with a median lateral
 position of about \SI{6}{m}, while in session 08/03\_Kinetiz the ego vehicle leads for most
 of the time and the opponent moves mainly on its right, at about \SI{-6}{m}.
 
-A first analysis of the detection rate as a function of the range concludes this section.
-Interestingly, it confirms some of the aspects introduced in Section~\ref{sec:sensors}.
+A first analysis of the detection rate as a function of the range concludes this section and, interestingly, confirms some of the aspects introduced in Section~\ref{sec:sensors}.
 The rate is computed as the number of detections associated with the opponent in each
 range interval divided by the time spent by the opponent in that interval, and is shown
 in Fig.~\ref{fig:ds_rate} separately for the opponent ahead of and behind the ego vehicle.
@@ -172,7 +170,7 @@ sessions moves at a lateral position of about \SI{6}{m}, is visible, while as it
 it approaches the longitudinal axis of the ego vehicle and enters the blind spot, where the
 detections drop. \\For the RaDAR, the detection rate is independent of the position of the opponent vehicle, as it is mounted below
 the rear wing. Its main advantage, therefore, is that it extends the range of detection up to about \SI{150}{m} also behind the ego
-vehicle, extending the perception of the LiDARs.
+vehicle.
 
 \begin{figure}[H]
     \centering
@@ -213,17 +211,18 @@ is about \SI{0.2}{m} (Table~\ref{tab:det_long}).
 A closer analysis of session 10/14\_eva suggests the origin of this bias. In this session
 the opponent was a second vehicle operated by us, so both the perception of the ego vehicle
 and the state estimation used as reference were known. Comparing the two, it emerged that
-the perception returns the geometric center of the vehicle, while the estimation refers to
-its center of mass. This difference, which is a matter of conventions and not of quality of
-the perception, produces a constant longitudinal offset. Since different teams may refer
+the perception returned the geometric center of the vehicle, while the estimation  its center of mass. This difference, produced a constant longitudinal offset compatible whit the one observed. Since different teams may refer
 their state estimate to different points of the vehicle, the same cause can also explain
 the different biases of the other two sessions.
 
 The hypothesis is also supported by the behavior of the camera. In the range
 20--\SI{60}{m}, where its error does not depend on the range (Fig.~\ref{fig:det_cam}), the
-mean error of the camera is compatible with the one of the LiDARs, within its larger standard deviation (Table~\ref{tab:det_long}). The camera also measures the geometric center of
-the vehicle, by reconstructing its bounding box, but through a different algorithm, and
-finding the same bias further supports the idea that its origin lies in the reference.
+mean error of the sensor is compatible with the one of the LiDARs, within its larger standard deviation (Table~\ref{tab:det_long}).  Different senors with different pipelines and working principles see the same offset, further supporting the idea that its origin lies in the reference
+For this reason, during the reconstruction of the ground truth a longitudinal offset is
+added to the state estimate of the opponent, which is first estimated offline for each
+session and then compensated.
+
+
 
 \begin{figure}[H]
     \centering
@@ -252,9 +251,7 @@ finding the same bias further supports the idea that its origin lies in the refe
     \label{tab:det_long}
 \end{table}
 
-For this reason, during the reconstruction of the ground truth a longitudinal offset is
-added to the state estimate of the opponent, which is first estimated offline for each
-session and then compensated.
+
 
 \subsection*{Lateral Component}
 \label{subsec:det_lat}
@@ -306,15 +303,13 @@ $x_{\mathrm{rel}}$ is successfully removed.
 \section{Macroscopic Error Trends}
 \label{sec:macro}
 
-Once the setup-related errors have been compensated, the errors related to the working
-principle of each sensor and of its detection pipeline are analyzed. The analysis is
-carried out on the first two moments of the errors, i.e.\ the mean and the standard
-deviation, and looks for trends in them. It starts from the considerations of
-Chapters~\ref{ch:setup} and~\ref{ch:tracking} on the working principle of the pipelines and
-on the intrinsic characteristics of the sensors. For instance, having introduced how the
-camera reconstructs the depth, the dependence of its longitudinal error on the range is
-analyzed, while for the RaDAR, since one of its limits is the angular resolution, the
-dependence of the standard deviation on the range is analyzed.
+Once the setup-related errors have been compensated, the analysis moves to the errors related
+to the operating principle of each sensor and of its detection pipeline. Starting from the
+characteristics introduced in Chapters~\ref{ch:setup} and~\ref{ch:tracking}, trends are
+sought in the first two moments of the errors, i.e.\ the mean and the standard deviation.
+For instance, having introduced how the camera reconstructs the depth, the dependence of its
+longitudinal error on the range is analyzed, while for the RaDAR, whose main limit is the
+angular resolution, the dependence of the standard deviation on the range is considered.
 
 
 \subsection*{LiDAR}
@@ -341,7 +336,7 @@ With the opponent behind, the standard deviation reaches 0.33--\SI{0.69}{m} beyo
 rear wing, which occludes the view of the LiDARs towards the back of the car
 (Section~\ref{subsec:lidar}). At short range the opponent, which moves at a lateral offset
 of about \SI{6}{m}, is still fully visible, but as it moves away it gets closer to the
-longitudinal axis of the ego vehicle and progressively enters the blind spot. Only a
+longitudinal axis of the ego vehicle and progressively enters the blind spot; only a
 decreasing portion of the vehicle then remains visible, and the few points returned produce
 a centroid of the cluster that changes from one scan to the next.
 
@@ -376,7 +371,7 @@ increases, reaching \SI{-0.18}{m} and \SI{-0.23}{m} at 90--\SI{100}{m}.
 \label{subsec:macro_radar}
 
 Moving on to the RaDAR, Fig.~\ref{fig:radar_long} shows its longitudinal error as a function of the longitudinal
-position of the opponent, separately for each session.
+position of the opponent, separately for sessions 07/26 TUM and 08/03 Kinetiz .
 
 \begin{figure}[H]
     \centering
@@ -393,8 +388,7 @@ although not monotonically, reaching 0.85--\SI{1.12}{m} behind and 0.77--\SI{0.8
 ahead at 90--\SI{100}{m}.
 
 The mean error differs with the opponent ahead and behind, which results in two different
-longitudinal offsets, but in both cases it is directed towards the ego vehicle, with a trend
-and a magnitude that depend on the session (Table~\ref{tab:rad_ex}). With the opponent
+longitudinal offsets, but in both cases it is directed towards the ego vehicle, with a magnitude that depend on the session (Table~\ref{tab:rad_ex}). With the opponent
 ahead, it is negative and tends to grow with the range, from \SI{-0.65}{m} and
 \SI{-0.43}{m} at 10--\SI{20}{m} in sessions 07/26\_TUM and 08/03\_Kinetiz to \SI{-1.31}{m}
 and \SI{-1.06}{m} at 90--\SI{100}{m}. With the opponent behind, it is positive and, on
@@ -453,8 +447,7 @@ depth, which is obtained from the size of the bounding box in the image
 its bounding box is estimated too small, so that the opponent is placed farther than it
 actually is. The same trend is observed in the sessions recorded at Yas Marina, with slopes
 between \SI{0.80}{cm/m} and \SI{1.51}{cm/m} (Appendix~\ref{app:lidar}), so that it can be
-compensated with the linear model~\eqref{eq:macro_slope}. Alternatively, the dependence on
-the range can be corrected by using as a prior the depth provided by another sensor, such as the LiDAR.
+compensated with the linear model~\eqref{eq:macro_slope}. or, alternatively, using as a prior the depth provided by another sensor, such as the LiDAR.
 
 \FloatBarrier
 
@@ -465,15 +458,9 @@ the range can be corrected by using as a prior the depth provided by another sen
 Starting from the measurement errors, once the trends identified in the previous section
 have been removed offline, an analysis in the time and frequency domains is carried out. The
 residual errors of the LiDARs and of the camera show a slow, low-frequency component, on
-which a white, high-frequency one is superimposed. This makes the residuals autocorrelated,
-which
-breaks the assumption of the Kalman filter on the measurement errors, namely that they are
-white and uncorrelated between different time instants,
-\begin{equation}
-    \mathbb{E}\left[\mathbf{v}_k\,\mathbf{v}_j^\top\right] = \mathbf{R}_k\,\delta_{kj}.
-    \label{eq:white_noise}
-\end{equation}
-The idea is therefore to characterize this behavior, in order to compensate it.
+which a white, high-frequency one is superimposed. This, as shown in the following, makes the residuals autocorrelated,
+breaking the assumption of the Kalman filter on the measurement errors, i.e that they are
+white and uncorrelated between different time instants; the idea is therefore to characterize this behavior, in order to compensate it.
 
 \subsection*{Spectral Analysis}
 \label{subsec:acf_psd}
@@ -497,15 +484,12 @@ PSD is obtained by averaging the periodograms of the segments
     S_e(f) = \frac{1}{K}\sum_{i=1}^{K} P_i(f).
     \label{eq:welch}
 \end{equation}
-A Hann window of $N = 128$ samples is adopted. Since each segment requires consecutive
-detections without interruptions, longer segments, of 256 or 512 samples, would reduce the
-number of segments available for the average. For the same reason, consecutive windows
-overlap by \SI{50}{\percent}, which increases the number of periodograms to be averaged.
+A Hann window of $N = 128$ samples is adopted with overlap between consecutive windows of  \SI{50}{\percent}, to increase the number of periodograms to be averaged.
 
-As a consequence, the analysis is limited to the segments in which the opponent is ahead.
+Since the formulation prescribes the segments to be of continuous samples, the analysis is limited to the ones in which the opponent is ahead.
 With the opponent behind, the detections of the LiDARs are interrupted by the blind spot of
 the rear wing, so that the continuous segments are too short to estimate the PSD. For the RaDAR, which also covers
-the rear sector, the errors with the opponent behind lead to similar results. The camera only provides data with the opponent ahead
+the rear sector, the errors with the opponent behind lead to similar results. \\The camera only provides data with the opponent ahead
 
 For sessions 07/26\_TUM and 10/14\_eva with the opponent ahead, the PSD of the residual
 errors is shown in Fig.~\ref{fig:psd} and summarized in Table~\ref{tab:psd_sessions}.
@@ -603,14 +587,10 @@ RaDAR & Long. & 0.29 & 0.28 & 0.17 & 0.11 & 0.08 & 0.03 & 0.04 & $-$0.04 \\
 \label{subsec:corr_geometry}
 
 To compensate this behavior, a model that explains the autocorrelation of the residual
-errors is sought. The analysis focuses on the relative geometry of the two vehicles, not
-only because the dependence of the errors on the direction from which the opponent is
-observed has not been analyzed yet, but also because a hint comes from the previous
-section, where the longitudinal errors of the RaDAR and of PointPillars showed that the
+errors is sought. The analysis focuses on the relative geometry of the two vehicles, leveragin on the considerations made  from the previous section, where the longitudinal errors of the RaDAR and of PointPillars showed that the
 detection is shifted according to the surface of the vehicle visible to the sensor. The
 idea is therefore that the face of the opponent that is seen can influence the detection in
-the same way and, since it changes slowly along the lap, be one of the origins of the
-autocorrelation. The relative geometry is described by two quantities.
+the same way and that could  be one of the origins of the autocorrelation. The relative geometry is described by two quantities.
 The bearing
 \begin{equation}
     \alpha = \operatorname{atan2}\left(y_{\mathrm{rel}},\, x_{\mathrm{rel}}\right)
@@ -636,7 +616,7 @@ coefficient
     {\sqrt{\sum_{k}\left(e_k - \bar{e}\right)^2}\,\sqrt{\sum_{k}\left(g_k - \bar{g}\right)^2}},
     \label{eq:geo_corr}
 \end{equation}
-computed on all the detections of the session. The results are reported in
+The results are reported in
 Table~\ref{tab:geo_dependence}.
 
 \begin{table}[H]
@@ -668,18 +648,17 @@ ahead.}
 \end{table}
 
 The longitudinal errors are only weakly correlated with the two angles, with $|r|$ mostly
-below 0.3, whereas the lateral errors show larger values, which reach, e.g., $-0.50$ for
-PointPillars and $-0.40$ for Clustering with the bearing in session 07/26\_TUM and $-0.68$
-for the camera with the aspect angle in session 10/14\_eva. Taken alone, these values would suggest a dependence of the lateral error on the geometry,
-whose sign, if the effect were physical, would be set by the observed side of the opponent.
+below 0.3, whereas the lateral ones show larger values, e.g.\ $-0.50$ for PointPillars and
+$-0.40$ for Clustering with the bearing in session 07/26\_TUM and $-0.68$ for the camera with
+the aspect angle in session 10/14\_eva. Taken alone, these values would suggest a dependence
+of the lateral error on the geometry, whose sign, if the effect were physical, would be set
+by the observed side of the opponent.
 
-The latter, however, changes from one session to the other, with the lateral errors of the
-LiDARs and of the camera negatively correlated with the bearing in session 07/26\_TUM and
-positively in session 10/14\_eva, and with the same inversion for the aspect angle in the
-case of PointPillars and of the camera.
-\\The correlations
-are therefore not significant, and a geometrical model  cannot explain the slow
-component.
+In both sessions the opponent moves mainly on the same side of the ego vehicle, yet the sign
+of the correlation is inverted. The lateral errors of the LiDARs and of the camera are
+negatively correlated with the bearing in session 07/26\_TUM and positively in session
+10/14\_eva, and the same inversion occurs for the aspect angle in the case of PointPillars
+and of the camera. Although present within each session, the correlations do not reflect a systematic behavior of the sensors and  a global geometrical model, valid for all the sessions, cannot be identified. The relative geometry cannot be used to explain and  compensate the slow component.
 
 
 \subsection*{Gauss-Markov Bias Model}
@@ -714,7 +693,7 @@ $\rho_b(\ell) = e^{-|\ell|/\tau}$, while $\eta_k$ is the white component that dr
 evolution. 
 
 The correlation time is chosen from the values of Table~\ref{tab:acf_sessions}, a value
-of $\tau = \SI{1}{s}$ is adopted for all the sensors, for simplicity. It does not represent
+of $\tau = \SI{1}{s}$ is adopted for all the sensors, for simplicity ; it does not represent
 the optimal value for each sensor, but it proves to be an effective choice. \\ Indeed, when the model
 is applied offline to the detrended errors and the estimated bias is removed, the
 residuals become white, with a normalized autocorrelation of about zero at all the lags,
@@ -745,12 +724,11 @@ RaDAR & Long. & $[-0.03,\,+0.03]$ & $[-0.07,\,-0.02]$ & $[-0.05,\,+0.07]$ \\
 opponent ahead, $\tau = \SI{1}{s}$. Range across the eight sessions.}
 \label{tab:acf_gm}
 \end{table}
-
-Finally, once the errors are decorrelated, the standard deviations of the white component
-and of the low-frequency bias can be computed. Since $w_k$ is uncorrelated between consecutive
-samples, the covariance of two consecutive errors depends only on $b_k$.
-Following~\eqref{eq:gm_process}, $\sigma_b^2$ is estimated by least squares on the pairs
-of consecutive detections, and $\sigma_w^2$ is obtained by difference,
+Once the errors are decorrelated, the standard deviations of the white component and of the
+low-frequency bias can be computed. Since $w_k$ is uncorrelated between consecutive samples,
+the covariance of two consecutive errors depends only on $b_k$, so that, following
+\eqref{eq:gm_process}, $\sigma_b^2$ is estimated by least squares on the pairs of consecutive
+detections and $\sigma_w^2$ is obtained by difference,
 \begin{equation}
     \mathbb{E}\left[e_k\, e_{k+1}\right] = \phi_k\, \sigma_b^2
     \;\Rightarrow\;
@@ -794,8 +772,8 @@ and of the autocorrelation. For the LiDARs and the camera, a considerable part o
 standard deviation of the error is introduced by the bias. For the RaDAR, instead, the
 bias is still present, but it is less relevant than the white component.
 
-The next step, is estimate the bias online. The natural approach, as prescribed by the literature, is to
-augment the state of the filter with the bias of each sensor, which evolves as in~\eqref{eq:gm_process}, so that the filter estimates the
+The next step, is to estimate the bias online. The  approach followed, 
+augments the state of the filter with the bias of each sensor, which evolves as in~\eqref{eq:gm_process}, so that the filter estimates the
 position of the opponent and the biases at the same time,
 \begin{equation}
     \tilde{\mathbf{x}} =
@@ -808,14 +786,14 @@ position of the opponent and the biases at the same time,
     \label{eq:gm_augmented}
 \end{equation}
 where $\mathbf{p} = \mathbf{H}\mathbf{x}$ is the position of the opponent and the
-subscripts L, C and R denote the LiDARs, the camera and the RaDAR. Each measurement is
+subscripts L, C and R denote the LiDARs, the camera and the RaDAR; each measurement is
 then the sum of the position of the opponent, of the bias of the sensor and of a white
 noise.
 
 Implementing this approach first on the LiDARs, the results show that their bias is not
 observable. In the prediction step, the position of the opponent and the bias are
 propagated through their own models, i.e.\ the motion model~\eqref{eq:tt_system} and the
-Gauss-Markov process~\eqref{eq:gm_process}, respectively, while a LiDAR measurement
+Gauss-Markov process~\eqref{eq:gm_process}, respectively, while a LiDAR measure
 observes their sum, so that the correction step has to split a single innovation between
 the two states. Considering a single component, with position $p$ and bias $b$, the
 measurement matrix of the LiDARs is $\mathbf{H} = [\,1 \;\; 1\,]$ and, following the
@@ -856,7 +834,7 @@ other hand, remain observable relative to the LiDARs, since the difference
     \label{eq:gm_relative}
 \end{equation}
 does not depend on the position of the opponent. The estimation of these relative biases
-is left as future work, rather than implemented in this work, as explained in
+is left as future work, rather than implemented in this, as explained in
 Section~\ref{sec:ch4_future}.
 
 % =====================================================================
@@ -896,8 +874,7 @@ measurement, although its mean error depends strongly on the range
 (Section~\ref{subsec:macro_camera}). The RaDAR shows the largest variability of the
 position measurement, mainly on the longitudinal component, so that its position is useful
 when the other sensors cannot detect the opponent, i.e.\ at long range with the opponent
-behind, while its main contribution remains the direct measurement of the range rate.
-
+behind.
 \begin{table}[H]
 \centering
 \small
@@ -978,15 +955,7 @@ measurement, i.e.\ becoming larger when the innovations are more dispersed than 
 prediction alone can explain and smaller when they are less dispersed. 
 A single innovation, however, is a noisy sample of $\mathbf{S}_k$, and an estimate based only
 on the current one would be unstable. For this reason, the information of the past
-innovations is retained, and the way they are combined is a design choice. The estimate can
-be computed as a moving average over the last $M$ innovations,
-\begin{equation}
-    \hat{\mathbf{R}}_k = \frac{1}{M}\sum_{j=k-M+1}^{k}
-    \left(\boldsymbol{\nu}_j\,\boldsymbol{\nu}_j^\top
-    - \mathbf{H}\,\mathbf{P}_{j|j-1}\,\mathbf{H}^\top\right),
-    \label{eq:cm_R_window}
-\end{equation}
-or, as done in this work, recursively through a mixing coefficient $\alpha \in (0,1)$,
+innovations is retained, and it is adapted recursively through a mixing coefficient $\alpha \in (0,1)$,
 \begin{equation}
     \hat{\mathbf{R}}_k = \alpha\,\hat{\mathbf{R}}_{k-1}
     + (1-\alpha)\left(\boldsymbol{\nu}_k\,\boldsymbol{\nu}_k^\top
@@ -994,13 +963,12 @@ or, as done in this work, recursively through a mixing coefficient $\alpha \in (
     \label{eq:cm_R_alpha}
 \end{equation}
 A larger value of $\alpha$ keeps $\hat{\mathbf{R}}_k$ close to its value at the previous
-step, while a smaller one updates it more rapidly with the new information, and $\alpha$ is
+step, while a smaller one updates it more rapidly with the new information. \\ $\alpha$ is
 chosen so that $\hat{\mathbf{R}}_k$ follows the trend of the measurement errors while
-remaining robust to spurious outliers. The recursion is initialized with the nominal value
-of Section~\ref{sec:gaussian_fit}.
+remaining robust to spurious outliers. 
 
-The fundamental assumption of the method is that the innovations are a zero-mean, white
-sequence, uncorrelated between different time instants. The assumption is necessary
+All of the above formulation lies on the assumption  that the innovations are a zero-mean, white
+sequence, uncorrelated between different time instants. The latter is necessary
 because only in this case each innovation is representative of the error of the
 measurement at that instant, so that, subtracting the uncertainty of the prediction, the
 error of the sensor is correctly isolated.
@@ -1012,7 +980,7 @@ error of the sensor is correctly isolated.
 
 The covariance matching is implemented online in the filter following~\eqref{eq:cm_R_alpha}, the formulation proposed in the previous chapter does not consider the possibility for $\mathbf{R}$ to become negative definite, therefore, 
  a lower bound on its diagonal elements  corresponding to a standard
-deviation of \SI{0.03}{m}  is added. The mixing coefficient is $\alpha = 0.95$.
+deviation of \SI{0.03}{m}  is added. The mixing coefficient is set to $\alpha = 0.95$.
 
 The validation is carried out on the errors whitened offline with the Gauss-Markov model of
 Section~\ref{subsec:gauss_markov_model}, i.e.\ on the residual errors from which the slow
@@ -1136,7 +1104,7 @@ the relative bias and would not reflect the actual accuracy of the sensor.
 
 To apply the covariance matching to the camera and to the RaDAR, the relative bias should
 therefore be estimated first. This is possible because, unlike the absolute bias, the
-relative one is observable, as shown in~\eqref{eq:gm_relative}, and it could be added to the
+relative one is observable, as shown in~\eqref{eq:gm_relative}, and could be added to the
 state of the filter as a Gauss-Markov process, similarly to what was proposed for the LiDARs
 in Section~\ref{subsec:gauss_markov_model}. Once the estimated relative bias is subtracted
 from the measurements, the innovations would contain only the white component of the error,
@@ -1144,6 +1112,6 @@ and the covariance matching could be applied to them in the same way as for the 
 
 This extension is left as future work because its benefit would be limited. It would provide
 consistent innovations for the camera and the RaDAR and, as a consequence, a better weighting
-of their measurements in the filter. However, the estimate of the state would still be
+of their measurements in the filter but, however, the estimate of the state would still be
 referred to the LiDARs and would therefore remain affected by their bias, which cannot be
 compensated with the sensors currently available.
