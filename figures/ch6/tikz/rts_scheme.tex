@@ -1,0 +1,40 @@
+% Scheme of the RTS smoother (Chapter 6): forward Kalman filter and backward step.
+\begin{tikzpicture}[
+    font=\footnotesize,
+    >={Stealth[length=2mm]},
+    blk/.style={draw, thick, rounded corners=2pt, minimum width=17mm, minimum height=9mm, align=center},
+    fwd/.style={blk, fill=black!5},
+    bwd/.style={blk, fill=black!15},
+    arr/.style={->, thick},
+    lab/.style={font=\scriptsize, align=center, fill=white, inner sep=1.2pt}
+]
+% forward row
+\node[fwd] (F0) at (0,0)   {KF\\ step $0$};
+\node[fwd] (F1) at (3,0)   {KF\\ step $k$};
+\node[fwd] (F2) at (6,0)   {KF\\ step $k{+}1$};
+\node[fwd] (F3) at (9.6,0) {KF\\ step $N$};
+% backward row
+\node[bwd] (B0) at (0,-3.2)   {Backward\\ step $0$};
+\node[bwd] (B1) at (3,-3.2)   {Backward\\ step $k$};
+\node[bwd] (B2) at (6,-3.2)   {Backward\\ step $k{+}1$};
+\node[bwd] (B3) at (9.6,-3.2) {Initialization\\ $k=N$};
+% measurements
+\foreach \i/\z in {F0/{\mathbf{z}_0},F1/{\mathbf{z}_k},F2/{\mathbf{z}_{k+1}},F3/{\mathbf{z}_N}}
+    \draw[arr] ($(\i.north)+(0,0.7)$) node[above]{$\z$} -- (\i.north);
+% forward arrows
+\draw[arr] (F0) -- node[lab,above]{$\cdots$} (F1);
+\draw[arr] (F1) -- node[lab,above]{$\hat{\mathbf{x}}_{k|k}$} (F2);
+\draw[arr] (F2) -- node[lab,above]{$\cdots$} (F3);
+% backward arrows
+\draw[arr] (B3) -- node[lab,below]{$\cdots$} (B2);
+\draw[arr] (B2) -- node[lab,below]{$\hat{\mathbf{x}}_{k+1|N}$} (B1);
+\draw[arr] (B1) -- node[lab,below]{$\cdots$} (B0);
+% stored quantities
+\draw[arr,dashed] (F1) -- node[lab]{$\hat{\mathbf{x}}_{k|k},\,\mathbf{P}_{k|k}$\\ $\hat{\mathbf{x}}_{k+1|k},\,\mathbf{P}_{k+1|k},\,\mathbf{F}_k$} (B1);
+\draw[arr,dashed] (F0) -- node[lab]{stored\\ quantities} (B0);
+\draw[arr,dashed] (F2) -- node[lab]{stored\\ quantities} (B2);
+\draw[arr,dashed] (F3) -- node[lab]{$\hat{\mathbf{x}}_{N|N},\,\mathbf{P}_{N|N}$} (B3);
+% outputs
+\foreach \i/\x in {B0/{\hat{\mathbf{x}}_{0|N}},B1/{\hat{\mathbf{x}}_{k|N}},B2/{\hat{\mathbf{x}}_{k+1|N}},B3/{\hat{\mathbf{x}}_{N|N}}}
+    \draw[arr] (\i.south) -- ($(\i.south)+(0,-0.7)$) node[below]{$\x$};
+\end{tikzpicture}

@@ -1,0 +1,28 @@
+% Architecture of the feed-forward process noise (Chapter 5).
+\begin{tikzpicture}[
+    font=\footnotesize,
+    >={Stealth[length=2mm]},
+    blk/.style={draw, thick, rounded corners=2pt, minimum width=22mm, minimum height=10mm, align=center},
+    aux/.style={blk, fill=black!5},
+    main/.style={blk, fill=black!15},
+    arr/.style={->, thick},
+    lab/.style={font=\scriptsize, align=center, fill=white, inner sep=1.2pt}
+]
+\node (Z) at (0,-1.4) {$\mathbf{z}_k$};
+\coordinate (S) at (1.2,-1.4);
+\node[aux]  (A) at (3.2,0)    {Auxiliary EKF\\ inflated $\mathbf{Q}$};
+\node[aux]  (J) at (6.6,0)    {Jerk\\ estimation};
+\node[aux]  (H) at (10,0)     {Hysteresis\\ logic};
+\node[blk]  (Q) at (10,-2.8)  {Process noise\\ switch};
+\node[main] (M) at (3.2,-2.8) {Main EKF\\ $\mathbf{Q}_k$};
+\node (P) at (3.2,-4.6) {state published to the planning module};
+\draw[thick] (Z) -- (S);
+\draw[arr] (S) |- (A.west);
+\draw[arr] (S) |- (M.west);
+\draw[arr] (A) -- node[lab,above]{$a_k$} (J);
+\draw[arr] (J) -- node[lab,above]{$j_k$} (H);
+\draw[arr] (H) -- node[lab,right]{$f_k$} (Q);
+\draw[arr] (Q) -- node[lab,above]{$\mathbf{Q}_{\mathrm{nom}}$ or $\lambda\mathbf{Q}_{\mathrm{nom}}$} (M);
+\draw[arr] (M) -- (P);
+\fill (S) circle (1.5pt);
+\end{tikzpicture}

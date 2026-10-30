@@ -1,0 +1,145 @@
+\refstepcounter{chapter}
+\chapter*{Appendix C}
+\addcontentsline{toc}{chapter}{Appendix C}
+\markboth{Appendix C}{Appendix C}
+\label{app:rts}
+
+This appendix reports the complete derivation of the backward step of the RTS smoother
+presented in Section~\ref{subsec:rts_backward}, for the linear Gaussian
+system~\eqref{eq:rts_linear}.
+
+\subsection*{Factorization of the Joint Density}
+
+The smoothed estimates $\hat{\mathbf{x}}_{k|N}$ and $\hat{\mathbf{x}}_{k+1|N}$ maximize the
+joint density $p(\mathbf{x}_k, \mathbf{x}_{k+1}, \mathbf{Y}_N)$. Denoting by
+$\mathbf{Z}_{k+1:N} = \{\mathbf{z}_{k+1}, \dots, \mathbf{z}_N\}$ the future measurements and
+applying the definition of conditional probability, the density can be written as
+\begin{equation}
+    p(\mathbf{x}_k, \mathbf{x}_{k+1}, \mathbf{Y}_N) =
+    p(\mathbf{Z}_{k+1:N} \mid \mathbf{x}_k, \mathbf{x}_{k+1}, \mathbf{Y}_k)\;
+    p(\mathbf{x}_{k+1} \mid \mathbf{x}_k, \mathbf{Y}_k)\;
+    p(\mathbf{x}_k \mid \mathbf{Y}_k)\;
+    p(\mathbf{Y}_k).
+\end{equation}
+By the Markov property of the model, the future measurements depend only on the states from
+$k+1$ on, so that, given $\mathbf{x}_{k+1}$, they are independent of $\mathbf{x}_k$ and of
+$\mathbf{Y}_k$, while the transition to $\mathbf{x}_{k+1}$, given $\mathbf{x}_k$, is
+independent of the past measurements,
+\begin{equation}
+    p(\mathbf{Z}_{k+1:N} \mid \mathbf{x}_k, \mathbf{x}_{k+1}, \mathbf{Y}_k)
+    = p(\mathbf{Z}_{k+1:N} \mid \mathbf{x}_{k+1}),
+    \qquad
+    p(\mathbf{x}_{k+1} \mid \mathbf{x}_k, \mathbf{Y}_k) = p(\mathbf{x}_{k+1} \mid \mathbf{x}_k),
+\end{equation}
+which gives the factorization~\eqref{eq:rts_joint}.
+
+\subsection*{Cost Function}
+
+The factors that depend on $\mathbf{x}_k$ are Gaussian,
+\begin{equation}
+    p(\mathbf{x}_{k+1} \mid \mathbf{x}_k) = \mathcal{N}\!\left(\mathbf{x}_{k+1};\,
+    \mathbf{F}_k\mathbf{x}_k,\, \mathbf{Q}_k\right),
+    \qquad
+    p(\mathbf{x}_k \mid \mathbf{Y}_k) = \mathcal{N}\!\left(\mathbf{x}_k;\,
+    \hat{\mathbf{x}}_{k|k},\, \mathbf{P}_{k|k}\right).
+\end{equation}
+Since the joint maximum is reached for $\mathbf{x}_{k+1} = \hat{\mathbf{x}}_{k+1|N}$,
+replacing $\mathbf{x}_{k+1}$ with its smoothed estimate and taking the negative logarithm,
+up to terms that do not depend on $\mathbf{x}_k$, the estimate $\hat{\mathbf{x}}_{k|N}$
+minimizes
+\begin{equation}
+    J(\mathbf{x}_k) =
+    \left(\hat{\mathbf{x}}_{k+1|N} - \mathbf{F}_k\mathbf{x}_k\right)^\top \mathbf{Q}_k^{-1}
+    \left(\hat{\mathbf{x}}_{k+1|N} - \mathbf{F}_k\mathbf{x}_k\right)
+    + \left(\mathbf{x}_k - \hat{\mathbf{x}}_{k|k}\right)^\top \mathbf{P}_{k|k}^{-1}
+    \left(\mathbf{x}_k - \hat{\mathbf{x}}_{k|k}\right),
+\end{equation}
+which is the cost~\eqref{eq:rts_cost}.
+
+\subsection*{Smoothed State}
+
+Since $J$ is quadratic in $\mathbf{x}_k$, its minimum is found by setting the gradient to
+zero,
+\begin{equation}
+    \frac{\partial J}{\partial \mathbf{x}_k} =
+    -2\,\mathbf{F}_k^\top\mathbf{Q}_k^{-1}\left(\hat{\mathbf{x}}_{k+1|N} - \mathbf{F}_k\mathbf{x}_k\right)
+    + 2\,\mathbf{P}_{k|k}^{-1}\left(\mathbf{x}_k - \hat{\mathbf{x}}_{k|k}\right) = \mathbf{0},
+\end{equation}
+which gives
+\begin{equation}
+    \left(\mathbf{P}_{k|k}^{-1} + \mathbf{F}_k^\top\mathbf{Q}_k^{-1}\mathbf{F}_k\right)
+    \hat{\mathbf{x}}_{k|N}
+    = \mathbf{P}_{k|k}^{-1}\hat{\mathbf{x}}_{k|k} + \mathbf{F}_k^\top\mathbf{Q}_k^{-1}\hat{\mathbf{x}}_{k+1|N}.
+\end{equation}
+Adding and subtracting $\mathbf{F}_k^\top\mathbf{Q}_k^{-1}\mathbf{F}_k\hat{\mathbf{x}}_{k|k}$
+on the right-hand side and using $\mathbf{F}_k\hat{\mathbf{x}}_{k|k} = \hat{\mathbf{x}}_{k+1|k}$,
+the smoothed state is written as a correction of the filtered one,
+\begin{equation}
+    \hat{\mathbf{x}}_{k|N} = \hat{\mathbf{x}}_{k|k}
+    + \left(\mathbf{P}_{k|k}^{-1} + \mathbf{F}_k^\top\mathbf{Q}_k^{-1}\mathbf{F}_k\right)^{-1}
+    \mathbf{F}_k^\top\mathbf{Q}_k^{-1}\left(\hat{\mathbf{x}}_{k+1|N} - \hat{\mathbf{x}}_{k+1|k}\right).
+    \label{eq:app_rts_info}
+\end{equation}
+The gain of~\eqref{eq:app_rts_info} is simplified with the matrix inversion lemma,
+\begin{equation}
+    \left(\mathbf{P}^{-1} + \mathbf{F}^\top\mathbf{Q}^{-1}\mathbf{F}\right)^{-1}
+    = \mathbf{P} - \mathbf{P}\mathbf{F}^\top\left(\mathbf{F}\mathbf{P}\mathbf{F}^\top + \mathbf{Q}\right)^{-1}\mathbf{F}\mathbf{P},
+\end{equation}
+which, multiplied by $\mathbf{F}^\top\mathbf{Q}^{-1}$, gives
+\begin{equation}
+    \left(\mathbf{P}^{-1} + \mathbf{F}^\top\mathbf{Q}^{-1}\mathbf{F}\right)^{-1}\mathbf{F}^\top\mathbf{Q}^{-1}
+    = \mathbf{P}\mathbf{F}^\top\left(\mathbf{F}\mathbf{P}\mathbf{F}^\top + \mathbf{Q}\right)^{-1},
+\end{equation}
+where the subscripts have been omitted for brevity. Since, from the forward pass, the term in
+parentheses is the predicted covariance $\mathbf{P}_{k+1|k}$, the gain reduces to the
+smoother gain
+\begin{equation}
+    \mathbf{C}_k = \mathbf{P}_{k|k}\,\mathbf{F}_k^\top\,\mathbf{P}_{k+1|k}^{-1},
+\end{equation}
+and the smoothed state is
+\begin{equation}
+    \hat{\mathbf{x}}_{k|N} = \hat{\mathbf{x}}_{k|k}
+    + \mathbf{C}_k\left(\hat{\mathbf{x}}_{k+1|N} - \hat{\mathbf{x}}_{k+1|k}\right).
+    \label{eq:app_rts_state}
+\end{equation}
+
+\subsection*{Smoothed Covariance}
+
+Defining the estimation errors $\tilde{\mathbf{x}}_{k|N} = \mathbf{x}_k - \hat{\mathbf{x}}_{k|N}$
+and $\tilde{\mathbf{x}}_{k|k} = \mathbf{x}_k - \hat{\mathbf{x}}_{k|k}$, and subtracting both
+sides of~\eqref{eq:app_rts_state} from $\mathbf{x}_k$, the errors are related by
+\begin{equation}
+    \tilde{\mathbf{x}}_{k|N} + \mathbf{C}_k\,\hat{\mathbf{x}}_{k+1|N}
+    = \tilde{\mathbf{x}}_{k|k} + \mathbf{C}_k\,\hat{\mathbf{x}}_{k+1|k}.
+\end{equation}
+By the orthogonality principle, the estimation error is uncorrelated with the estimate
+computed from the same measurements, so that $\tilde{\mathbf{x}}_{k|N}$ is uncorrelated with
+$\hat{\mathbf{x}}_{k+1|N}$ and $\tilde{\mathbf{x}}_{k|k}$ with $\hat{\mathbf{x}}_{k+1|k}$.
+Taking the covariance of both sides gives
+\begin{equation}
+    \mathbf{P}_{k|N} + \mathbf{C}_k\,\mathbb{E}\!\left[\hat{\mathbf{x}}_{k+1|N}\hat{\mathbf{x}}_{k+1|N}^\top\right]\mathbf{C}_k^\top
+    = \mathbf{P}_{k|k} + \mathbf{C}_k\,\mathbb{E}\!\left[\hat{\mathbf{x}}_{k+1|k}\hat{\mathbf{x}}_{k+1|k}^\top\right]\mathbf{C}_k^\top.
+\end{equation}
+For the same reason, the second moment of the state can be decomposed as
+$\mathbb{E}[\mathbf{x}_{k+1}\mathbf{x}_{k+1}^\top] = \mathbf{P}_{k+1|N} +
+\mathbb{E}[\hat{\mathbf{x}}_{k+1|N}\hat{\mathbf{x}}_{k+1|N}^\top] = \mathbf{P}_{k+1|k} +
+\mathbb{E}[\hat{\mathbf{x}}_{k+1|k}\hat{\mathbf{x}}_{k+1|k}^\top]$, so that
+\begin{equation}
+    \mathbb{E}\!\left[\hat{\mathbf{x}}_{k+1|N}\hat{\mathbf{x}}_{k+1|N}^\top\right]
+    - \mathbb{E}\!\left[\hat{\mathbf{x}}_{k+1|k}\hat{\mathbf{x}}_{k+1|k}^\top\right]
+    = \mathbf{P}_{k+1|k} - \mathbf{P}_{k+1|N},
+\end{equation}
+and substituting into the previous equation gives the smoothed covariance
+\begin{equation}
+    \mathbf{P}_{k|N} = \mathbf{P}_{k|k}
+    + \mathbf{C}_k\left(\mathbf{P}_{k+1|N} - \mathbf{P}_{k+1|k}\right)\mathbf{C}_k^\top.
+\end{equation}
+
+\subsection*{Initialization}
+
+At the last instant, the measurements used by the filter and by the smoother coincide, so
+that $\hat{\mathbf{x}}_{N|N}$ and $\mathbf{P}_{N|N}$ are also the smoothed estimate and
+covariance. Starting from them, the smoothed state~\eqref{eq:app_rts_state} and covariance
+are computed backward for $k = N-1, \dots, 0$, using the filtered states
+$\hat{\mathbf{x}}_{k|k}$, $\mathbf{P}_{k|k}$, the predictions $\hat{\mathbf{x}}_{k+1|k}$,
+$\mathbf{P}_{k+1|k}$ and the matrices $\mathbf{F}_k$ stored by the forward pass.
