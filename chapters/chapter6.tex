@@ -58,8 +58,7 @@ at $k$ to the one at $k+1$, and computes the smoothed estimate with a backward
 recursion that starts from the last instant and runs on the output of a single forward
 Kalman filter. The RTS formulation is chosen in this work, since it only requires the
 quantities already computed by the forward filter to be stored, and it does not need a
-second filter running in parallel with its own initialization, the backward recursion
-being instead initialized with the estimate of the forward filter at the current time.
+second filter running in parallel with its own initialization.
 
 % =====================================================================
 \section{RTS Smoother Formulation}
@@ -92,9 +91,7 @@ Kalman filter of the tracker, which processes the measurements in chronological 
 stores, at each step, the quantities required by the backward pass. The backward pass is
 then initialized at the last step with the filtered estimate and runs in reverse
 chronological order, computing each smoothed state from the one of the following step and
-from the quantities stored by the forward pass. The two passes are described in the
-following.
-
+from the quantities stored by the forward pass. 
 \begin{figure}[H]
     \centering
     \input{figures/ch6/tikz/rts_scheme.tex}
@@ -105,7 +102,7 @@ following.
 \subsection{Forward Pass}
 \label{subsec:rts_forward}
 
-The RTS smoother is built on top of a forward pass, which is the Kalman filter of
+ It is the Kalman filter of
 Chapter~\ref{ch:tracking} and provides, at each step, the causal quantities on which the
 backward recursion operates. The state is first predicted through the motion model,
 \begin{equation}
@@ -124,13 +121,11 @@ and then corrected with the measurement,
     \end{aligned}
     \label{eq:rts_fwd_corr}
 \end{equation}
-as in~\eqref{eq:tt_prediction} and~\eqref{eq:tt_update}. Both stages are needed by the
-smoother. The filtered estimate $\hat{\mathbf{x}}_{k|k}$ and its covariance
+as in~\eqref{eq:tt_prediction} and~\eqref{eq:tt_update}. \\ The filtered estimate $\hat{\mathbf{x}}_{k|k}$ and its covariance
 $\mathbf{P}_{k|k}$ are the causal states that the backward recursion refines, while the
 prediction $\hat{\mathbf{x}}_{k+1|k}$, its covariance $\mathbf{P}_{k+1|k}$ and the state
 matrix $\mathbf{F}_k$ are used to compare the causal prediction with the smoothed state at
-the following step and to compute the smoother gain, which weights this comparison. For
-this reason, all these quantities are stored at every step of the forward pass.
+the following step and to compute the smoother gain, which weights this comparison. 
 
 \subsection{Backward Step}
 \label{subsec:rts_backward}
@@ -160,9 +155,7 @@ depends only on $\mathbf{x}_k$, the joint density factorizes as
 \end{equation}
 The first factor carries the information of the future measurements and depends only on
 $\mathbf{x}_{k+1}$, while the last one does not depend on the states. The second and the
-third factors are provided by the forward pass and are Gaussian, with moments given by the
-motion model and by the filtered estimate, so that the dependence on $\mathbf{x}_k$ is
-confined to these two terms. In the smoothing problem, the
+third factors are those provided by the forward pass. In the smoothing problem, the
 future state $\mathbf{x}_{k+1}$ is replaced by its smoothed estimate
 $\hat{\mathbf{x}}_{k+1|N}$, which maximizes the joint density together with
 $\hat{\mathbf{x}}_{k|N}$, and the smoothed estimate at $k$ is obtained by
@@ -206,7 +199,7 @@ $\mathbf{C}_k = \mathbf{P}_{k|k}\mathbf{F}_k^\top\mathbf{P}_{k+1|k}^{-1}$, which
 mismatch according to the uncertainty of the forward filter, i.e.\ to the ratio between the
 covariance of the filtered estimate and the one of the prediction. A filtered estimate with a
 small covariance is therefore only marginally corrected, whereas an uncertain one is pulled
-more strongly towards the information carried by the future measurements. The same
+more strongly towards the information carried by the future estimates. The same
 mechanism acts on the covariance. At the last instant the smoothed and the filtered
 covariances coincide, and, if the smoothed covariance at $k+1$ does not exceed the filtered
 one, it does not exceed the predicted one either, since the correction step of the filter
@@ -284,13 +277,11 @@ one referred to the past, it is preferable to bound how old the smoothed informa
 rather than how much information is used to compute it.
 
 At every publication, the backward step of Section~\ref{subsec:rts_backward} is applied over
-the window, as reported in Algorithm~\ref{alg:rts}. The recursion is initialized at the most
-recent entry, whose filtered estimate is also the smoothed one, and proceeds towards the oldest
-entry of the window, computing each smoothed state from the one obtained at the following entry
-and from the filtered state, the prediction and the Jacobian stored in the history by the
-forward pass. The smoothed states are then published on the history used by the planning
-module, which therefore contains, at the most recent instant, the causal prediction of the
-filter and, from the first available measurement backward, the smoothed states.
+the window, as reported in Algorithm~\ref{alg:rts}. The recursion is initialized at the most recent entry and proceeds backward to the oldest one
+of the window, computing at each step the smoothed state from the causal one and from the
+result of the previous step. In the end, the history used by the planning module contains the causal
+prediction of the filter at the most recent instant and, from the first available measurement
+backward, the smoothed states.
 
 \begin{algorithm}[H]
 \caption{RTS smoother on the sliding window of the history, for a single track.}
@@ -346,19 +337,18 @@ opponent, compared with the ground truth through two metrics.
         \mathrm{RMSE}(T_w) = \sqrt{\frac{1}{M}\sum_{i=1}^{M}\left(\hat{v}_i(T_w) - v_i\right)^2},
         \label{eq:rts_rmse}
     \end{equation}
-    where the $M$ instants are the same for all the windows, so that the values are directly
-    comparable. The RMSE is computed both on the whole session (global RMSE) and on the
+    The RMSE is computed both on the whole session (global RMSE) and on the
     instants within the braking maneuvers (local RMSE).
-    \item \textbf{Maneuver delay}. The braking maneuvers are identified on the ground truth of
-    the opponent, and the onset of each of them is flagged at the instant in which the
-    magnitude of its acceleration exceeds a threshold. The same instant is then searched on
-    the speed estimated with each window, and the maneuver delay is the difference between
-    the two. A positive value indicates that the estimate starts the maneuver late, a
-    negative one that it anticipates it, and the delay is summarized by its median over the
-    braking maneuvers of the session.
-\end{itemize}
 
-The analysis is carried out on the session recorded on 5 September 2026 at Imola.
+    \item \textbf{Maneuver delay}. This metric evaluates whether the smoother, by exploiting
+    the future information, reduces the delay with which the estimate detects the onset of a
+    maneuver. The braking maneuvers are identified on the ground truth of the opponent, and the
+    onset of each of them is flagged at the instant in which the magnitude of its acceleration
+    exceeds a threshold. The same instant is then searched on the speed estimated with each
+    window, and the maneuver delay is the difference between the two. A positive value
+    indicates that the estimate starts the maneuver late, a negative one that it anticipates
+    it, and the delay is summarized by its median over the braking maneuvers of the session.
+\end{itemize}
 
 \subsection*{Sensitivity Analysis with All Sensors Available}
 
@@ -366,7 +356,7 @@ First, the performance of the smoother is analyzed when all the sensors are avai
 with the position measurements of the LiDARs, of the camera and of the RaDAR, and with the
 range rate measurement of the RaDAR. Fig.~\ref{fig:rts_lag_radar} shows the performance of
 the smoother on the estimate of the speed of the opponent, comparing the one-step-ahead
-prediction of the filter, the causal state, i.e.\ the most recent filtered estimate, and the
+prediction of the filter, the causal state, and the
 smoothed states obtained with an increasing amount of future information, up to a window of
 \SI{500}{ms}. As the window increases, the smoothed estimate moves closer to the ground
 truth, while the curves obtained with windows longer than about \SI{200}{ms} are almost
@@ -388,7 +378,7 @@ of \SI{0.938}{m/s} against \SI{1.177}{m/s}. With respect to this baseline, the s
 the global and the local RMSE by \SI{31}{\percent} and \SI{35}{\percent}, respectively, a
 reduction that grows with the window up to about \SI{300}{ms} and then saturates.
 
-This saturation is consistent with the formulation of the smoother. In the backward
+This behavior is consistent with the formulation of the smoother. In the backward
 step~\eqref{eq:rts_backward}, the correction of each state is weighted by the gain
 $\mathbf{C}_k = \mathbf{P}_{k|k}\mathbf{F}_k^\top\mathbf{P}_{k+1|k}^{-1}$, which depends on the
 ratio between the filtered and the predicted covariance. With the range rate of the RaDAR, the
@@ -590,11 +580,9 @@ feed-forward formulation. It reduces the
 delay of the estimate by exploiting the future information, so that the delay accumulated by
 the feed-forward estimate before a late activation of the flag can be recovered, and it
 attenuates the noise due to spurious measurements and activations by averaging each state with
-the adjacent ones through the backward recursion. The two effects also reinforce each other.
-Since the smoother attenuates the effect of the spurious activations, the activation thresholds
-of the flag can be lowered, so that the maneuvers are detected earlier and the delay of the
-feed-forward estimate is further reduced, while the additional spurious activations introduced
-by the lower thresholds are absorbed by the smoothing.
+the adjacent ones through the backward recursion. The two effects also reinforce each other. Indeed, since the smoother attenuates the effect of the spurious activations, the activation thresholds
+of the flag can be lowered, the maneuvers are detected earlier and the delay of the
+feed-forward estimate is further reduced.
 
 From the implementation point of view, the two approaches are complementary, since the smoother
 acts on the causal estimate published on the history, which is exactly the output of the

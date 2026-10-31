@@ -4,14 +4,11 @@
 The motion model of the tracker, introduced in Section~\ref{subsec:tt_cca}, assumes that
 the opponent moves with constant curvature and constant longitudinal acceleration over
 each prediction interval. This assumption holds well when the dynamics of the opponent
-changes slowly, e.g.\ on a straight or in the middle of a corner, but it is violated at
-the beginning and at the end of the maneuvers. When the opponent starts braking, or
-passes from braking to traction, the acceleration changes abruptly, and the actual
-motion departs from the one predicted by the CCA model. In these conditions, the dynamic
-model is no longer correct and the quality of the estimate degrades.
+changes slowly, e.g.\ on a straight, but it is violated during breaking and traction phased. In these phases, the dynamic
+model is not describing the real dynamics of the opponent and, therefore, the quality of the estimate degrades.
 
 This behavior is shown in Fig.~\ref{fig:qff_cca_baseline}, which compares the speed and the
-acceleration estimated by the filter with the CCA model and the nominal process noise with the
+acceleration estimated by the filter with the CCA model with the
 ground truth over two braking maneuvers. At the onset of each braking, the estimated
 acceleration departs from the ground truth with a delay of several tenths of a second, and the
 lag accumulated in this interval is reflected on the speed, which is overestimated during the
@@ -25,7 +22,7 @@ braking and underestimated at its end.
     \label{fig:qff_cca_baseline}
 \end{figure}
 
-Among the approaches proposed in the literature to adapt a filter to the maneuvers of a target,
+Different approaches  have been proposed to recover the correctness of the estimate,
 one of the most widespread is the multiple model approach. Its rationale is to describe the
 possible dynamics of the opponent through a set of motion models, each of which is evolved by a
 dedicated filter running in parallel, so that the estimate is obtained by combining the outputs
@@ -36,58 +33,48 @@ instead, the filters also interact, since at each step their initial conditions 
 mixing the estimates of all the models according to the transition probabilities between them,
 which allows the estimate to follow the switches between the operating conditions of the
 vehicle. These approaches, however, come at the cost of a higher computational load and of a
-larger number of parameters to tune, such as the transition probabilities between the models,
-and they require the actual behavior of the vehicle to be effectively represented by the chosen
-set of models.
+larger number of parameters to tune, such as the transition probabilities between the models.
 
-A different approach is based on a maneuver detection logic, and it can be seen as a nuance of
-the multiple model approach. The filter still switches between distinct behaviors, but these
-are obtained from a single motion model by changing its process noise, and the switch is
-driven by an explicit detection of the maneuver rather than by model probabilities computed
-from the innovations. The approach presented in this chapter moves from this second family, and
-it consists in adapting the process noise covariance matrix following the detection of the
-maneuver, i.e.\ in feed-forward, hence its name.
+Another class of approaches is based on the detection of the maneuver. An indicator is
+monitored to identify the onset of a maneuver and, once it is detected, the behavior of the
+filter is adapted, changing discretely from one condition to another. In this chapter, a method
+belonging to this class is presented, which adapts the process noise covariance matrix
+following the detection of the maneuver, i.e.\ in feed-forward, hence its name.
 
-Section~\ref{sec:qff_idea} explains the idea and the rationale of the approach, and
+Section~\ref{sec:qff_idea} explains the idea of the approach, and
 Section~\ref{sec:qff_nominal} describes the preliminary tuning of the nominal process noise,
-which is the starting value of the method. Section~\ref{sec:qff_formulation} presents the
-feed-forward formulation, together with the maneuver detection logic based on the jerk of the
-opponent and its implementation in the tracker. Finally, Section~\ref{sec:qff_results}
+the starting value of the method. Section~\ref{sec:qff_formulation} presents the
+feed-forward formulation and its implementation in the tracker. Finally, Section~\ref{sec:qff_results}
 compares the resulting estimate with the one of the nominal filter.
 
 % =====================================================================
 \section{The Idea}
 \label{sec:qff_idea}
 
-The idea behind the approach stems from the role of the process noise covariance
-$\mathbf{Q}_k$ in the Kalman filter, where it represents the uncertainty of the motion model,
-i.e.\ how much the actual motion of the opponent is expected to differ from the predicted one.
-In the prediction step, it is added to the covariance propagated through the motion model,
+The idea behind the approach starts from the gain of the Kalman filter and from the way in
+which the process noise covariance $\mathbf{Q}_k$ enters the correction step. The latter, in the prediction step, is added
+to the covariance propagated through the motion model,
 \begin{equation}
     \mathbf{P}_{k+1|k} = \mathbf{F}_k\,\mathbf{P}_{k|k}\,\mathbf{F}_k^\top + \mathbf{Q}_k,
     \label{eq:qff_pred_cov}
 \end{equation}
-and the predicted covariance enters the Kalman gain of the correction step,
+which in turn determines the Kalman gain of the correction step,
 \begin{equation}
     \mathbf{K}_{k+1} = \mathbf{P}_{k+1|k}\,\mathbf{H}_{k+1}^\top
     \left(\mathbf{H}_{k+1}\,\mathbf{P}_{k+1|k}\,\mathbf{H}_{k+1}^\top + \mathbf{R}_{k+1}\right)^{-1},
     \label{eq:qff_gain}
 \end{equation}
-as in~\eqref{eq:tt_prediction} and~\eqref{eq:tt_update}. Considering a single component,
-with a predicted variance $P$ and a measurement noise variance $R$, the gain reduces to
+as in~\eqref{eq:tt_prediction} and~\eqref{eq:tt_update}. Considering a single component, with a
+predicted variance $P$ and a measurement noise variance $R$, the gain reduces to
 \begin{equation}
     K = \frac{P}{P + R},
     \label{eq:qff_gain_scalar}
 \end{equation}
-which ranges between zero, when the prediction is much more accurate than the
-measurement, and one, when the measurement is much more accurate than the prediction.
-Increasing $\mathbf{Q}_k$ increases $P$ and therefore $K$, so that the corrected state
-moves away from the prediction and towards the measurement. Through the off-diagonal
-terms of $\mathbf{P}_{k+1|k}$, the effect is not limited to the measured position. The
-process noise of the CCA model acts on the acceleration and on the curvature
-(Section~\ref{subsec:tt_cca}), and a larger uncertainty on these states allows the
-correction of the position to be transferred more quickly to the speed and to the
-acceleration, which are not measured directly by the LiDARs and by the camera.
+which ranges between zero, when the prediction is much more accurate than the measurement, and
+one, when the measurement is much more accurate than the prediction. Increasing
+$\mathbf{Q}_k$ therefore increases $P$ and $K$, so that the corrected state moves away from the
+prediction and towards the measurement, whereas a smaller process noise keeps the filter
+anchored to its prediction.
 
 \begin{figure}[H]
     \centering
@@ -97,19 +84,21 @@ acceleration, which are not measured directly by the LiDARs and by the camera.
     \label{fig:qff_highq}
 \end{figure}
 
-By varying $\mathbf{Q}_k$, the filter is therefore moved along a trade-off between reactivity
-and noise, as shown in Fig.~\ref{fig:qff_highq}, which compares the estimate obtained with the
-nominal process noise and with an increased one, $q_a = 500$, over two braking maneuvers. With
-the increased process noise, the larger gain makes the filter follow the changes of maneuver
-quickly, with an acceleration close to the ground truth at the beginning and at the end of the
-braking phases, but in the phases at constant acceleration it also follows the noise of the
-measurements, and the estimate of the acceleration becomes noisier without any benefit. With
-the nominal process noise, instead, the estimate is smoother, but it follows the transitions
-with a visible delay, which is also reflected on the speed. Neither value is therefore adequate
-over the whole lap, since the dynamics of the vehicle alternates slowly varying phases with
-abrupt transitions between traction and braking, and the idea of the approach is to alternate
-between the two values of the process noise according to the detection of the maneuver, as
-formulated in Section~\ref{sec:qff_formulation} after the tuning of the nominal value.
+Fig.~\ref{fig:qff_highq} shows this behavior, comparing two different tunings of the filter
+over two braking maneuvers, the first with an increased process noise, $q_a = 500$, and the
+second with the nominal one of Section~\ref{sec:qff_nominal}.  During the maneuvers, the filter with the increased process noise, having a
+larger predicted covariance, corrects the prediction more with the measurements, and it is
+therefore more reactive and follows the braking phases more closely. In the phases at constant
+acceleration, instead, the filter with the nominal tuning is more representative, and its
+estimate is considerably smoother, since it filters the noise of the measurements through a
+prediction in which it is more confident.
+
+What stands out is that a fixed tuning of the process noise cannot adequately describe a
+dynamics that alternates slowly varying phases with abrupt transitions between traction and
+braking, and from this consideration arises the feed-forward approach, which aims to combine
+the advantages of both tunings by starting from the nominal process noise, keeping it as long
+as the CCA model correctly describes the dynamics of the opponent, and adapting
+$\mathbf{Q}_k$ through a multiplicative factor when a maneuver begins.
 
 % =====================================================================
 \section{Nominal Process Noise Tuning}
@@ -120,9 +109,7 @@ $\mathbf{Q}_{\mathrm{nom}}$ of the process noise, i.e.\ of the spectral densitie
 and $q_\kappa$ of Section~\ref{subsec:tt_cca}. The choice is made by testing different
 values of the process noise and selecting the one that gives a good starting point on the
 trade-off introduced in the previous section, between the reactivity of the filter to
-the changes of the dynamics and the noise of the estimate. This value is the baseline of
-the feed-forward approach, in which it is multiplied by an inflation factor during the
-maneuvers.
+the changes of the dynamics and the noise of the estimate.
 
 \TODO{Figures with the estimate obtained with different values of the process noise, and
 their effect on the quality of the estimate.}
@@ -158,15 +145,10 @@ obtained first, since it is not measured by the sensors, and two approaches are 
 
 The first consists in augmenting the state of the filter with the jerk, which turns the CCA
 model into a constant-jerk model. This solution is not pursued, since it would require a new
-formulation of the motion model and of its Jacobians, together with a new characterization of
-the process noise, which would act on the derivative of the jerk, and of its propagation to the
-other states through the discretization of Section~\ref{subsec:tt_cca}, and since the jerk,
-not being measured by any sensor, could be corrected through the speed measured by the RaDAR
-only after a double integration.
-
+formulation of the motion model and of its Jacobians, together with a new characterization and derivation of
+the process noise covariances.
 The second approach, adopted in this work, consists in obtaining the jerk by differentiating
-and filtering the estimated acceleration, and it is preferred since it can be pursued without
-modifying the motion model of the filter. Two families of filters are considered, time-domain
+and filtering the estimated acceleration. \\ Two families of filtering techniques are considered, time-domain
 and frequency-based ones.
 
 \paragraph{Time-domain filters.} In this family, the differentiated acceleration is
@@ -174,18 +156,21 @@ filtered by interpolating the signal with a polynomial of degree $n$ over a movi
 of $m$ samples. The degree of the polynomial sets the degrees of freedom of the fit,
 while the length of the window sets the number of samples used for the fitting, and
 therefore the amount of smoothing. The classical filter of this family is the
-Savitzky--Golay filter. Polynomial filters, however, typically optimize the estimate at
-the center of the window. In a real-time application, this would require using both the
-past and the future samples of the signal, which are not available online. For this
-reason, this family is discarded, and the frequency-based filters are adopted.
+Savitzky--Golay filter. Polynomial filters, however, are known to provide the best estimate when used in their
+non-causal formulation, i.e.\ when the estimate is computed at the center of the window, using
+both past and future samples of the signal, and, therefore, cannot be adopted in a real-time application, which is the reason why they are discarded in favor of the frequency-based ones.
 
-\paragraph{Frequency-based filters.} In this family, the acceleration is differentiated
-and filtered with a low-pass filter. Both filters can be written as the product of the
-derivative and of a low-pass filter $L(s)$,
+\paragraph{Frequency-based filters.} In this family, the filter is designed in the frequency
+domain. A differentiator is used to obtain the jerk from the estimated acceleration, and it is
+complemented by a low-pass filter $L(s)$, which removes the noise outside the band of
+interest, so that the resulting filter can be written as
 \begin{equation}
     H(s) = s\,L(s).
     \label{eq:qff_diff}
 \end{equation}
+Among the filters considered is the first-order low-pass filter, which combined with the
+derivative gives the dirty derivative, i.e.\ a differentiator band-limited by a pole with
+time constant $\tau$,
 Among the filters considered is the first-order low-pass filter, which combined with the
 derivative gives the dirty derivative, i.e.\ a differentiator band-limited by a pole with
 time constant $\tau$,
@@ -254,7 +239,7 @@ the opponent on the history passed to the planning module, and its process noise
 by the hysteresis logic. The second has a constant and increased process noise, and it is
 introduced only to estimate the jerk and to manage the maneuver flag.
 
-This second filter is needed for two reasons. The first is the delay of the detection. If the
+This second filter is needed for two reasons. The first is that if the
 jerk were derived from the main filter, which adopts the nominal process noise until the flag
 is activated, its acceleration would follow the transitions with the delay shown in
 Fig.~\ref{fig:qff_highq}, and the activation threshold would be exceeded only when the
@@ -269,8 +254,7 @@ detection is decoupled from the switching, and the process noise of the main fil
 feed-forward.
 
 The inflation factor is set to $\lambda = 100$. Since the nominal spectral density of the
-acceleration is $q_a = 5$, during the maneuvers the main filter adopts the same process noise
-as the filter used for the detection, i.e.\ the increased process noise of
+acceleration is $q_a = 5$, during the maneuvers the main filter adopts the same process noise used by the auxiliary filter,  i.e.\ the increased process noise of
 Fig.~\ref{fig:qff_highq}.
 
 % =====================================================================
@@ -282,9 +266,7 @@ with the parameters of Section~\ref{subsec:qff_implementation}. The estimate of 
 filter with the feed-forward process noise is compared with those of the nominal filter and of
 the filter with the increased process noise, which represent the two behaviors between which
 the method switches. The comparison is first carried out on a sequence of corners and then on
-the detail of a single braking, and in both cases the estimate of the speed and of the
-acceleration is followed by the estimated jerk, compared with the one of the ground truth and
-with the thresholds of the hysteresis.
+the detail of a single braking.
 
 \begin{figure}[H]
     \centering
@@ -296,11 +278,11 @@ with the thresholds of the hysteresis.
 Fig.~\ref{fig:qff_overview} shows a sequence that alternates braking phases with phases at
 almost constant speed. In the latter, the feed-forward estimate overlaps the nominal one and
 preserves its smoothness, while the filter with the increased process noise follows the noise
-of the measurements. In the two braking phases between \SI{730}{s} and \SI{740}{s}, the
-feed-forward estimate departs from the nominal one and approximates the ground truth better. In
-the braking at about \SI{760}{s}, instead, it remains close to the nominal estimate, with the
-same delay with respect to the ground truth, and it departs from it only in the following phase
-of traction.
+of the measurements. In the two braking phases between \SI{730}{s} and \SI{740}{s}, the flag is activated and the
+feed-forward estimate quickly corrects the acceleration and the speed, reducing the delay of
+the nominal filter and lying between this and the filter with the increased process noise. In
+the braking at about \SI{760}{s}, instead, the feed-forward estimate remains close to the nominal
+one during the braking, and it differs from it only in the following traction phase.
 
 \begin{figure}[H]
     \centering
@@ -314,12 +296,9 @@ which shows the estimated jerk for the same maneuvers. On the straight, the esti
 remains below the thresholds and the flag is inactive, which is why the feed-forward estimate
 coincides with the nominal one. In the braking phases between \SI{730}{s} and \SI{740}{s}, the
 estimated jerk exceeds the upper threshold close to the onset of the maneuvers. At about
-\SI{760}{s}, instead, the jerk of the ground truth exhibits a sharp peak at the onset of the
-braking, while the estimated jerk reaches the upper threshold only a few tenths of a second later, which
+\SI{760}{s}, instead, the estimated  jerk is delayed of a few tenths of a second, which
 explains why the feed-forward estimate follows the nominal one during the braking. The figure
-also shows isolated peaks of the estimated jerk, e.g.\ at about \SI{739}{s}, which exceed the
-thresholds while the jerk of the ground truth remains small, and which therefore activate the
-flag outside the maneuvers.
+also shows some false activations at approx. \SI{739}{s}
 
 \begin{figure}[H]
     \centering
@@ -328,12 +307,7 @@ flag outside the maneuvers.
     \label{fig:qff_braking_detail}
 \end{figure}
 
-Fig.~\ref{fig:qff_braking_detail} shows the detail of a braking in which the maneuver is
-detected at its onset. The feed-forward estimate starts to decrease with a slight delay with
-respect to the filter with the increased process noise, but well before the nominal one, whose
-delay is accumulated in the speed, which is underestimated at the end of the braking. The
-feed-forward estimate of the speed, instead, remains close to the ground truth during the whole
-maneuver.
+Also in this case, during the maneuver the feed-forward estimate lies between the two reference estimates, anticipating the onset of the braking with respect to the filter with the nominal.
 
 \begin{figure}[H]
     \centering
@@ -342,20 +316,4 @@ maneuver.
     \label{fig:qff_jerk}
 \end{figure}
 
-In the corresponding jerk, shown in Fig.~\ref{fig:qff_jerk}, the main peak of the estimate
-follows the one of the ground truth with a slight delay, which is the same delay observed
-between the feed-forward estimate and the one of the filter with the increased process noise.
-After the braking, some peaks of the estimated jerk exceed the upper threshold while the jerk of
-the ground truth remains small, activating the flag also in this case outside the maneuver.
-
-These results show that the approach works as intended. The flag remains inactive in the phases
-at constant acceleration and is activated in the braking and traction phases, so that the filter
-with the feed-forward process noise lies between the nominal filter and the one with the
-increased process noise, keeping the smoothness of the former where the dynamics changes slowly
-and approaching the reactivity of the latter during the maneuvers. The cases in which the
-approach is less effective, i.e.\ the late activation at about \SI{760}{s}, the slight delay
-of Fig.~\ref{fig:qff_braking_detail} and the activations outside the maneuvers, share a common
-origin in the jerk estimator. Since the jerk is obtained by differentiating the acceleration of
-the filter with the increased process noise, it inherits the delay with which this filter
-follows the changes of the dynamics, which is transferred to the activation of the flag, while
-the differentiation amplifies part of its noise, which produces the spurious activations.
+The corresponding jerk, shown in Fig.~\textbackslash{}ref\{fig:qff\_jerk\},  also highlights the same considerations . The estimated jerk is consistent with the one of the ground truth, but it is affected by a slight delay, and it exceeds the activation threshold also in the absence of a maneuver, producing spurious activations of the flag, e.g.\textbackslash{} at about \textbackslash{}SI\{868\}{s\}. The figures show that the approach is correct in principle, since the activation of the flag increases the reactivity of the filter to the changes of the dynamics, whereas, when the flag is inactive, the estimate coincides with the nominal one. At the same time, they highlight the limits of the method, which are mainly related to the quality of the jerk estimator. The estimated jerk is itself delayed, as a consequence of the residual delay that affects the acceleration from which it is derived, and this delay is directly transferred to the activation of the flag. The activation could be anticipated by lowering the activation threshold, thereby recovering reactivity at the onset of the braking, at the cost, however, of a higher exposure to false activations.
