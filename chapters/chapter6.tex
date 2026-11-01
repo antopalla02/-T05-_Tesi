@@ -348,9 +348,9 @@ range rate measurement of the RaDAR. Fig.~\ref{fig:rts_lag_radar} shows the perf
 the smoother on the estimate of the speed of the opponent, comparing the one-step-ahead
 prediction of the filter, the causal state, and the
 smoothed states obtained with an increasing amount of future information, up to a window of
-\SI{500}{ms}. As the window increases, the smoothed estimate moves closer to the ground
-truth, while the curves obtained with windows longer than about \SI{200}{ms} are almost
-superimposed.
+\SI{500}{ms}. As the window increases, the smoothed state corrects to a greater extent the
+noise and the spurious peaks of the causal estimate, although the smoothed states tend to
+overlap for windows of about 200 to \SI{300}{ms}.
 
 \begin{figure}[!htbp]
     \centering
@@ -360,16 +360,18 @@ superimposed.
     \label{fig:rts_lag_radar}
 \end{figure}
 
-The RMSE and the maneuver delay as a function of the window length are shown in
-Fig.~\ref{fig:rts_metrics_radar} and reported in Table~\ref{tab:rts_radar}. The causal state is
-the baseline of the analysis. It is more accurate than the one-step-ahead prediction, since it
+Looking at the RMSE, shown in Fig.~\ref{fig:rts_metrics_radar} and reported in
+Table~\ref{tab:rts_radar} as a function of the window length together with the maneuver delay,
+it can be seen that the causal state, which is the baseline of the analysis, is more accurate
+than the one-step-ahead prediction, since it
 integrates the latest measurements, including the range rate of the RaDAR, with a global RMSE
 of \SI{0.938}{m/s} against \SI{1.177}{m/s}. With respect to this baseline, the smoother reduces
-the global and the local RMSE by \SI{31}{\percent} and \SI{35}{\percent}, respectively, a
-reduction that grows with the window up to about \SI{300}{ms} and then saturates.
+the global and the local RMSE by \SI{31}{\percent} and \SI{35}{\percent}, respectively. The
+same overlap observed in Fig.~\ref{fig:rts_lag_radar} is evident here, since the reduction of
+the RMSE grows with the window up to about \SI{300}{ms} and then saturates.
 
-This behavior is consistent with the formulation of the smoother. In the backward
-step~\eqref{eq:rts_backward}, the correction of each state is weighted by the gain
+This behavior depends on the fact that, in the backward step~\eqref{eq:rts_backward}, the
+correction of each state is weighted by the gain
 $\mathbf{C}_k = \mathbf{P}_{k|k}\mathbf{F}_k^\top\mathbf{P}_{k+1|k}^{-1}$, which depends on the
 ratio between the filtered and the predicted covariance. With the range rate of the RaDAR, the
 speed is directly observed and its filtered variance is small compared with the process noise
@@ -423,7 +425,7 @@ the causal state lag behind the ground truth more markedly than in the previous 
 that the smoothed estimates obtained with the different windows are clearly separated, i.e.\
 the correction applied by the smoother to the causal state is considerably larger.
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
     \centering
     \subfloat[Braking]{\includegraphics[width=0.76\textwidth]{figures/ch6/rts_lag_noradar_braking.png}}\\
     \subfloat[Corner]{\includegraphics[width=0.76\textwidth]{figures/ch6/rts_lag_noradar_corner.png}}
@@ -431,7 +433,7 @@ the correction applied by the smoother to the causal state is considerably large
     \label{fig:rts_lag_noradar}
 \end{figure}
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
     \centering
     \subfloat[RMSE of the speed]{\includegraphics[width=0.76\textwidth]{figures/ch6/rts_rmse_noradar.png}}\\
     \subfloat[Maneuver delay]{\includegraphics[width=0.76\textwidth]{figures/ch6/rts_delay_noradar.png}}
@@ -448,9 +450,11 @@ gain $\mathbf{C}_k$ increases and the future measurements are propagated further
 time, so that the reduction of the RMSE reaches \SI{73}{\percent} and saturates only at about
 \SI{600}{ms}.
 
-Table~\ref{tab:rts_noradar} also shows that the smoothed estimate anticipates the maneuvers,
-with an anticipation with respect to the ground truth that grows with the window up to about
-\SI{500}{ms}, where it saturates at about \SI{-106}{ms}. The same behavior is visible in the
+Table~\ref{tab:rts_noradar} also shows that the smoother corrects the delay of the
+one-step-ahead prediction and of the causal state, which start the maneuvers about
+\SI{290}{ms} and \SI{190}{ms} after the ground truth, but, as the window widens, it exhibits a
+behavior that leads it to anticipate the onset of the maneuver, with an anticipation that grows
+up to about \SI{500}{ms}, where it saturates at about \SI{-106}{ms}. The same behavior is visible in the
 local RMSE, computed on the braking maneuvers, which reaches its minimum of \SI{0.669}{m/s} at
 about \SI{500}{ms} and then increases, up to \SI{0.820}{m/s} at \SI{981}{ms}.
 
@@ -475,7 +479,7 @@ this anticipation is set by how slowly the product of the gains decays. Without 
 rate the gains are larger and the deceleration is propagated further back in time, while with
 the RaDAR the product decays rapidly and the anticipation remains limited.
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
 \small
 \begin{tabular}{rccccc}
@@ -570,7 +574,7 @@ feed-forward formulation. It reduces the
 delay of the estimate by exploiting the future information, so that the delay accumulated by
 the feed-forward estimate before a late activation of the flag can be recovered, and it
 attenuates the noise due to spurious measurements and activations by averaging each state with
-the adjacent ones through the backward recursion. The two effects also reinforce each other. Indeed, since the smoother attenuates the effect of the spurious activations, the activation thresholds
+the adjacent ones through the backward recursion. The two effects also reinforce each other. Indeed, since the smoother attenuates the spurious activations, the activation thresholds
 of the flag can be lowered, the maneuvers are detected earlier and the delay of the
 feed-forward estimate is further reduced.
 
