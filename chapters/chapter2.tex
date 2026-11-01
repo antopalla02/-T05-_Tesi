@@ -7,28 +7,47 @@
 
 This chapter gives an overview of the hardware and software setup of the fully
 autonomous racecars on which this research is based. The work considers two different
-vehicles: the Dallara AV-24, which competes in the Indy Autonomous Challenge (IAC), and
+vehicles, the Dallara AV-24, which competes in the Indy Autonomous Challenge (IAC), and
 the Dallara EAV-25, which competes in the Abu Dhabi Autonomous Racing League (A2RL). Both
 cars are equipped with the sensors and the software stack used to design, run and
 evaluate the algorithms presented in the following chapters.
 
-Section~\ref{sec:operating_conditions} introduces the two competitions.
-Section~\ref{sec:av24} and Section~\ref{sec:eav24} introduce the
-two racecars together with their sensors. Section~\ref{sec:sensors} presents the working principle of the
-sensors used for opponent tracking and their setup on the two vehicles. 
-Section~\ref{sec:sw_arch} outlines the software architecture.
+Section~\ref{sec:operating_conditions} introduces the two competitions, together with their
+formats and the vehicles adopted in each of them. Section~\ref{sec:sensors} presents the
+working principle of the exteroceptive sensors used for opponent tracking and their setup on
+the two vehicles, and Section~\ref{sec:sw_arch} outlines the software architecture.
 
 % =====================================================================
 \section{Autonomous Racing Competitions}
 \label{sec:operating_conditions}
 
+The IAC and the A2RL are racing competitions for autonomous vehicles, in which university
+teams develop the software that drives the cars. They represent a fertile ground for the
+development of autonomous driving, since the vehicles compete at the limits of their dynamic
+capabilities, above \SI{250}{km/h} and, in the formats with several vehicles on track, in close
+proximity to each other, conditions that are hard to reproduce elsewhere.
 
-\paragraph{Indy Autonomous Challenge.} The first edition of the IAC was held in 2021 at
-the Indianapolis Motor Speedway, preceded since 2019 by a series of competitions in
-simulated environments. All the teams compete with the same vehicle, provided by the organizers. Historically, the events have been held mainly on oval tracks, such as the
-Indianapolis Motor Speedway, the Las Vegas Motor Speedway, and the Texas Motor Speedway. Since
-2023 the series has also raced on road courses, starting from Monza, and from the last two
-seasons at WeatherTech Raceway Laguna Seca (Fig.~\ref{fig:av24}).
+% ---------------------------------------------------------------------
+\subsection{Indy Autonomous Challenge}
+\label{sec:av24}
+
+The IAC was the first championship for fully autonomous racecars on real tracks. Its first
+edition was held in 2021 at the Indianapolis Motor Speedway, preceded since 2019 by a series
+of competitions in simulated environments, and all the teams compete with the same vehicle,
+provided by the organizers. Historically, the events have been held mainly on oval tracks,
+such as the Indianapolis Motor Speedway, the Las Vegas Motor Speedway and the Texas Motor
+Speedway, while since 2023 the series has also raced on road courses, starting from Monza
+and, in the last two seasons, at WeatherTech Raceway Laguna Seca (Fig.~\ref{fig:av24}).
+
+The IAC events include formats with a single vehicle and formats with several vehicles on
+track. In the former, such as time trials and qualifying, each car runs alone and is ranked
+on its fastest lap, so that the focus is entirely on driving the vehicle autonomously at the
+limits of its dynamic capabilities. In the latter, the vehicles share the track and race
+against each other. Since its second edition, the IAC has also included the passing
+competition, a format specifically designed to promote the interaction between the vehicles,
+in which, in each head-to-head round of an elimination bracket, the trailing vehicle, which
+is given more power, aims to overtake the leading one, which in turn aims to defend its
+position.
 
 \begin{figure}[H]
     \centering
@@ -37,44 +56,12 @@ seasons at WeatherTech Raceway Laguna Seca (Fig.~\ref{fig:av24}).
     \label{fig:av24}
 \end{figure}
 
-\paragraph{Abu Dhabi Autonomous Racing League.} The A2RL is organized by ASPIRE, and debuted in April 2024 at the
-Yas Marina Circuit, with a race between four autonomous cars. Unlike the IAC, it was
-conceived from the beginning for road circuits. In September 2026
-it raced for the first time at the Autodromo Internazionale Enzo e Dino Ferrari in Imola (Fig.~\ref{fig:eav24}).
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{figures/ch2/eav24_imola.jpg}
-    \caption{Dallara EAV-25 at Imola circuit, August 2026.}
-    \label{fig:eav24}
-\end{figure}
-
-\paragraph{Formats.} Both championships include single-vehicle and multi-target formats.
-In single-vehicle formats, such as time trials and qualifying, each car is alone on track
-and is ranked on its fastest lap: the focus is entirely on driving the vehicle
-autonomously at the limits of its dynamic capabilities. In multi-target formats, such as races, instead,
-the vehicle shares the track with other cars. 
-In addition to the standard race formats, the IAC has recently introduced the passing competition, a format specifically designed to promote the interaction between the vehicles. In each head-to-head round of an elimination bracket, the trailing vehicle, which is given more power, aims to overtake the leading one, which in turn aims to defend its position.
-
-
-Overall, in both competitions, the cars race above \SI{250}{km/h}, close to their
-dynamic limits and, in the multi-target formats, in close proximity to each other:
-conditions that are hard to reproduce elsewhere, and therefore valuable for testing
-autonomous driving.
-
-\FloatBarrier
-
-% =====================================================================
-\section{Dallara AV-24}
-\label{sec:av24}
-
-The Dallara AV-24 (Fig.~\ref{fig:av24}) is the official vehicle of the IAC and the
-second generation of racecars adopted by the series, introduced in 2024 as the successor
-of the AV-21. It is built by Dallara on the chassis of the Indy NXT, and has been adapted to driverless
-operation while keeping the layout and the performance of the original car. The
-vehicle has been designed to compete mainly on oval tracks. Its main characteristics are
-collected in Table~\ref{tab:av24}.
-
+\paragraph{Dallara AV-24.} The Dallara AV-24 (Fig.~\ref{fig:av24}) is the official vehicle
+of the IAC and the second generation of racecars adopted by the series, introduced in 2024
+as the successor of the AV-21. It is built by Dallara on the chassis of the Indy NXT, and has
+been adapted to driverless operation while keeping the layout and the performance of the
+original car. The vehicle has been designed to compete mainly on oval tracks, and its main
+characteristics are collected in Table~\ref{tab:av24}.
 
 \begin{table}[H]
     \centering
@@ -87,7 +74,7 @@ collected in Table~\ref{tab:av24}.
         Engine            & 4 Piston Racing K20C, \SI{2.0}{l} turbocharged four-cylinder \\
         Power             & \SI{488}{hp} \\
         Gearbox           & Ricardo, six-speed sequential \\
-        Top speed         & over \SI{300}{km/h} \\
+        Top speed         & about \SI{250}{km/h} \\
         Mass              & \SI{748}{kg} \\
         Length / width / height & \SI{4.88}{m} / \SI{1.93}{m} / \SI{1.16}{m} \\
         \bottomrule
@@ -96,41 +83,50 @@ collected in Table~\ref{tab:av24}.
     \label{tab:av24}
 \end{table}
 
-Several modifications have been introduced on the original car to enable autonomous
-driving. The bodywork has been modified to host the exteroceptive sensors used for the
-perception of the environment and of the opponents, three LiDARs, two RaDARs and six
-cameras, described in Section~\ref{sec:sensors}.
-This sensor suite allows the opponent vehicle to be perceived reliably and consistently. It is chosen specifically to make the perception robust and redundant, by fusing sensors with different working principles and strengths, so as to overcome the limitations of each of them. \\
-The state of the ego vehicle is estimated from GNSS
-receivers and from proprioceptive sensors: a VectorNav VN-310 GNSS/INS, which includes an
-inertial measurement unit, and two NovAtel PwrPak7 receivers provide position, attitude,
-velocity and acceleration measurements, while the wheel speed
-and steering angle sensors measure the motion of the wheels and the steering input. The cockpit, no longer occupied by the driver, hosts the on-board
-computer, which runs the autonomous driving software, processing the data of the sensors
-and translating them into the commands for the drive-by-wire actuators of steering,
-throttle, brake and gear. Finally, a radio system
-with dedicated antennas connects the car to the base station, which receives the
-telemetry and sends the race control signals.
+To enable autonomous driving, the cockpit, no longer occupied by the driver, hosts the
+on-board computer, which runs the autonomous driving software and translates the processed
+data of the sensors into the commands for the drive-by-wire actuators of steering, throttle,
+brake and gear, while the bodywork has been adapted to integrate the exteroceptive sensors used for
+the perception of the environment and of the opponents, three LiDARs, two RaDARs and six
+cameras, described in Section~\ref{sec:sensors}. This sensor suite is chosen to make the
+perception robust and redundant, by fusing sensors with different working principles and
+strengths so as to overcome the limitations of each of them. The state of the ego vehicle is
+estimated from a VectorNav VN-310 GNSS/INS, which includes an inertial measurement unit, and
+from two NovAtel PwrPak7 receivers, which provide position, attitude, velocity and
+acceleration measurements, while the wheel speed and steering angle sensors measure the
+motion of the wheels and the steering input. Finally, a radio system with dedicated antennas
+connects the car to the base station, which receives the telemetry and sends the race
+control signals.
 
-\FloatBarrier
-
-% =====================================================================
-\section{Dallara EAV-25}
+% ---------------------------------------------------------------------
+\subsection{Abu Dhabi Autonomous Racing League}
 \label{sec:eav24}
 
-The Dallara EAV-25 (Fig.~\ref{fig:eav24}) is the official vehicle of the A2RL. It is
-developed from the Dallara SF23, the single-seater of the Japanese Super Formula
-championship, and keeps its chassis and aerodynamic package.
+The A2RL is a championship for fully autonomous racecars organized by ASPIRE, which debuted
+in April 2024 at the Yas Marina Circuit with a race between four autonomous cars. Unlike the
+IAC, it was conceived from the beginning for road circuits, and in September 2026 it raced
+for the first time at the Autodromo Internazionale Enzo e Dino Ferrari in Imola
+(Fig.~\ref{fig:eav24}). As in the IAC, the events include formats with a single vehicle on
+track, such as time trials and qualifying, in which each car is ranked on its fastest lap,
+and formats in which the vehicles share the track and race against each other.
 
-Unlike the AV-24, the EAV-25 is conceived for road circuits; therefore, the vehicle is
-designed for high performance in heavy braking, in slow and fast corners and, in
-general, in more challenging dynamical conditions. The power unit is a turbocharged
-\SI{2.0}{l} four-cylinder engine delivering about \SI{450}{hp}, which can be raised
-temporarily to about \SI{550}{hp} enabling the push-to-pass, coupled with a
-longitudinal six-speed sequential gearbox, which brings the car to a top speed of about
-\SI{300}{km/h}. The main characteristics of the vehicle are summarized in
-Table~\ref{tab:eav24}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/ch2/eav24_imola.jpg}
+    \caption{Dallara EAV-25 at Imola circuit, August 2026.}
+    \label{fig:eav24}
+\end{figure}
 
+\paragraph{Dallara EAV-25.} The Dallara EAV-25 (Fig.~\ref{fig:eav24}) is the official
+vehicle of the A2RL. It is developed from the Dallara SF23, the single-seater of the Japanese
+Super Formula championship, and keeps its chassis and aerodynamic package. Unlike the AV-24,
+the EAV-25 is conceived for road circuits, and the vehicle is therefore designed for high
+performance in heavy braking, in slow and fast corners and, in general, in more challenging
+dynamic conditions. The power unit is a turbocharged \SI{2.0}{l} four-cylinder engine
+delivering about \SI{450}{hp}, which can be raised temporarily to about \SI{550}{hp} through
+the push-to-pass, coupled with a longitudinal six-speed sequential gearbox, which brings the
+car to a top speed of about \SI{250}{km/h}. The main characteristics of the vehicle are
+summarized in Table~\ref{tab:eav24}.
 
 \begin{table}[H]
     \centering
@@ -143,7 +139,7 @@ Table~\ref{tab:eav24}.
         Engine            & 4 Piston Racing K20C1, \SI{2.0}{l} turbocharged four-cylinder \\
         Power             & \SI{450}{hp} (\SI{550}{hp} with push-to-pass) \\
         Gearbox           & 3MO, six-speed sequential \\
-        Top speed         & about \SI{300}{km/h} \\
+        Top speed         & about \SI{250}{km/h} \\
         Mass              & \SI{742}{kg} \\
         Length / width / height & \SI{5.24}{m} / \SI{1.93}{m} / \SI{0.97}{m} \\
         \bottomrule
@@ -157,9 +153,9 @@ seven cameras for the perception of the environment and of the opponents, also d
 in Section~\ref{sec:sensors}. The state of the ego vehicle is estimated from a
 dual-antenna VectorNav VN-310 RTK-GNSS/INS, which includes an inertial measurement unit,
 from a Kistler SF~Motion, an optical sensor that measures the longitudinal and lateral
-ground speed, and from the wheel speed sensors. The cockpit hosts the
-on-board computer, which runs the autonomous driving software and commands the
-steer-by-wire system and the other actuators, together with the radio system for the communication with race control.
+ground speed, and from the wheel speed sensors. The cockpit hosts the on-board computer,
+which runs the autonomous driving software and commands the steer-by-wire system and the
+other actuators, together with the radio system for the communication with race control.
 
 \FloatBarrier
 
@@ -167,9 +163,11 @@ steer-by-wire system and the other actuators, together with the radio system for
 \section{Sensors}
 \label{sec:sensors}
 
-To perceive the surrounding environment, as anticipated in the previous section, each vehicle has been retrofitted with several sensors. The following section describes the ones mounted on the Dallara AV-24 and EAV-25. For each type of
-sensor, the working principle and the main strengths and limitations are presented first;
-then, focusing on each vehicle, the main characteristics and performance of the specific ones mounted on it are described.
+This section focuses on the exteroceptive sensors mounted on the Dallara AV-24 and EAV-25,
+i.e.\ LiDARs, RaDARs and cameras, since they are the sensors on which the perception, and
+therefore the target tracking addressed in this work, is based. For each type of sensor, the
+working principle and the main strengths and limitations are presented first, followed by the
+main characteristics and performance of the specific units mounted on each vehicle.
 
 % ---------------------------------------------------------------------
 \subsection{LiDAR}
@@ -190,7 +188,7 @@ scatter the laser beam. The energy returned by a target also decreases quickly
 with the distance and with the reflectivity of its surface, so that the working range
 is shorter than that of RaDAR technologies. Finally, a LiDAR measures positions only:
 the velocity of a target is not observed directly and has to be inferred from
-successive scans.
+consecutive scans.
 
 \subsubsection{Dallara AV-24}
 
@@ -199,7 +197,7 @@ forward, and two on the sides of the cockpit, oriented at $\pm\SI{112.5}{\degree
 with respect to the longitudinal axis. The Iris operates at a wavelength of \SI{1550}{nm}
 with a dual-scanning optical system, which sweeps the field of view at 640 lines per
 second: the number of scan lines in each frame therefore depends on the frame rate, and
-at the \SI{10}{Hz} used in the application each frame contains 64 lines. The vertical
+at the \SI{20}{Hz} used in this application each frame contains 32 lines. The vertical
 field of view and the distribution of the scan lines within it
 can be configured in real time, choosing between uniform scan patterns, in which the lines
 are evenly spaced, and non-uniform ones, for instance Gaussian, which concentrate the
@@ -219,7 +217,7 @@ Table~\ref{tab:lidar_av24}.
         Scan lines                        & 640 lines/s \\
         Maximum range                     & \SI{200}{m} (10\% reflectivity) \\
         Range precision                   & ${<}\SI{2}{cm}$ (\SI{50}{m}) \\
-        Update rate                       & \SI{10}{Hz} \\
+        Update rate                       & \SI{20}{Hz} \\
         \bottomrule
     \end{tabular}
     \caption{Main characteristics of the LiDARs mounted on the Dallara AV-24.}
@@ -233,8 +231,8 @@ ahead of the sensor and seen from behind: it covers an angle of
 about \SI{2.2}{\degree} in the horizontal direction and \SI{1.3}{\degree} in the vertical
 one. With a horizontal resolution of \SI{0.12}{\degree}, each scan line returns about 18
 points on its rear. In the vertical direction, with a uniform pattern over
-\SI{26}{\degree} the 64 lines are about \SI{0.4}{\degree} apart, and the opponent is
-crossed by about 3 lines, for a total of about 55 points per frame; with a pattern that
+\SI{26}{\degree} the 32 lines are about \SI{0.8}{\degree} apart, and the opponent is
+crossed by one or two lines, for a total of about 18 to 36 points per frame; with a pattern that
 concentrates the lines around the horizon, the number of lines on the opponent, and thus
 of points, increases accordingly. 
 Each unit covers \SI{120}{\degree} in azimuth, so that the three LiDARs together cover
@@ -259,7 +257,7 @@ and more evident as the opponent aligns with the longitudinal axis of the ego ve
 The EAV-25 is equipped with three Innovusion Falcon Kinetic LiDARs: one at the front of
 the cockpit, facing forward, and two on the sides of the cockpit, oriented at
 $\pm\SI{120}{\degree}$ with respect to the longitudinal axis. The Falcon Kinetic operates at \SI{1550}{nm},  scanning up to 1500 lines
-per second and is used at \SI{10}{Hz}. Its angular resolution is
+per second and is used at \SI{20}{Hz}. Its angular resolution is
 \SI{0.18}{\degree} $\times$ \SI{0.24}{\degree} and can be increased to
 \SI{0.09}{\degree} $\times$ \SI{0.08}{\degree} in a specific region of interest of
 \SI{40}{\degree} $\times$ \SI{4.8}{\degree}, whose position within the field of view can be
@@ -281,7 +279,7 @@ Table~\ref{tab:lidar_eav24}.
         Angular resolution in the region of interest (H $\times$ V) & \SI{0.09}{\degree} $\times$ \SI{0.08}{\degree} (\SI{40}{\degree} $\times$ \SI{4.8}{\degree}) \\
         Scan lines                        & up to 1500 lines/s \\
         Maximum range                     & \SI{250}{m} (10\% reflectivity) \\
-        Update rate                       & \SI{10}{Hz} \\
+        Update rate                       & \SI{20}{Hz} \\
         \bottomrule
     \end{tabular}
     \caption{Main characteristics of the LiDARs mounted on the Dallara EAV-25.}
@@ -311,17 +309,12 @@ caused by the rear wing apply.
 \label{subsec:radar}
 
 A RaDAR (Radio Detection and Ranging) is an active sensor that emits electromagnetic
-waves in the radio band and receives the echoes reflected by the targets. Automotive
-RaDARs are typically frequency-modulated continuous-wave (FMCW) sensors: the
-transmitted signal is a sequence of frequency ramps, and the frequency difference
-between the transmitted and the received signal is proportional to the range of the
-target. The direction of the target is obtained from the phase differences of the echo
-across the receiving antennas.
-
-The main strength of the RaDAR is the direct measure of the relative velocity. \\When the target
-moves with respect to the sensor, the phase of its echo changes from one ramp to the
-next by an amount proportional to the radial component of the relative velocity
-(Doppler effect):
+waves in the radio band and receives the echoes reflected by the targets. The range of a
+target is obtained from the delay of the echo with respect to the transmitted signal, and its
+direction from the differences between the echoes received by the antennas. When the target
+moves with respect to the sensor, its relative motion also induces, through the Doppler
+effect, a phase shift of the echo between two consecutive transmissions, which is
+proportional to the radial component of the relative velocity,
 \begin{equation}
     \Delta\varphi = \frac{4\pi}{\lambda}\,\dot\rho\,T_c
     \quad\Longrightarrow\quad
@@ -331,14 +324,16 @@ next by an amount proportional to the radial component of the relative velocity
 where:
 \begin{itemize}
     \item $\lambda$ denotes the carrier wavelength;
-    \item $T_c$ denotes the time between two consecutive ramps;
-    \item $\Delta\varphi$ denotes the phase shift of the received echo.
-
+    \item $T_c$ denotes the time between two consecutive transmissions;
+    \item $\Delta\varphi$ denotes the phase shift of the echo between them.
 \end{itemize}
 
-RaDARs emit radio waves, with a wavelength much longer than the light of LiDARs. These waves are less attenuated by dust, fog and rain, which makes the sensor robust to adverse weather and extends its detection range beyond the one of LiDARs.
-
-Its position measurement, however, is less accurate than the one of the LiDARs, for two reasons. First, its angular resolution is considerably coarser, so the vehicle is sampled with fewer points. Second, the RaDAR does not reconstruct the three-dimensional shape of the target, but derives its position from the echoes of the most reflective surfaces of the vehicle.
+RaDARs emit radio waves, with a wavelength much longer than the light of LiDARs. These waves
+are less attenuated by dust, fog and rain, which makes the sensor robust to adverse weather and
+extends its detection range beyond the one of LiDARs. Its position measurement, however, is
+less accurate than the one of the LiDARs, since it typically samples the vehicle with fewer
+points. The main advantage of the RaDAR therefore comes from the direct measure of the range
+rate, which is not available from the other sensors.
 
 \subsubsection{Dallara AV-24}
 
@@ -389,7 +384,7 @@ RaDAR covers the blind spot of the LiDARs.
     \label{fig:av24_radar_fov}
 \end{figure}
 
-In our scenario, as for the LiDARs, the effective range of the RaDAR is shorter than the nominal one, and the opponent is detected consistently only up to about 150 m. The main reason is that the radio waves are reflected only by a few parts of the opponent, such as the nose, the wings and the metallic components.
+In our scenario, as for the LiDARs, the effective range of the RaDAR is shorter than the nominal one, and the opponent is detected consistently only up to about 150 m. The main reason is that the radio waves are mainly reflected by a few parts of the opponent, such as the nose, the wings and the metallic components.
 
 \subsubsection{Dallara EAV-25}
 
@@ -422,7 +417,7 @@ reported in Table~\ref{tab:radar_eav24}.
 \end{table}
 
 The horizontal field of view reported in Table~\ref{tab:radar_eav24} is the nominal one of
-each unit. In the application, the region of interest of each RaDAR is limited to
+each unit. In this application, the region of interest of each RaDAR is limited to
 $\pm\SI{45}{\degree}$ around its boresight, so that the four sectors do not overlap and
 together cover the whole horizontal plane around the vehicle
 (Fig.~\ref{fig:eav24_radar_fov}). The configuration of the RaDARs also allows the blind spot of the LiDARs
@@ -442,16 +437,15 @@ behind the car to be covered efficiently.
 \label{subsec:camera}
 
 Cameras are passive sensors that capture images of the scene at high resolution and
-frame rate. Their main strength is the semantic content of the images: color, texture
-and shape allow neural networks to detect and classify the surrounding objects reliably,
-and for each vehicle in the field of view the detector returns a bounding box in the
-image. The three-dimensional position of the vehicle is then reconstructed from the
-bounding box, with the knowledge of the calibration of the cameras.
+frame rate. Their main strength is the semantic content of the images, since color, texture
+and shape make them well suited to the detection and classification of the surrounding
+objects.
 
 Cameras are strongly affected by the environmental conditions. Being
 passive sensors, for example, they depend on the ambient light, so that the quality of the images
-changes with the brightness of the scene, as well as with the weather. Since the depth is not measured directly but reconstructed from the image, its accuracy
-degrades as the distance of the target increases.
+changes with the brightness of the scene, as well as with the weather. Moreover, a camera projects the scene onto the image plane and does not measure the depth
+directly, so that the accuracy with which the distance of a target can be inferred degrades
+as the distance increases.
 
 \subsubsection{Dallara AV-24}
 
@@ -522,8 +516,9 @@ main modules: estimation, perception, planning and control (Fig.~\ref{fig:sw_arc
 
 \paragraph{Estimation.} The estimation module estimates the state of the ego
 vehicle, i.e.\ its position, heading, velocity and acceleration, by
-fusing the measurements of the GNSS receivers, of the inertial units and of the
-proprioceptive sensors. Its output is used by the perception, planning and control
+using the measurements of both the proprioceptive sensors, i.e.\ the GNSS receivers, the
+inertial units and the wheel speed sensors, and the exteroceptive ones, i.e.\ cameras, LiDARs
+and RaDARs. Its output is used by the perception, planning and control
 modules.
 
 \paragraph{Perception.}The perception module turns the raw data of LiDARs, RaDARs and cameras into a description of the vehicles around the ego car. For each sensor, the raw data are processed into a list of detections, each containing the position of a vehicle and, for the RaDAR, also its range rate. The detections of the different sensors are then passed to
@@ -538,8 +533,7 @@ Chapter~\ref{ch:tracking}.
 from perception and the data of a track database, which contains the
 boundaries of the track and a set of reference trajectories. Based on the presence of
 other vehicles and on the chosen strategy, i.e.\ following, overtaking or defending,
-the planning module decides the trajectory that the vehicle has to follow; the
-trajectory can also be selected by configuration. The output is a reference trajectory,
+the planning module decides the trajectory that the vehicle has to follow. The output is a reference trajectory,
 i.e.\ a path with the associated speed profile, which is sent to control.
 
 \paragraph{Control.} It receives the reference trajectory from planning and the ego

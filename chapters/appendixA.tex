@@ -4,7 +4,37 @@
 \markboth{Appendix A}{Appendix A}
 \label{app:process_noise}
 
-Starting from the Jacobian $\mathbf{A}$ of~\eqref{eq:tt_A}, the matrix exponential is
+\subsection*{Discrete-Time Motion Model}
+
+With $\kappa$ and $a_k$ constant over the interval and $\tau = t - t_k$, the integration
+of~\eqref{eq:tt_cca} gives
+\begin{equation}
+    a(\tau) = a_k, \qquad
+    v(\tau) = v_k + a_k\,\tau, \qquad
+    \psi(\tau) = \psi_k + \kappa\left(v_k\,\tau + \tfrac{1}{2}\,a_k\,\tau^2\right).
+\end{equation}
+Since $\dot\psi = \kappa\,v$, then $v\,\mathrm{d}\tau = \mathrm{d}\psi/\kappa$, and
+\begin{equation}
+    \begin{aligned}
+        x_{k+1} &= x_k + \int_0^{\Delta t} v\cos\psi\,\mathrm{d}\tau
+                 = x_k + \frac{1}{\kappa}\int_{\psi_k}^{\psi_{k+1}} \cos\psi\,\mathrm{d}\psi
+                 = x_k + \frac{\sin\psi_{k+1} - \sin\psi_k}{\kappa}, \\
+        y_{k+1} &= y_k + \int_0^{\Delta t} v\sin\psi\,\mathrm{d}\tau
+                 = y_k + \frac{1}{\kappa}\int_{\psi_k}^{\psi_{k+1}} \sin\psi\,\mathrm{d}\psi
+                 = y_k - \frac{\cos\psi_{k+1} - \cos\psi_k}{\kappa}.
+    \end{aligned}
+\end{equation}
+For $\kappa \to 0$, with $s = v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2$ and
+$\psi_{k+1} = \psi_k + \kappa\,s$,
+\begin{equation}
+    \lim_{\kappa \to 0} \frac{\sin(\psi_k + \kappa\,s) - \sin\psi_k}{\kappa} = s\cos\psi_k,
+    \qquad
+    \lim_{\kappa \to 0} -\frac{\cos(\psi_k + \kappa\,s) - \cos\psi_k}{\kappa} = s\sin\psi_k.
+\end{equation}
+
+\subsection*{Process Noise Covariance}
+
+From~\eqref{eq:tt_A} and~\eqref{eq:tt_exp_series},
 \begin{equation}
     \renewcommand{\arraystretch}{1.6}
     e^{\mathbf{A}\tau} =
@@ -19,7 +49,7 @@ Starting from the Jacobian $\mathbf{A}$ of~\eqref{eq:tt_A}, the matrix exponenti
     \end{bmatrix}.
     \label{eq:app_exp}
 \end{equation}
-and~\eqref{eq:tt_Q_def}, with $\mathbf{G}$ and $\mathbf{Q}_c$ of~\eqref{eq:tt_noise}, gives
+and substituting into~\eqref{eq:tt_Q_def},
 \begin{equation}
     \mathbf{Q}_k =
     \begin{bmatrix}

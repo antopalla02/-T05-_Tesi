@@ -1,0 +1,55 @@
+\section{Perception output}
+\label{sec:tt_perception}
+
+Each family of sensors is processed by a dedicated pipeline, running as an independent
+process, and all the pipelines publish their output with the same structure, i.e.\ a list of
+detections, each one representing a possible opponent vehicle and containing the acquisition
+time of the sensor data, the source that produced it, the position of the object and, when
+available, its heading and range rate. All the detections reach the tracker in the same
+reference frame and, thanks to this common interface, the tracker treats all the sources in
+the same way, the only differences being the measured quantities and their uncertainty.
+
+All the pipelines exploit two pieces of prior information on the circuit. The first is a
+binary map of the drivable area, which is used to discard the detections that fall outside the track boundaries. The second is the database of reference trajectories: when the sensor cannot measure the heading of a detection, it is taken from the closest
+point of the closest trajectory.
+
+\paragraph{LiDAR.} The point cloud of the LiDARs is processed by two complementary pipelines,
+a geometric one, based on Clustering, and one based on a neural network, PointPillars.
+
+In the Clustering pipeline, the points belonging to the ground are first removed, and only the
+remaining points that fall inside the drivable area are kept. These points are grouped by a
+density-based clustering algorithm (DBSCAN), and the clusters whose extent is not compatible
+with the dimensions of a car are discarded. Since the LiDAR samples only the surfaces facing
+the sensor, the points of each cluster depend on the visible part of the vehicle, and their
+centroid is shifted towards the visible corner or side. Once this corner is identified, the
+cluster is therefore shifted according to the nominal dimensions of the vehicle, so that its
+position corresponds to the center of the car.
+
+PointPillars, instead, is based on a deep neural network for three-dimensional object
+detection, which operates on the same point cloud. The cloud is divided into vertical columns,
+the pillars, whose points are encoded into features and processed by the network as an image.
+For each detected object, the network returns an oriented three-dimensional bounding box,
+i.e.\ its center, dimensions and heading, together with a confidence score. Since the network
+learns the shape of the vehicle from the training data, it can estimate the center and the
+heading of the vehicle also when it is only partially visible.
+
+\paragraph{RaDAR.} At every cycle, each RaDAR returns a list of reflection points, each one
+described by its range, azimuth, elevation and range rate. The points at ranges and heights
+not compatible with a vehicle on track are discarded, and the remaining ones are grouped by a
+spatial clustering whose parameters depend on the range, since the number of reflections
+returned by a vehicle decreases with its distance and fewer points are therefore required to
+form a cluster at longer range. The clusters are then filtered with the map of the drivable
+area, and each of them generates a detection whose position is the centroid of its points and
+whose range rate is their mean.
+
+\paragraph{Camera.} The camera pipeline detects the vehicles in the images with a YOLO
+neural network, which returns a two-dimensional bounding box for each of them. The position
+of the vehicle is then reconstructed either from the camera alone, estimating the distance
+from the apparent height of the bounding box, or by projecting
+the LiDAR points onto the image and exploiting the points that fall inside the bounding box
+to locate the vehicle more accurately.
+
+
+
+% =====================================================================
+\section{Prediction}
