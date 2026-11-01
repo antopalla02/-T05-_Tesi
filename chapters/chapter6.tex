@@ -509,13 +509,11 @@ Window & \multicolumn{2}{c}{Global RMSE} & \multicolumn{2}{c}{Local RMSE} & Mane
 \subsection*{Comparison}
 \label{subsec:rts_comparison}
 
-The two cases are compared in Table~\ref{tab:rts_radar_noradar}. In both of them the smoother
-significantly improves the estimate of the speed with respect to the causal state, which
-justifies the use of an acausal approach to estimate the state of the opponent. With the
+The two setups previously introduced are compared in Table~\ref{tab:rts_radar_noradar}. In both of them the smoother
+significantly improves the estimate of the speed with respect to the causal state. With the
 RaDAR, the improvement saturates at about \SI{300}{ms}, while without it the error keeps
 decreasing with the window, at the cost of an anticipation of the maneuvers that grows with
-it. To limit this anticipation, the window is fixed at \SI{300}{ms}, where the smoothed
-estimate without the RaDAR reaches a global RMSE of \SI{0.625}{m/s} and a local one of
+it. To limit this anticipation, the window is fixed at \SI{300}{ms} also in the second case, with a global RMSE of \SI{0.625}{m/s} and a local one of
 \SI{1.022}{m/s}, against \SI{0.646}{m/s} and \SI{1.114}{m/s} with all the sensors.
 
 \begin{table}[!htbp]
@@ -568,15 +566,14 @@ Chapter~\ref{ch:qff}, where the approach, although correct in principle, was sho
 by the quality of the jerk estimator, which inherited the delay and the noise of the estimate
 from which it was derived.
 
-The smoother comes in handy for this purpose since, as shown in the previous sections and
+The smoother is well suited to this purpose since, as shown in the previous sections and
 following the formulation of Section~\ref{subsec:rts_backward}, it addresses both limits of the
-feed-forward formulation. It reduces the
-delay of the estimate by exploiting the future information, so that the delay accumulated by
-the feed-forward estimate before a late activation of the flag can be recovered, and it
-attenuates the noise due to spurious measurements and activations by averaging each state with
-the adjacent ones through the backward recursion. The two effects also reinforce each other. Indeed, since the smoother attenuates the spurious activations, the activation thresholds
-of the flag can be lowered, the maneuvers are detected earlier and the delay of the
-feed-forward estimate is further reduced.
+feed-forward formulation. By exploiting the future information, it compensates for the lag
+accumulated by the causal estimate before a late activation of the flag, while the backward
+recursion, which combines each state with the adjacent ones, attenuates the noise introduced by
+spurious measurements and activations. The two effects are moreover mutually reinforcing,
+since the attenuation of the spurious activations allows the activation thresholds to be
+lowered, so that the maneuvers are detected earlier and the residual lag is further reduced.
 
 From the implementation point of view, the two approaches are complementary, since the smoother
 acts on the causal estimate published on the history, which is exactly the output of the
@@ -613,11 +610,22 @@ due to the spurious activations, e.g.\ at about \SI{1066}{s} and \SI{1068}{s}, a
 possible overshoots of the feed-forward estimate are not present in the smoothed one. The
 smoother applied to the nominal filter,
 instead, still presents a delay with respect to the ground truth in the braking phases of the
-cases shown. The difference lies in the causal estimate on which the backward recursion
-operates. With the feed-forward process noise, the smoother starts from a causal estimate that
-is more representative of the actual dynamics of the opponent than the one of the filter with
-the nominal tuning, and the smoothing further improves it, bringing it closer to the ground
-truth.
+cases shown. Focusing instead on the comparison between the smoother applied to the feed-forward estimate and
+the classical one, the figures show that the latter still presents a delay with respect to the
+ground truth in the braking phases. The difference lies in the causal estimate on which the
+backward recursion operates. With the feed-forward process noise, the smoother starts from a
+causal estimate that is more representative of the actual dynamics of the opponent than the one
+of the filter with the nominal tuning, the smoother further improves it using the information of the future estimates, bringing it closer to the ground truth.
+
+These observations are quantified in Table~\ref{tab:rts_qff}, which reports the RMSE of the
+speed and of the acceleration with respect to the ground truth for the two smoothed estimates
+with a window of \SI{300}{ms}. The reference is the causal estimate of the filter
+with the feed-forward process noise, since it is the estimate that provides the state of the
+opponent online and in real time. Both smoothed estimates considerably reduce the RMSE of the
+acceleration, by about \SI{50}{\percent}with an RMSE of  \SI{1.786}{m/s^2} and \SI{1.869}{m/s^2}. On the speed, instead, the two estimates differ
+markedly, since the smoother alone reduces the RMSE by \SI{40.7}{\percent}, to
+\SI{0.634}{m/s}, while the combination with the feed-forward process noise reduces it by
+\SI{66.7}{\percent}, to \SI{0.356}{m/s}.
 
 \begin{table}[H]
 \centering
@@ -638,14 +646,4 @@ the causal estimate of the feed-forward filter.}
 \label{tab:rts_qff}
 \end{table}
 
-These observations are quantified in Table~\ref{tab:rts_qff}, which reports the RMSE of the
-speed and of the acceleration with respect to the ground truth for the two smoothed estimates
-with a window of \SI{300}{ms}. The reference is the causal estimate of the filter
-with the feed-forward process noise, since it is the estimate that provides the state of the
-opponent online and in real time. Both smoothed estimates considerably reduce the RMSE of the
-acceleration, by about \SI{50}{\percent}, which shows that the smoothing removes most of the
-noise introduced by the feed-forward approach. On the speed, instead, the two estimates differ
-markedly, since the smoother alone reduces the RMSE by \SI{40.7}{\percent}, to
-\SI{0.634}{m/s}, while the combination with the feed-forward process noise reduces it by
-\SI{66.7}{\percent}, to \SI{0.356}{m/s}, with an RMSE of the acceleration that is also slightly
-lower, \SI{1.786}{m/s^2} against \SI{1.869}{m/s^2}.
+
