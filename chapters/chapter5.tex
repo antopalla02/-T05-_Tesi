@@ -107,15 +107,47 @@ through a multiplicative factor when a maneuver begins.
 \section{Nominal Process Noise Tuning}
 \label{sec:qff_nominal}
 
-Preliminary to the feed-forward approach is the tuning of the nominal value
-$\mathbf{Q}_{\mathrm{nom}}$ of the process noise, i.e.\ of the spectral densities $q_a$
-and $q_\kappa$ of Section~\ref{subsec:tt_cca}. The choice is made by testing different
-values of the process noise and selecting the one that gives a good starting point on the
-trade-off introduced in the previous section, between the reactivity of the filter to
-the changes of the dynamics and the noise of the estimate.
+A preliminary step in the development of the feed-forward approach is the tuning of the nominal
+process noise covariance $\mathbf{Q}_{\mathrm{nom}}$, defined by the spectral densities $q_a$
+and $q_\kappa$ introduced in Section~\ref{subsec:tt_cca}. The objective is to identify a
+suitable compromise between the responsiveness of the filter to changes in the opponent's
+dynamics and the smoothness of its estimate, as discussed in Section~\ref{sec:qff_idea}.
 
-\TODO{Figures with the estimate obtained with different values of the process noise, and
-their effect on the quality of the estimate.}
+The tuning is performed by comparing the estimates obtained with different values of the
+acceleration noise spectral density $q_a$, while keeping $q_\kappa$ fixed.
+Figs.~\ref{fig:qff_tuning_braking} and~\ref{fig:qff_tuning_straight} show the estimated speed
+and acceleration for three representative values, $q_a = 1$, $5$ and $50$, during a braking
+maneuver and on a straight, respectively.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/ch5/cca_tuning_braking.pdf}
+    \caption{Speed and acceleration estimated with different values of $q_a$ during a braking.
+    Session of 5 September 2026, Imola.}
+    \label{fig:qff_tuning_braking}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/ch5/cca_tuning_straight.pdf}
+    \caption{Speed and acceleration estimated with different values of $q_a$ on a straight.
+    Session of 5 September 2026, Imola.}
+    \label{fig:qff_tuning_straight}
+\end{figure}
+
+Consistently with the considerations of Section~\ref{sec:qff_idea}, increasing $q_a$ improves
+the responsiveness of the filter at the expense of a noisier estimate. During the braking, the
+acceleration estimated with $q_a = 50$ follows the ground truth with the smallest delay,
+whereas with $q_a = 1$ the slower response leads to an accumulated error in the speed, which is
+underestimated at the end of the maneuver. On the straight, however, the larger Kalman gain
+associated with $q_a = 50$ makes the acceleration estimate considerably noisier, with
+pronounced spikes, while the estimates obtained with $q_a = 1$ and $q_a = 5$ remain smooth and
+nearly coincident.
+
+The value $q_a = 5$ is therefore selected as the nominal tuning, as it provides a suitable
+compromise between the two operating conditions: it improves the response to changes in
+acceleration compared with $q_a = 1$, while avoiding the pronounced fluctuations observed with
+$q_a = 50$ during steady-state motion.
 
 % =====================================================================
 \section{Feed-Forward Formulation}
