@@ -1,4 +1,73 @@
 \chapter{Conclusions and Future Work}
 \label{ch:conclusions}
 
-\TODO{}
+The reliability of an autonomous vehicle depends on how accurately it can estimate the state of
+the vehicles around it, and on how this estimate copes with noisy sensors and with dynamics
+that the models describe only approximately. This thesis has addressed this problem in the
+context of autonomous racing, a setting in which high speeds, abrupt maneuvers and close
+interactions between vehicles make the limitations of the estimation clearly evident, by
+working on the target tracking module of the Dallara AV-24 and EAV-25 and evaluating the
+proposed methods on experimental racing data.
+
+The analysis of the measurement noise has shown that the errors of the detections cannot in
+general be described as stationary, white Gaussian noise. Once the contributions related to
+the reference and to the calibration are removed, the errors of several sources still contain
+a slowly varying component, which has been modeled as a Gauss-Markov process and separated
+from a white one, while their dependence on the relative geometry has proved not to be
+reproducible across sessions, preventing a general deterministic compensation. These results
+indicate that a correct description of the measurement noise requires its temporal structure
+to be taken into account, beyond its first two moments. On this basis, a covariance matching
+technique has been adopted to estimate the measurement noise covariance of the LiDARs
+recursively and in real time, and it has been shown to describe the white component of the
+errors more closely than a static covariance, while the slowly varying bias, shared by the
+estimate of the state, cannot be recovered from the innovations alone.
+
+The degradation of the estimate during the maneuvers has been addressed with two complementary
+approaches. The feed-forward adaptation of the process noise has proved to be correct in
+principle, since it makes the filter more reactive when a maneuver is detected and preserves
+the nominal behavior elsewhere, but it has also shown the limits of any reactive strategy,
+whose effectiveness depends on the delay and on the noise of the signal used for the
+detection. The RTS smoother, instead, has shown that exploiting the measurements acquired
+after each instant considerably improves the estimate of the speed, both with and without a
+direct measurement of it, at the price of a state referred to the past, which is acceptable
+whenever the downstream modules, such as the gap control of the planning module, do not
+strictly require the current state. The combination of the two approaches has provided the
+most accurate estimate among the configurations considered, confirming that improving the
+causal estimate remains beneficial even when it is subsequently refined by the smoother.
+
+More generally, these results show that a careful modeling of the uncertainties of a tracking
+filter, both on the measurements and on the motion model, can considerably improve the
+estimate without modifying the architecture of the system, and that the trade-off between
+latency and accuracy can be exploited whenever the application tolerates a delayed estimate.
+Both aspects are not specific to racing, and they apply equally to the tracking of the
+vehicles in urban traffic, where heterogeneous sensors and sudden changes of the dynamics of
+the other road users pose the same problems.
+
+\section{Future Work}
+\label{sec:future_work}
+
+As anticipated in Section~\ref{sec:ch4_future}, a first extension concerns the measurement
+noise of the camera and of the RaDAR. Their innovations contain, besides their own white
+error, the difference between their bias and the one of the LiDARs, which varies slowly and
+prevents the covariance matching from being applied to them directly. Unlike the absolute
+bias, this relative bias is observable, and it could be estimated online by augmenting the
+state of the filter with a slowly varying bias for each sensor, modeled as a Gauss-Markov
+process. Once compensated, the innovations of the camera and of the RaDAR would contain only
+their white component, and the adaptive estimation of the measurement noise covariance could
+be extended to all the detection sources, improving the relative weighting of their
+measurements in the filter.
+
+A second extension concerns the feed-forward adaptation of the process noise, whose
+performance is limited by the trade-off between delay and noise of the jerk estimate obtained
+by differentiating and filtering the acceleration. A constant-jerk motion model could be
+implemented, extending the constant-acceleration model with the jerk as an additional state of
+the filter, so that the jerk would be estimated directly by the filter instead of being
+derived from its output. It would then be possible to evaluate whether this formulation
+resolves the trade-off between delay and noise, providing an earlier and more reliable
+detection of the maneuvers, in terms of activation delay, false activations and estimation
+error.
+
+Finally, the proposed methods should be validated on a larger set of sessions, circuits and
+operating conditions, and their effect on the downstream modules, above all on the planning
+and on the gap control, should be evaluated at the level of the whole autonomous driving
+system.
