@@ -5,49 +5,62 @@
 \chapter{Experimental Setup and Methodology}
 \label{ch:setup}
 
-This chapter gives an overview of the hardware and software setup of the fully
-autonomous racecars on which this research is based. The work considers two different
-vehicles, the Dallara AV-24, which competes in the Indy Autonomous Challenge (IAC), and
-the Dallara EAV-25, which competes in the Abu Dhabi Autonomous Racing League (A2RL). Both
-cars are equipped with the sensors and the software stack used to design, run and
-evaluate the algorithms presented in the following chapters.
+This chapter provides an overview of the hardware and software platforms on which this research
+is based. Two autonomous racing vehicles are considered: the Dallara AV-24, used in the Indy
+Autonomous Challenge (IAC), and the Dallara EAV-25, adopted in the Abu Dhabi Autonomous Racing
+League (A2RL). Both vehicles are equipped with the sensing and computational infrastructure
+required to develop, implement, and evaluate the algorithms presented in the following chapters.
 
-Section~\ref{sec:operating_conditions} introduces the two competitions, together with their
-formats and the vehicles adopted in each of them. Section~\ref{sec:sensors} presents the
-working principle of the exteroceptive sensors used for opponent tracking and their setup on
-the two vehicles, and Section~\ref{sec:sw_arch} outlines the software architecture.
+Section~\ref{sec:operating_conditions} introduces the two competitions, their racing formats,
+and the vehicles employed, with Section~\ref{subsec:iac} devoted to the IAC and the Dallara AV-24
+and Section~\ref{subsec:a2rl} to the A2RL and the Dallara EAV-25. Section~\ref{sec:sensors}
+describes the operating principles and configurations of the exteroceptive sensors used for
+opponent tracking, while Section~\ref{sec:sw_arch} provides an overview of the software
+architecture.
 
 % =====================================================================
 \section{Autonomous Racing Competitions}
 \label{sec:operating_conditions}
 
-The IAC and the A2RL are racing competitions for autonomous vehicles, in which university
-teams develop the software that drives the cars. They represent a fertile ground for the
-development of autonomous driving, since the vehicles compete at the limits of their dynamic
-capabilities, above \SI{250}{km/h} and, in the formats with several vehicles on track, in close
-proximity to each other, conditions that are hard to reproduce elsewhere.
+The IAC and A2RL are autonomous racing competitions in which university teams develop the
+software responsible for driving fully autonomous racecars. These competitions provide a
+challenging environment for the development and validation of autonomous driving technologies,
+as vehicles operate close to their dynamic limits, reaching speeds exceeding \SI{250}{km/h}. In
+multi-vehicle racing scenarios, these demanding conditions are further compounded by the need to
+interact with other vehicles in close proximity. The combination of high speeds, aggressive
+dynamics, and close interactions places stringent requirements on perception, estimation, and
+control algorithms, making autonomous racing a particularly valuable testbed for technologies
+that are difficult to evaluate under comparable conditions in conventional driving environments.
 
 % ---------------------------------------------------------------------
 \subsection{Indy Autonomous Challenge}
-\label{sec:av24}
+\label{subsec:iac}
 
-The IAC was the first championship for fully autonomous racecars on real tracks. Its first
-edition was held in 2021 at the Indianapolis Motor Speedway, preceded since 2019 by a series
-of competitions in simulated environments, and all the teams compete with the same vehicle,
-provided by the organizers. Historically, the events have been held mainly on oval tracks,
-such as the Indianapolis Motor Speedway, the Las Vegas Motor Speedway and the Texas Motor
-Speedway, while since 2023 the series has also raced on road courses, starting from Monza
-and, in the last two seasons, at WeatherTech Raceway Laguna Seca (Fig.~\ref{fig:av24}).
+The Indy Autonomous Challenge (IAC) was among the first competitions to bring fully autonomous
+racecars to racing circuits. Launched in 2019 with a series of simulation-based
+challenges, it held its first on-track event in 2021 at the Indianapolis Motor Speedway. All
+participating teams compete using an identical vehicle platform provided by the organizers, with
+the competition focusing on the development of the autonomous driving software. Initially, IAC
+events were held primarily on oval circuits, including the Indianapolis Motor Speedway, Las Vegas
+Motor Speedway, and Texas Motor Speedway. In 2023, the competition expanded to road courses with
+its first event at the Autodromo Nazionale Monza, followed by events at WeatherTech Raceway Laguna
+Seca in 2025 and 2026 (Fig.~\ref{fig:av24}).
 
-The IAC events include formats with a single vehicle and formats with several vehicles on
-track. In the former, such as time trials and qualifying, each car runs alone and is ranked
-on its fastest lap, so that the focus is entirely on driving the vehicle autonomously at the
-limits of its dynamic capabilities. In the latter, the vehicles share the track and race
-against each other. Since its second edition, the IAC has also included the passing
-competition, a format specifically designed to promote the interaction between the vehicles,
-in which, in each head-to-head round of an elimination bracket, the trailing vehicle, which
-is given more power, aims to overtake the leading one, which in turn aims to defend its
-position.
+The IAC features both single-vehicle and multi-vehicle competition formats. In single-vehicle
+events, such as time trials and qualifying sessions, each car runs independently and is ranked
+according to its fastest lap time. These formats primarily challenge the ability of the
+autonomous driving system to exploit the vehicle's dynamic capabilities while maintaining
+stability and control. Multi-vehicle formats introduce the additional complexity of interactions
+between competing vehicles, requiring the autonomous system to perceive and react to the behavior
+of other racecars.
+
+Among these formats, the passing competition, introduced in 2022, is specifically designed to
+challenge autonomous overtaking capabilities. It follows a single-elimination tournament
+structure, with teams competing in head-to-head matches. During each match, the vehicles
+alternate between the roles of attacker and defender: the defender maintains a prescribed speed
+and racing line, while the attacker attempts to complete an overtake within a designated passing
+zone. The difficulty progressively increases as the target speed is raised over successive
+rounds, until one of the competitors fails to complete the maneuver.
 
 \begin{figure}[H]
     \centering
@@ -100,15 +113,21 @@ control signals.
 
 % ---------------------------------------------------------------------
 \subsection{Abu Dhabi Autonomous Racing League}
-\label{sec:eav24}
+\label{subsec:a2rl}
 
-The A2RL is a championship for fully autonomous racecars organized by ASPIRE, which debuted
-in April 2024 at the Yas Marina Circuit with a race between four autonomous cars. Unlike the
-IAC, it was conceived from the beginning for road circuits, and in September 2026 it raced
-for the first time at the Autodromo Internazionale Enzo e Dino Ferrari in Imola
-(Fig.~\ref{fig:eav24}). As in the IAC, the events include formats with a single vehicle on
-track, such as time trials and qualifying, in which each car is ranked on its fastest lap,
-and formats in which the vehicles share the track and race against each other.
+The Abu Dhabi Autonomous Racing League (A2RL) is an autonomous racing championship organized by
+ASPIRE, which held its inaugural event in April 2024 at the Yas Marina Circuit, featuring a race
+between four fully autonomous vehicles. Unlike the IAC, which initially focused on oval tracks,
+the A2RL was conceived from the outset for road-course racing. After its first two editions in
+Abu Dhabi, the competition expanded internationally in September 2026, holding its first
+European race at the Autodromo Internazionale Enzo e Dino Ferrari in Imola
+(Fig.~\ref{fig:eav24}).
+
+Similarly to the IAC, the championship combines single-vehicle and multi-vehicle competition
+formats. The former include time trials and qualifying sessions, in which teams compete to
+achieve the fastest lap time, while the latter involve several vehicles racing simultaneously on
+the same track, introducing the additional challenges of opponent interactions and overtaking
+maneuvers.
 
 \begin{figure}[H]
     \centering
