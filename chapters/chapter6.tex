@@ -16,7 +16,7 @@ state at the current instant, so that an estimate referred to a past instant but
 accurate can be used instead.
 
 Section~\ref{sec:rts_problem} introduces the smoothing problem and
-Section~\ref{sec:rts_formulation} derives the Rauch--Tung--Striebel (RTS) smoother, while
+Section~\ref{sec:rts_formulation} derives the Rauch--Tung--Striebel (RTS) smoother, 
 Sections~\ref{sec:rts_implementation} and~\ref{sec:rts_sensitivity} describe its
 implementation and present the results. Finally, Section~\ref{sec:rts_qff} proposes its
 combination with the feed-forward process noise approach introduced in the previous chapter.
@@ -39,12 +39,10 @@ interest, which determines how the conditional density is computed.
     instant $k$, and the density is propagated from the last available one through the
     transition density of the motion model, so that no new information enters the estimate.
     \item \textbf{Filtering}, with $N = k$. The predicted density is complemented with the
-    likelihood of the measurement at the current instant, which, for a linear Gaussian system, is solved in closed form by the Kalman filter
+    likelihood of the measurement at the current instant,  the Kalman filter
     introduced in Chapter~\ref{ch:tracking}.
-    \item \textbf{Smoothing}, with $N > k$. Besides the past and the current measurements,
-    also those acquired after instant $k$ are used, and the filtered density is corrected
-    with the information carried by the future measurements, which enters through the smoothed
-    density at $k+1$, so that the smoothed density at $k$ depends on the one at $k+1$.
+    \item \textbf{Smoothing}, with $N > k$. Besides the past and current measurements, also those acquired after instant $k$ are used,
+and their information corrects the filtered density through the smoothed one at $k+1$.
 \end{itemize}
 
 For the smoothing problem, two formulations have been proposed, which have been proven to
@@ -72,9 +70,7 @@ system
     \mathbf{z}_k = \mathbf{H}_k\,\mathbf{x}_k + \mathbf{v}_k,
     \label{eq:rts_linear}
 \end{equation}
-under the following assumptions, which ensure that all the densities of
-Section~\ref{sec:rts_problem} remain Gaussian and are fully described by their mean and
-covariance.
+under the following assumptions: 
 \begin{itemize}
     \item \textbf{Linearity.} The dynamics and the measurements are linear in the state. For
     the EKF of the tracker, the equations are applied to the system linearized around the
@@ -124,7 +120,7 @@ and then corrected with the measurement,
 as in~\eqref{eq:tt_prediction} and~\eqref{eq:tt_update}. \\ The filtered estimate $\hat{\mathbf{x}}_{k|k}$ and its covariance
 $\mathbf{P}_{k|k}$ are the causal states that the backward recursion refines, while the
 prediction $\hat{\mathbf{x}}_{k+1|k}$, its covariance $\mathbf{P}_{k+1|k}$ and the state
-matrix $\mathbf{F}_k$ are used to compare the causal prediction with the smoothed state at
+matrix $\mathbf{F}_k$ , as will be shown, are used to compare the causal prediction with the smoothed state at
 the following step and to compute the smoother gain, which weights this comparison. 
 
 \subsection{Backward Step}
@@ -200,11 +196,7 @@ mismatch according to the uncertainty of the forward filter, i.e.\ to the ratio 
 covariance of the filtered estimate and the one of the prediction. A filtered estimate with a
 small covariance is therefore only marginally corrected, whereas an uncertain one is pulled
 more strongly towards the information carried by the future estimates. The same
-mechanism acts on the covariance. At the last instant the smoothed and the filtered
-covariances coincide, and, if the smoothed covariance at $k+1$ does not exceed the filtered
-one, it does not exceed the predicted one either, since the correction step of the filter
-reduces the covariance, so that $\mathbf{P}_{k+1|N} \preceq \mathbf{P}_{k+1|k+1} \preceq
-\mathbf{P}_{k+1|k}$. The term
+mechanism acts on the covariance.  The term
 $\mathbf{C}_k(\mathbf{P}_{k+1|N} - \mathbf{P}_{k+1|k})\mathbf{C}_k^\top$
 in~\eqref{eq:rts_backward} is negative semidefinite, and by induction backward in time
 \begin{equation}
@@ -260,7 +252,7 @@ the estimates of all the states of an interval once all its measurements have be
 which is the problem solved by the formulation of Section~\ref{sec:rts_formulation}. A
 fixed-lag smoother, finally, provides at each instant the estimate of the state at a fixed
 delay behind the current time, i.e.\ $\hat{\mathbf{x}}_{k-L|k}$ with a constant lag $L$. In
-the tracker, the measurements keep arriving and a past but refined estimate has to be
+the tracker, the estimate has to be
 available at every publication, so that a fixed-lag formulation is adopted, obtained by
 applying the fixed-interval RTS recursion on a window that slides with the current time.
 
@@ -269,7 +261,7 @@ current instant $t_N$, i.e.\ the time of the most recent entry of the history of
 it smooths backward in time over the interval $[t_N - T_w,\, t_N]$, using all the measurements
 contained in it. This choice is preferred to a formulation that fixes the information used by
 the smoother, i.e.\ the number of measurements, for two reasons. First, the time span covered
-by a fixed number of measurements would change with the configuration of the detections,
+by a fixed number of measurements would change with the number of the detections,
 being short when the opponent is observed by all the sensors and longer when only some of them
 are available. Second, the estimate is used by the gap control, which regulates the distance
 from the opponent in terms of time, and, since the smoother replaces a real-time estimate with
@@ -340,14 +332,12 @@ opponent, compared with the ground truth through two metrics.
     The RMSE is computed both on the whole session (global RMSE) and on the
     instants within the braking maneuvers (local RMSE).
 
-    \item \textbf{Maneuver delay}. This metric evaluates whether the smoother, by exploiting
+    \item \textbf{Maneuver delay}. Evaluates whether the smoother, by exploiting
     the future information, reduces the delay with which the estimate detects the onset of a
-    maneuver. The braking maneuvers are identified on the ground truth of the opponent, and the
-    onset of each of them is flagged at the instant in which the magnitude of its acceleration
-    exceeds a threshold. The same instant is then searched on the speed estimated with each
-    window, and the maneuver delay is the difference between the two. A positive value
+    maneuver. The braking maneuvers are identified on the ground truth of the opponent; the same instant is then searched on the speed estimated by the smoother with different
+    window lengths, and the maneuver delay is the difference between the two. In our results, a  positive value
     indicates that the estimate starts the maneuver late, a negative one that it anticipates
-    it, and the delay is summarized by its median over the braking maneuvers of the session.
+    it, the delay is summarized by its median over the braking maneuvers of the session.
 \end{itemize}
 
 \subsection*{Sensitivity Analysis with All Sensors Available}
