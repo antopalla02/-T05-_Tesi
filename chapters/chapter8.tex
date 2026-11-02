@@ -1,13 +1,8 @@
 \chapter{Conclusions and Future Work}
 \label{ch:conclusions}
 
-The reliability of an autonomous vehicle depends on how accurately it can estimate the state of
-the vehicles around it, and on how this estimate copes with noisy sensors and with dynamics
-that the models describe only approximately. This thesis has addressed this problem in the
-context of autonomous racing, a setting in which high speeds, abrupt maneuvers and close
-interactions between vehicles make the limitations of the estimation clearly evident, by
-working on the target tracking module of the Dallara AV-24 and EAV-25 and evaluating the
-proposed methods on experimental racing data.
+This thesis has investigated the limitations of the target tracking module employed in the Dallara AV-24 and EAV-25 autonomous racecars, focusing on the accuracy of the opponent state estimation under the demanding conditions of autonomous racing. In particular, the work has addressed three aspects of the estimation problem: the characterization and modeling of measurement errors from LiDARs, RaDARs and cameras, the delayed response of the filter to abrupt changes in the opponent's dynamics, and the possibility of improving the reconstructed state by exploiting measurements acquired at subsequent instants. These aspects have been investigated using experimental data collected during racing sessions, with the objective of improving the estimation performance within the existing Extended Kalman Filter architecture.
+
 
 The analysis of the measurement noise has shown that the errors of the detections cannot in
 general be described as stationary, white Gaussian noise. Once the contributions related to
@@ -37,11 +32,7 @@ causal estimate remains beneficial even when it is subsequently refined by the s
 
 More generally, these results show that a careful modeling of the uncertainties of a tracking
 filter, both on the measurements and on the motion model, can considerably improve the
-estimate without modifying the architecture of the system, and that the trade-off between
-latency and accuracy can be exploited whenever the application tolerates a delayed estimate.
-Both aspects are not specific to racing, and they apply equally to the tracking of the
-vehicles in urban traffic, where heterogeneous sensors and sudden changes of the dynamics of
-the other road users pose the same problems.
+estimate without modifying the architecture of the system.
 
 \section{Future Work}
 \label{sec:future_work}
@@ -67,7 +58,3 @@ resolves the trade-off between delay and noise, providing an earlier and more re
 detection of the maneuvers, in terms of activation delay, false activations and estimation
 error.
 
-Finally, the proposed methods should be validated on a larger set of sessions, circuits and
-operating conditions, and their effect on the downstream modules, above all on the planning
-and on the gap control, should be evaluated at the level of the whole autonomous driving
-system.
