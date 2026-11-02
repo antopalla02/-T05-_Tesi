@@ -42,15 +42,13 @@
 - Activation logic with hysteresis (pseudocode)
 - Results
 
-## 6. RTS Smoother
+## 6. Non-Causal Filtering
 - Formulation: EKF, fixed-lag RTS
 - Sensitivity analysis on the window length
 - Analysis with and without RaDAR measurements
 - Results
 
-## 7. Experimental Results
-
-## 8. Conclusions and Future Work
+## 7. Conclusions and Future Work
 - Conclusions
 - Future work: camera bias estimation
 

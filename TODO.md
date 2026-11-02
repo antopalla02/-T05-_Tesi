@@ -7,7 +7,7 @@
 - [ ] Acknowledgements
 - [ ] Bibliography: enable `\bibliography{Thesis_bibliography}` and add the citations
       (Kalman 1960, Rauch–Tung–Striebel 1965, Fraser–Potter 1969, Fokin 2009, ...)
-- [x] Chapter 7 (Experimental Results) removed: results presented at the end of each chapter
+- [x] Experimental Results chapter removed: results presented at the end of each chapter
 
 ## Chapter 1 – Introduction
 - [ ] Whole chapter (motivation, problem statement, contributions, outline)
@@ -39,7 +39,7 @@
   - [ ] Detail of a braking phase
 - [ ] figures/ch5/*.png extracted from the slides are not used (to be replaced)
 
-## Chapter 6 – RTS Smoother
+## Chapter 6 – Non-Causal Filtering
 - [ ] Section 6.5 Combination with the Q Feed-Forward (formulation, implementation, results)
 - [x] Table 6.1 vs Table 6.3 inconsistency resolved with the new metric tables
 - [x] Figures replaced with the new ones:
@@ -49,6 +49,6 @@
   - [x] Fig. 6.4 RMSE and maneuver delay vs window length, without RaDAR (label corrected to "maneuver delay")
   - [x] Fig. 6.5 RaDAR vs no RaDAR (replaced with the new figure with legend)
 
-## Chapter 8 – Conclusions and Future Work
+## Chapter 7 – Conclusions and Future Work
 - [ ] Whole chapter (conclusions; future work: relative biases of camera and RaDAR,
       RTS + feed-forward Q)
