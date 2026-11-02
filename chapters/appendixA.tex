@@ -3,88 +3,64 @@
 \markboth{Appendix A}{Appendix A}
 \label{app:process_noise}
 
+In this appendix the discrete-time CCA model, its Jacobian and the discretized process noise
+covariance are derived.
+
 \subsection*{Discrete-Time Motion Model}
 
-Over the prediction interval, the curvature $\kappa$ and the acceleration $a_k$ are constant.
-Denoting by $\tau = t - t_k \in [0,\,\Delta t]$ the time elapsed from the last estimate, the
-equations~\eqref{eq:tt_cca} are integrated in cascade. Since $\dot a = 0$,
+With $\kappa$ and $a_k$ constant over the interval and $\tau \in [0,\,\Delta t]$,
+equations~\eqref{eq:tt_cca} are integrated in cascade,
 \begin{equation}
-    a(\tau) = a_k.
-\end{equation}
-Integrating $\dot v = a$,
-\begin{equation}
-    v(\tau) = v_k + \int_0^{\tau} a_k\,\mathrm{d}\sigma = v_k + a_k\,\tau,
-\end{equation}
-and integrating $\dot\psi = \kappa\,v$,
-\begin{equation}
-    \psi(\tau) = \psi_k + \kappa\int_0^{\tau}\left(v_k + a_k\,\sigma\right)\mathrm{d}\sigma
-    = \psi_k + \kappa\left(v_k\,\tau + \tfrac{1}{2}\,a_k\,\tau^2\right).
+    a(\tau) = a_k,
+    \qquad
+    v(\tau) = v_k + a_k\,\tau,
+    \qquad
+    \psi(\tau) = \psi_k + \kappa\left(v_k\,\tau + \tfrac{1}{2}\,a_k\,\tau^2\right),
     \label{eq:app_psi}
 \end{equation}
-Evaluating these expressions at $\tau = \Delta t$ gives~\eqref{eq:tt_cca_vapsi}. For the
-position,
 \begin{equation}
     x_{k+1} = x_k + \int_0^{\Delta t} v(\tau)\cos\psi(\tau)\,\mathrm{d}\tau,
     \qquad
     y_{k+1} = y_k + \int_0^{\Delta t} v(\tau)\sin\psi(\tau)\,\mathrm{d}\tau.
 \end{equation}
-Since $\mathrm{d}\psi = \kappa\,v\,\mathrm{d}\tau$, for $\kappa \neq 0$ the variable of
-integration can be changed from $\tau$ to $\psi$, with $v\,\mathrm{d}\tau = \mathrm{d}\psi/\kappa$
-and limits $\psi(0) = \psi_k$ and $\psi(\Delta t) = \psi_{k+1}$, so that
+For $\kappa \neq 0$, with $v\,\mathrm{d}\tau = \mathrm{d}\psi/\kappa$,
 \begin{equation}
-    \begin{aligned}
-        x_{k+1} &= x_k + \frac{1}{\kappa}\int_{\psi_k}^{\psi_{k+1}} \cos\psi\,\mathrm{d}\psi
-                 = x_k + \frac{\sin\psi_{k+1} - \sin\psi_k}{\kappa}, \\
-        y_{k+1} &= y_k + \frac{1}{\kappa}\int_{\psi_k}^{\psi_{k+1}} \sin\psi\,\mathrm{d}\psi
-                 = y_k - \frac{\cos\psi_{k+1} - \cos\psi_k}{\kappa},
-    \end{aligned}
+    x_{k+1} = x_k + \frac{\sin\psi_{k+1} - \sin\psi_k}{\kappa},
+    \qquad
+    y_{k+1} = y_k - \frac{\cos\psi_{k+1} - \cos\psi_k}{\kappa},
 \end{equation}
-which is~\eqref{eq:tt_cca_xy}. For $\kappa \to 0$, denoting by
-$s = v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2$ the distance travelled over the interval,
-so that $\psi_{k+1} = \psi_k + \kappa\,s$ from~\eqref{eq:app_psi}, the first-order expansions
-\begin{equation}
-    \begin{aligned}
-        \sin(\psi_k + \kappa\,s) &= \sin\psi_k + \kappa\,s\cos\psi_k + O(\kappa^2), \\
-        \cos(\psi_k + \kappa\,s) &= \cos\psi_k - \kappa\,s\sin\psi_k + O(\kappa^2)
-    \end{aligned}
-\end{equation}
-give
+which is~\eqref{eq:tt_cca_xy}. For $\kappa \to 0$, with
+$s = v_k\,\Delta t + \tfrac{1}{2}\,a_k\,\Delta t^2$ and $\psi_{k+1} = \psi_k + \kappa\,s$,
 \begin{equation}
     \lim_{\kappa \to 0} \frac{\sin\psi_{k+1} - \sin\psi_k}{\kappa} = s\cos\psi_k,
     \qquad
     \lim_{\kappa \to 0} -\frac{\cos\psi_{k+1} - \cos\psi_k}{\kappa} = s\sin\psi_k,
 \end{equation}
-and therefore the straight-line model~\eqref{eq:tt_cca_straight}.
+which gives the straight-line model~\eqref{eq:tt_cca_straight}.
 
 \subsection*{Jacobian of the Motion Model}
 
-The elements of~\eqref{eq:tt_F} follow from the derivatives of~\eqref{eq:tt_cca_discrete}. From
-the expression of $\psi_{k+1}$,
+The non-trivial elements of~\eqref{eq:tt_F} are
 \begin{equation}
     \frac{\partial\psi_{k+1}}{\partial v_k} = \kappa\,\Delta t,
     \qquad
     \frac{\partial\psi_{k+1}}{\partial a_k} = \tfrac{1}{2}\,\kappa\,\Delta t^2,
-    \qquad
-    \frac{\partial\psi_{k+1}}{\partial \psi_k} = 1,
 \end{equation}
-and, by the chain rule, the derivatives of $x_{k+1}$ are
 \begin{equation}
+    \renewcommand{\arraystretch}{2}
     \begin{aligned}
-        \frac{\partial x_{k+1}}{\partial v_k} &= \frac{\cos\psi_{k+1}}{\kappa}\,
-            \frac{\partial\psi_{k+1}}{\partial v_k} = \Delta t\cos\psi_{k+1}, \qquad
-        \frac{\partial x_{k+1}}{\partial a_k} = \frac{\cos\psi_{k+1}}{\kappa}\,
-            \frac{\partial\psi_{k+1}}{\partial a_k} = \tfrac{1}{2}\,\Delta t^2\cos\psi_{k+1}, \\
-        \frac{\partial x_{k+1}}{\partial \psi_k} &= \frac{\cos\psi_{k+1} - \cos\psi_k}{\kappa},
+        \frac{\partial x_{k+1}}{\partial v_k} &= \Delta t\cos\psi_{k+1}, &
+        \frac{\partial x_{k+1}}{\partial a_k} &= \tfrac{1}{2}\,\Delta t^2\cos\psi_{k+1}, &
+        \frac{\partial x_{k+1}}{\partial \psi_k} &= \frac{\cos\psi_{k+1} - \cos\psi_k}{\kappa}, \\
+        \frac{\partial y_{k+1}}{\partial v_k} &= \Delta t\sin\psi_{k+1}, &
+        \frac{\partial y_{k+1}}{\partial a_k} &= \tfrac{1}{2}\,\Delta t^2\sin\psi_{k+1}, &
+        \frac{\partial y_{k+1}}{\partial \psi_k} &= \frac{\sin\psi_{k+1} - \sin\psi_k}{\kappa}.
     \end{aligned}
 \end{equation}
-while the derivatives of $y_{k+1}$ are obtained in the same way, with $\sin\psi_{k+1}$ in place
-of $\cos\psi_{k+1}$ and $(\sin\psi_{k+1} - \sin\psi_k)/\kappa$ with respect to $\psi_k$. The
-derivatives of $v_{k+1}$ and $a_{k+1}$ are those of linear functions, and the straight-line
-Jacobian~\eqref{eq:tt_F_straight} is obtained in the same way from~\eqref{eq:tt_cca_straight}.
 
 \subsection*{Process Noise Covariance}
 
-The powers of the Jacobian~\eqref{eq:tt_A} are
+The powers of~\eqref{eq:tt_A} are
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}
     \mathbf{A}^2 =
@@ -104,9 +80,10 @@ The powers of the Jacobian~\eqref{eq:tt_A} are
         0 & 0 & 0 & 0 & 0 \\
         0 & 0 & 0 & 0 & 0
     \end{bmatrix},
+    \qquad
+    \mathbf{A}^4 = \mathbf{0},
 \end{equation}
-and $\mathbf{A}^4 = \mathbf{0}$, so that the series~\eqref{eq:tt_exp_series} stops at the
-third-order term and gives
+so that the series~\eqref{eq:tt_exp_series} gives
 \begin{equation}
     \renewcommand{\arraystretch}{1.6}
     e^{\mathbf{A}\tau} =
@@ -121,74 +98,64 @@ third-order term and gives
     \end{bmatrix}.
     \label{eq:app_exp}
 \end{equation}
-Since $\mathbf{Q}_c$ in~\eqref{eq:tt_noise} is non-zero only in its fourth and fifth diagonal
-elements, the integrand of~\eqref{eq:tt_Q_def} reduces to
+With $\mathbf{Q}_c$ in~\eqref{eq:tt_noise}, the integrand of~\eqref{eq:tt_Q_def} is
 \begin{equation}
     e^{\mathbf{A}\tau}\,\mathbf{Q}_c\,e^{\mathbf{A}^\top\tau}
     = q_a\,\mathbf{e}_4(\tau)\,\mathbf{e}_4(\tau)^\top
     + v^2 q_\kappa\,\mathbf{e}_5(\tau)\,\mathbf{e}_5(\tau)^\top,
 \end{equation}
 where $\mathbf{e}_4(\tau)$ and $\mathbf{e}_5(\tau)$ are the fourth and fifth columns
-of~\eqref{eq:app_exp},
+of~\eqref{eq:app_exp}. Since $\mathbf{A}$ is nilpotent, each element of $\mathbf{Q}_k$ is the
+integral of a polynomial in $\tau$ and is computed exactly,
 \begin{equation}
-    \renewcommand{\arraystretch}{1.4}
-    \mathbf{e}_4(\tau) =
-    \begin{bmatrix}
-        \tfrac{1}{2}\tau^2\cos\psi - \tfrac{1}{6}\kappa v\tau^3\sin\psi \\
-        \tfrac{1}{2}\tau^2\sin\psi + \tfrac{1}{6}\kappa v\tau^3\cos\psi \\
-        \tau \\ 1 \\ \tfrac{1}{2}\kappa\tau^2
-    \end{bmatrix},
-    \qquad
-    \mathbf{e}_5(\tau) =
-    \begin{bmatrix}
-        -v\tau\sin\psi \\ \phantom{-}v\tau\cos\psi \\ 0 \\ 0 \\ 1
-    \end{bmatrix}.
-\end{equation}
-Each element of $\mathbf{Q}_k$ is then the integral over $[0,\,\Delta t]$ of a polynomial in
-$\tau$, and since the prediction interval is small, only the terms up to the third order in
-$\Delta t$ are retained. For instance,
-\begin{equation}
-    \begin{aligned}
-        q_{11} &= q_a\int_0^{\Delta t}\left(\tfrac{1}{2}\tau^2\cos\psi
-            - \tfrac{1}{6}\kappa v\tau^3\sin\psi\right)^2\mathrm{d}\tau
-            + v^2 q_\kappa\int_0^{\Delta t} v^2\tau^2\sin^2\psi\,\mathrm{d}\tau \\
-        &= \tfrac{1}{3}\,q_\kappa v^4\sin^2\psi\,\Delta t^3 + O(\Delta t^5),
-    \end{aligned}
-\end{equation}
-\begin{equation}
-    q_{14} = q_a\int_0^{\Delta t}\left(\tfrac{1}{2}\tau^2\cos\psi
-        - \tfrac{1}{6}\kappa v\tau^3\sin\psi\right)\mathrm{d}\tau
-        = \tfrac{1}{6}\,q_a\cos\psi\,\Delta t^3 + O(\Delta t^4),
-\end{equation}
-while the elements that couple the speed with the position and with the heading, $q_{13}$,
-$q_{23}$ and $q_{35}$, are of the fourth order and are therefore neglected. Proceeding in the
-same way for all the elements gives
-\begin{equation}
+    \renewcommand{\arraystretch}{1.3}
     \mathbf{Q}_k =
     \begin{bmatrix}
-        q_{11} & q_{12} & 0      & q_{14} & q_{15} \\
-        q_{12} & q_{22} & 0      & q_{24} & q_{25} \\
-        0      & 0      & q_{33} & q_{34} & 0      \\
+        q_{11} & q_{12} & q_{13} & q_{14} & q_{15} \\
+        q_{12} & q_{22} & q_{23} & q_{24} & q_{25} \\
+        q_{13} & q_{23} & q_{33} & q_{34} & q_{35} \\
         q_{14} & q_{24} & q_{34} & q_{44} & q_{45} \\
-        q_{15} & q_{25} & 0      & q_{45} & q_{55}
+        q_{15} & q_{25} & q_{35} & q_{45} & q_{55}
     \end{bmatrix},
     \label{eq:app_Q}
 \end{equation}
+with
 \begin{equation}
-    \renewcommand{\arraystretch}{2}
+    \setlength{\jot}{6pt}
     \begin{aligned}
-        q_{11} &= \tfrac{1}{3}\,q_\kappa v^4 \sin^2\psi\,\Delta t^3, &
-        q_{12} &= -\tfrac{1}{3}\,q_\kappa v^4 \sin\psi\cos\psi\,\Delta t^3, \\
-        q_{22} &= \tfrac{1}{3}\,q_\kappa v^4 \cos^2\psi\,\Delta t^3, &
-        q_{14} &= \tfrac{1}{6}\,q_a \cos\psi\,\Delta t^3, \\
-        q_{24} &= \tfrac{1}{6}\,q_a \sin\psi\,\Delta t^3, &
-        q_{15} &= -\tfrac{1}{2}\,q_\kappa v^3 \sin\psi\,\Delta t^2, \\
-        q_{25} &= \tfrac{1}{2}\,q_\kappa v^3 \cos\psi\,\Delta t^2, &
-        q_{33} &= \tfrac{1}{3}\,q_a\,\Delta t^3, \\
-        q_{34} &= \tfrac{1}{2}\,q_a\,\Delta t^2, &
-        q_{44} &= q_a\,\Delta t, \\
-        q_{45} &= \tfrac{1}{6}\,\kappa\,q_a\,\Delta t^3, &
-        q_{55} &= q_\kappa v^2\,\Delta t.
+        q_{11} &= \tfrac{1}{3}\,q_\kappa v^4 \sin^2\psi\,\Delta t^3
+                + \tfrac{1}{20}\,q_a \cos^2\psi\,\Delta t^5
+                - \tfrac{1}{36}\,q_a \kappa v \sin\psi\cos\psi\,\Delta t^6 \\
+               &\quad + \tfrac{1}{252}\,q_a \kappa^2 v^2 \sin^2\psi\,\Delta t^7, \\[10pt]
+        q_{12} &= -\tfrac{1}{3}\,q_\kappa v^4 \sin\psi\cos\psi\,\Delta t^3
+                + \tfrac{1}{40}\,q_a \sin 2\psi\,\Delta t^5
+                + \tfrac{1}{72}\,q_a \kappa v \cos 2\psi\,\Delta t^6 \\
+               &\quad - \tfrac{1}{252}\,q_a \kappa^2 v^2 \sin\psi\cos\psi\,\Delta t^7, \\[10pt]
+        q_{22} &= \tfrac{1}{3}\,q_\kappa v^4 \cos^2\psi\,\Delta t^3
+                + \tfrac{1}{20}\,q_a \sin^2\psi\,\Delta t^5
+                + \tfrac{1}{36}\,q_a \kappa v \sin\psi\cos\psi\,\Delta t^6 \\
+               &\quad + \tfrac{1}{252}\,q_a \kappa^2 v^2 \cos^2\psi\,\Delta t^7, \\[10pt]
+        q_{13} &= \tfrac{1}{120}\,q_a \left(15\cos\psi - 4\kappa v\,\Delta t\sin\psi\right)\Delta t^4, \\[10pt]
+        q_{23} &= \tfrac{1}{120}\,q_a \left(15\sin\psi + 4\kappa v\,\Delta t\cos\psi\right)\Delta t^4, \\[10pt]
+        q_{14} &= \tfrac{1}{24}\,q_a \left(4\cos\psi - \kappa v\,\Delta t\sin\psi\right)\Delta t^3, \\[10pt]
+        q_{24} &= \tfrac{1}{24}\,q_a \left(4\sin\psi + \kappa v\,\Delta t\cos\psi\right)\Delta t^3, \\[10pt]
+        q_{15} &= -\tfrac{1}{2}\,q_\kappa v^3 \sin\psi\,\Delta t^2
+                + \tfrac{1}{20}\,q_a \kappa \cos\psi\,\Delta t^5
+                - \tfrac{1}{72}\,q_a \kappa^2 v \sin\psi\,\Delta t^6, \\[10pt]
+        q_{25} &= \tfrac{1}{2}\,q_\kappa v^3 \cos\psi\,\Delta t^2
+                + \tfrac{1}{20}\,q_a \kappa \sin\psi\,\Delta t^5
+                + \tfrac{1}{72}\,q_a \kappa^2 v \cos\psi\,\Delta t^6,
     \end{aligned}
     \label{eq:app_Q_elements}
+\end{equation}
+\begin{equation}
+    \setlength{\jot}{10pt}
+    \begin{aligned}
+        q_{33} &= \tfrac{1}{3}\,q_a\,\Delta t^3, &
+        \qquad q_{34} &= \tfrac{1}{2}\,q_a\,\Delta t^2, &
+        \qquad q_{35} &= \tfrac{1}{8}\,q_a \kappa\,\Delta t^4, \\[10pt]
+        q_{44} &= q_a\,\Delta t, &
+        \qquad q_{45} &= \tfrac{1}{6}\,q_a \kappa\,\Delta t^3, &
+        \qquad q_{55} &= q_\kappa v^2\,\Delta t + \tfrac{1}{20}\,q_a \kappa^2\,\Delta t^5.
+    \end{aligned}
 \end{equation}
