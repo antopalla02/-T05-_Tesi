@@ -296,14 +296,15 @@ The continuous-time model with process noise becomes
 \abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}\setlength{\jot}{8pt}
+    \begin{gathered}
     \dot{\mathbf{x}}(t) = f(\mathbf{x}(t),\kappa) + \mathbf{w}(t),
     \qquad
     \mathbf{w}(t) =
     \begin{bmatrix}
         0 & 0 & 0 & w_a(t) & v\,w_\kappa(t)
-    \end{bmatrix}^\top,
-    \qquad
+    \end{bmatrix}^\top, \\
     \mathbf{Q}_c = \operatorname{diag}\left(0,\,0,\,0,\,q_a,\,v^2 q_\kappa\right),
+    \end{gathered}
     \label{eq:tt_noise}
 \end{equation}
 where $\mathbf{Q}_c$ is the spectral density matrix of $\mathbf{w}(t)$.
