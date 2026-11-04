@@ -56,7 +56,7 @@ their uncertainty. The target tracking module is fed by four input sources.
     \item \textbf{LiDAR Clustering.} The point cloud of the LiDARs is processed geometrically,
     by removing the points of the ground and those outside the track and grouping the
     remaining ones into clusters, from which the position of the opponent is extracted.
-    \item \textbf{LiDAR PointPillars.} The same point cloud is processed by a neural network
+    \item \textbf{LiDAR PointPillars.} The same point cloud of Clustering is processed by a neural network
     for three-dimensional object detection, which returns the position and the heading of the
     opponent.
     \item \textbf{RaDAR.} The reflection points of the RaDARs are grouped into clusters, each
