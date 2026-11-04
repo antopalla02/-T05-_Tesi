@@ -78,8 +78,8 @@ bounding box, defined by its center, dimensions, and heading, together with a co
 score. By learning vehicle shapes from the training data, the pipeline can estimate the
 vehicle center and heading even when only part of the opponent is visible.
 
-\paragraph{RaDAR.} At each cycle, each RaDAR sensor returns a set of reflection points,
-described by their range, azimuth, elevation, and range rate. The points are first clustered
+\paragraph{RaDAR.}  At every scan, each sensor returns a set of reflection points,
+described by their range, azimuth, elevation, and range rate. The latter are first clustered
 according to their spatial proximity and range rate, so that reflections that are close
 together but with different velocities are separated. Each cluster generates a detection
 whose position is the centroid of its points and whose range rate is their mean range rate.
@@ -537,7 +537,13 @@ compensated with the linear model~\eqref{eq:macro_slope} or, alternatively, usin
 
 Fig.~\ref{fig:detrended_cam_radar} shows the longitudinal errors of the camera and of the
 RaDAR in session 07/26\_TUM, with the trends identified in the previous section removed.
-
+Starting from those, an analysis in  time and frequency domains is carried out. The
+residual errors of the LiDARs and of the camera show a slow, low-frequency component, on
+which a white component is superimposed. One of the assumptions in the formulation of the
+Kalman filter is that the measurement noise is white, i.e.\ uncorrelated between different
+time instants. As shown in the following, the slow component makes the residuals
+autocorrelated and violates this condition, and the idea is therefore to characterize this
+behavior, in order to compensate it.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/detrended_long_cam_radar_0726.pdf}
@@ -547,16 +553,6 @@ RaDAR in session 07/26\_TUM, with the trends identified in the previous section 
     mean and standard deviation in intervals of \SI{10}{m}.}
     \label{fig:detrended_cam_radar}
 \end{figure}
-
-
-Starting from the measurement errors, once the trends identified in the previous section
-have been removed offline, an analysis in the time and frequency domains is carried out. The
-residual errors of the LiDARs and of the camera show a slow, low-frequency component, on
-which a white component is superimposed. One of the assumptions in the formulation of the
-Kalman filter is that the measurement noise is white, i.e.\ uncorrelated between different
-time instants. As shown in the following, the slow component makes the residuals
-autocorrelated and violates this condition, and the idea is therefore to characterize this
-behavior, in order to compensate it.
 
 \subsection*{Spectral Analysis}
 \label{subsec:acf_psd}
