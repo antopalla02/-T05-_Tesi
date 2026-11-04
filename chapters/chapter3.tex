@@ -613,11 +613,17 @@ $\mathbf{R} = \operatorname{diag}(\mathbf{R}_p,\,\sigma_{\dot\rho}^2)$.
 
 Given the predicted state $\hat{\mathbf{x}}_{k+1|k}$ and covariance $\mathbf{P}_{k+1|k}$,
 and the measurement $\mathbf{z}_{k+1}$ associated with the track, the update step
-computes
+computes the innovation and its covariance,
 \begin{equation}
     \begin{aligned}
         \boldsymbol{\nu}_{k+1} &= \mathbf{z}_{k+1} - h(\hat{\mathbf{x}}_{k+1|k}), \\
-        \mathbf{S}_{k+1} &= \mathbf{H}_{k+1}\,\mathbf{P}_{k+1|k}\,\mathbf{H}_{k+1}^\top + \mathbf{R}_{k+1}, \\
+        \mathbf{S}_{k+1} &= \mathbf{H}_{k+1}\,\mathbf{P}_{k+1|k}\,\mathbf{H}_{k+1}^\top + \mathbf{R}_{k+1},
+    \end{aligned}
+    \label{eq:tt_innov}
+\end{equation}
+and then the Kalman gain, with which the state and its covariance are corrected,
+\begin{equation}
+    \begin{aligned}
         \mathbf{K}_{k+1} &= \mathbf{P}_{k+1|k}\,\mathbf{H}_{k+1}^\top\,\mathbf{S}_{k+1}^{-1}, \\
         \hat{\mathbf{x}}_{k+1|k+1} &= \hat{\mathbf{x}}_{k+1|k} + \mathbf{K}_{k+1}\,\boldsymbol{\nu}_{k+1}, \\
         \mathbf{P}_{k+1|k+1} &= \left(\mathbf{I} - \mathbf{K}_{k+1}\,\mathbf{H}_{k+1}\right)\mathbf{P}_{k+1|k},

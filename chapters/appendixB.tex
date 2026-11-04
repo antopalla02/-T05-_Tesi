@@ -174,3 +174,138 @@ Session & \multicolumn{9}{c|}{$x_{\mathrm{rel}}$ [m]} & Trend \\
     distributions.}
     \label{fig:gauss_all}
 \end{figure}
+
+\subsection*{Observability of the Bias-Augmented CCA Model}
+\label{app:obs}
+
+Consider a single LiDAR, with both bias components expressed in the same reference frame as
+the measured position. The augmented state and measurement are
+\begin{equation}
+    \tilde{\mathbf{x}}_k =
+    \begin{bmatrix} x_k & y_k & v_k & a_k & \psi_k & b_{x,k} & b_{y,k} \end{bmatrix}^\top,
+    \qquad
+    \mathbf{z}_k = \mathbf{H}\mathbf{x}_k + \mathbf{b}_k + \mathbf{w}_k,
+\end{equation}
+\begin{equation}
+    \mathbf{H} =
+    \begin{bmatrix}
+        1 & 0 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 & 0
+    \end{bmatrix},
+    \qquad
+    \mathbf{b}_{k+1} = \phi\,\mathbf{b}_k + \boldsymbol{\eta}_k,
+    \qquad
+    \phi = e^{-T/\tau},
+    \qquad
+    T = \Delta t > 0.
+\end{equation}
+The analysis considers the deterministic linearization, with known curvature and a fixed
+state-transition Jacobian,
+\begin{equation}
+    \delta\tilde{\mathbf{x}}_{k+1} = \mathbf{A}\,\delta\tilde{\mathbf{x}}_k,
+    \qquad
+    \delta\mathbf{z}_k = \mathbf{C}\,\delta\tilde{\mathbf{x}}_k,
+    \qquad
+    \mathbf{A} =
+    \begin{bmatrix}
+        \mathbf{F} & \mathbf{0}_{5\times2} \\
+        \mathbf{0}_{2\times5} & \phi\,\mathbf{I}_2
+    \end{bmatrix},
+    \qquad
+    \mathbf{C} = \begin{bmatrix} \mathbf{H} & \mathbf{I}_2 \end{bmatrix}.
+\end{equation}
+The observability matrix is
+\begin{equation}
+    \mathcal{O} =
+    \begin{bmatrix}
+        \mathbf{C} \\ \mathbf{C}\mathbf{A} \\ \mathbf{C}\mathbf{A}^2 \\ \vdots \\ \mathbf{C}\mathbf{A}^6
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \mathbf{H} & \mathbf{I}_2 \\
+        \mathbf{H}\mathbf{F} & \phi\,\mathbf{I}_2 \\
+        \mathbf{H}\mathbf{F}^2 & \phi^2\,\mathbf{I}_2 \\
+        \vdots & \vdots \\
+        \mathbf{H}\mathbf{F}^6 & \phi^6\,\mathbf{I}_2
+    \end{bmatrix},
+    \qquad
+    (\mathbf{A}, \mathbf{C}) \text{ observable}
+    \quad \Longleftrightarrow \quad
+    \operatorname{rank}\,\mathcal{O} = 7.
+\end{equation}
+
+\subsubsection*{Decoupling of the Bias}
+
+The CCA model alone is known to be observable under non-degenerate motion conditions, i.e.\
+when the opponent moves during the interval, so that
+\begin{equation}
+    \operatorname{rank}\,\mathcal{O}_{\mathrm{CCA}} = 5,
+    \qquad
+    \mathcal{O}_{\mathrm{CCA}} =
+    \begin{bmatrix}
+        \mathbf{H} \\ \mathbf{H}\mathbf{F} \\ \mathbf{H}\mathbf{F}^2 \\
+        \mathbf{H}\mathbf{F}^3 \\ \mathbf{H}\mathbf{F}^4
+    \end{bmatrix}.
+\end{equation}
+The rank of $\mathcal{O}$ is obtained by isolating the contribution of the bias from the one
+of the motion. To this end, the matrix
+\begin{equation}
+    \mathbf{N} = \mathbf{F} - \mathbf{I}_5
+\end{equation}
+is introduced. In the Jacobians~\eqref{eq:tt_F} and~\eqref{eq:tt_F_straight}, the columns of
+$x$ and $y$ coincide with those of the identity, while the block of $v$, $a$ and $\psi$ has
+unit diagonal, so that all the eigenvalues of $\mathbf{F}$ are equal to 1 and $\mathbf{N}$ is
+nilpotent. Each multiplication by $\mathbf{N}$ moves the dependence one step along the chain
+$a \rightarrow v \rightarrow \psi \rightarrow (x, y)$, which has at most three steps, and therefore
+$\mathbf{N}^4 = \mathbf{0}$. Since $(\mathbf{A} - \mathbf{I}_7)^4$ is a linear combination of
+$\mathbf{I}_7, \mathbf{A}, \dots, \mathbf{A}^4$, the rows of
+$\mathbf{C}(\mathbf{A} - \mathbf{I}_7)^4$ are linear combinations of the rows of $\mathcal{O}$,
+and
+\begin{equation}
+    \begin{aligned}
+        \mathbf{C}\left(\mathbf{A} - \mathbf{I}_7\right)^4
+        &= \mathbf{C}\mathbf{A}^4 - 4\,\mathbf{C}\mathbf{A}^3 + 6\,\mathbf{C}\mathbf{A}^2
+           - 4\,\mathbf{C}\mathbf{A} + \mathbf{C} \\
+        &= \begin{bmatrix} \mathbf{H}\,\mathbf{N}^4 &
+           (\phi - 1)^4\,\mathbf{I}_2 \end{bmatrix}
+         = \begin{bmatrix} \mathbf{0}_{2\times5} & (\phi - 1)^4\,\mathbf{I}_2 \end{bmatrix},
+    \end{aligned}
+\end{equation}
+in which the motion cancels and only the bias remains. For $\phi \neq 1$, any
+$\mathbf{q} = [\,\mathbf{q}_m^\top \;\; \mathbf{q}_b^\top\,]^\top \in \ker\mathcal{O}$ therefore
+satisfies
+\begin{equation}
+    \mathbf{q}_b = \mathbf{0},
+    \qquad
+    \mathbf{H}\mathbf{F}^j\mathbf{q}_m = \mathbf{0},
+    \quad j = 0, \dots, 6,
+\end{equation}
+so that
+\begin{equation}
+    \operatorname{rank}\,\mathcal{O} = 2 + \operatorname{rank}\,\mathcal{O}_{\mathrm{CCA}} = 7.
+\end{equation}
+
+\subsubsection*{Case $\phi = 1$}
+
+For $\phi = 1$, the vectors
+\begin{equation}
+    \mathbf{q}_x =
+    \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & -1 & 0 \end{bmatrix}^\top,
+    \qquad
+    \mathbf{q}_y =
+    \begin{bmatrix} 0 & 1 & 0 & 0 & 0 & 0 & -1 \end{bmatrix}^\top
+\end{equation}
+satisfy
+\begin{equation}
+    \mathbf{A}\mathbf{q}_x = \mathbf{q}_x,
+    \quad
+    \mathbf{C}\mathbf{q}_x = \mathbf{0},
+    \qquad
+    \mathbf{A}\mathbf{q}_y = \mathbf{q}_y,
+    \quad
+    \mathbf{C}\mathbf{q}_y = \mathbf{0},
+\end{equation}
+so that $\mathcal{O}\mathbf{q}_x = \mathcal{O}\mathbf{q}_y = \mathbf{0}$ and
+\begin{equation}
+    \operatorname{rank}\,\mathcal{O} = 5.
+\end{equation}
