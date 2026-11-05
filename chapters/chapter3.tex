@@ -280,16 +280,15 @@ spectral density $q_a$,
 \end{equation}
 which models the fact that the dynamics of the opponent, and its acceleration in particular,
 can vary in time. The second accounts for
-the uncertainty of the curvature taken from the track database. The opponent does not follow
-the reference trajectories exactly, since its line differs slightly from them and changes when
-it overtakes or defends its position, so that the actual curvature is modeled as the one of the
+the uncertainty of the curvature taken from the track database since the opponent may not follow
+the reference trajectories exactly, so that the actual curvature is modeled as the one of the
 database perturbed by a zero-mean white noise $w_\kappa(t)$ with spectral density $q_\kappa$,
 and the heading evolves as
 \begin{equation}
     \dot\psi(t) = \left(\kappa + w_\kappa(t)\right) v(t) = \kappa\,v(t) + v(t)\,w_\kappa(t).
 \end{equation}
-Since the opponent generally drives close to the reference trajectories, the uncertainty on the
-curvature is small, and $q_\kappa$ is accordingly much lower than $q_a$.
+The uncertainty on the
+curvature $q_\kappa$ is much lower than $q_a$ because the opponent is expected to drive close to the set of possible trajectories.
 The continuous-time model with process noise becomes
 \abovedisplayskip=16pt plus 3pt minus 3pt \belowdisplayskip=16pt plus 3pt minus 3pt
 \abovedisplayshortskip=16pt plus 3pt minus 3pt \belowdisplayshortskip=16pt plus 3pt minus 3pt
