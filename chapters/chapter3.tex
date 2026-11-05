@@ -159,8 +159,7 @@ the system is written as $\dot{\mathbf{x}}(t) = f(\mathbf{x}(t),\kappa)$.
 
 In racing, the trajectories of the vehicles are largely predictable, since the cars drive along
 racing lines that are optimized for the circuit and depart from them mainly to overtake or to
-defend their position. This knowledge is exploited through the track database introduced in
-Section~\ref{sec:sw_arch}, which stores a set of reference trajectories computed offline for
+defend their position. This knowledge is exploited through the track database, which stores a set of reference trajectories computed offline for
 the circuit, together with their main geometric characteristics, i.e.\ the position, the
 heading and the curvature along each of them. Assuming that the opponent follows one of these
 trajectories, the curvature of its path is not estimated by the filter, but it is taken from the
@@ -484,13 +483,19 @@ compatible with a track only if
     d_{ij}^2 < \gamma,
     \label{eq:tt_gate}
 \end{equation}
-where the threshold $\gamma$ is chosen as the \SI{95}{\percent} quantile of the distribution,
-so that a detection that actually originates from the opponent described by the track falls
-inside the gate with a probability of \SI{95}{\percent}. For the position measurements, with
-two degrees of freedom, this gives $\gamma = 5.99$. When the detection also includes the range
-rate measured by the RaDAR (Section~\ref{subsec:tt_meas_model}), the residual and its
-covariance include this component as well, with the measurement matrix~\eqref{eq:tt_H_radar},
-and the gate is computed with three degrees of freedom, i.e.\ $\gamma = 7.81$.
+where the threshold $\gamma$ is set to the 95th percentile of the $\chi^2$ distribution. Under
+the assumed statistical model, this means that the squared Mahalanobis distance falls below
+$\gamma$ for \SI{95}{\percent} of detections originating from the tracked opponent. The gate is
+therefore designed to retain \SI{95}{\percent} of valid detections, while the remaining
+\SI{5}{\percent} are rejected.
+
+For position measurements, the residual has two components, corresponding to a $\chi^2$
+distribution with two degrees of freedom, whose 95th percentile is $\gamma = 5.99$. When the
+detection also includes the range rate measured by the RaDAR
+(Section~\ref{subsec:tt_meas_model}), the residual and its covariance are augmented to include
+this additional component, using the measurement matrix in~\eqref{eq:tt_H_radar}. The
+threshold is then obtained from a $\chi^2$ distribution with three degrees of freedom, giving
+$\gamma = 7.81$ for the same \SI{95}{\percent} acceptance probability.
 
 \subsection{Munkres Algorithm}
 \label{subsec:tt_munkres}

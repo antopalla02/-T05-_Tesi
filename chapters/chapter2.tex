@@ -22,15 +22,15 @@ architecture.
 \section{Autonomous Racing Competitions}
 \label{sec:operating_conditions}
 
-The IAC and A2RL are autonomous racing competitions in which university teams develop the
-software responsible for driving fully autonomous racecars. These competitions provide a
-challenging environment for the development and validation of autonomous driving technologies,
-as vehicles operate close to their dynamic limits, reaching speeds exceeding \SI{250}{km/h}. In
-multi-vehicle racing scenarios, these demanding conditions are further compounded by the need to
-interact with other vehicles in close proximity. The combination of high speeds, aggressive
-dynamics, and close interactions places stringent requirements on perception, estimation, and
-control algorithms, making autonomous racing a particularly valuable testbed for technologies
-that are difficult to evaluate under comparable conditions in conventional driving environments.
+The IAC and A2RL are autonomous racing competitions in which university teams from around the
+world develop the software that enables racecars to drive autonomously. These events bring
+autonomous driving into motorsport, subjecting the developed algorithms to particularly
+challenging conditions, with vehicles operating close to their dynamic limits and reaching
+speeds exceeding \SI{250}{km/h}. In multi-vehicle races, these demands are further increased by
+close interactions with opponents and the need to perform racing maneuvers at high speed. Both
+competitions therefore provide a fertile environment for the development of autonomous driving
+technologies, enabling the exploration of scenarios that are difficult to reproduce in other
+applications.
 
 % ---------------------------------------------------------------------
 \subsection{Indy Autonomous Challenge}
@@ -327,32 +327,31 @@ caused by the rear wing apply.
 \subsection{RaDAR}
 \label{subsec:radar}
 
-A RaDAR (Radio Detection and Ranging) is an active sensor that emits electromagnetic
-waves in the radio band and receives the echoes reflected by the targets. The range of a
-target is obtained from the delay of the echo with respect to the transmitted signal, and its
-direction from the differences between the echoes received by the antennas. When the target
-moves with respect to the sensor, its relative motion also induces, through the Doppler
-effect, a phase shift of the echo between two consecutive transmissions, which is
-proportional to the radial component of the relative velocity,
+A RaDAR (Radio Detection and Ranging) is an active sensor that emits radio waves and analyzes
+the echoes reflected by surrounding objects to estimate their distance and direction. Through
+the Doppler effect, it also directly measures the range rate $\dot\rho$, i.e.\ the rate at which
+the distance between the sensor and the target changes. This quantity is related to the phase
+difference $\Delta\varphi$ between the echoes received in consecutive transmissions,
 \begin{equation}
     \Delta\varphi = \frac{4\pi}{\lambda}\,\dot\rho\,T_c
     \quad\Longrightarrow\quad
     \dot\rho = \frac{\lambda\,\Delta\varphi}{4\pi\,T_c},
     \label{eq:doppler}
 \end{equation}
-where:
-\begin{itemize}
-    \item $\lambda$ denotes the carrier wavelength;
-    \item $T_c$ denotes the time between two consecutive transmissions;
-    \item $\Delta\varphi$ denotes the phase shift of the echo between them.
-\end{itemize}
+where $\lambda$ is the carrier wavelength and $T_c$ is the interval between consecutive
+transmissions.
 
-RaDARs emit radio waves, with a wavelength much longer than the light of LiDARs. These waves
-are less attenuated by dust, fog and rain, which makes the sensor robust to adverse weather and
-extends its detection range beyond the one of LiDARs. Its position measurement, however, is
-less accurate than the one of the LiDARs, since it typically samples the vehicle with fewer
-points. The main advantage of the RaDAR therefore comes from the direct measure of the range
-rate, which is not available from the other sensors.
+As an active sensor, RaDAR operates independently of ambient lighting, both during the day and
+at night.
+
+Compared with LiDAR, RaDAR has lower angular resolution and therefore generally provides less
+accurate position measurements. However, its signals have much longer wavelengths than the
+laser light used by LiDAR and are less attenuated by dust, fog and rain, allowing more robust
+operation in adverse weather conditions.
+
+Within a sensor fusion framework, RaDAR complements LiDAR by providing range-rate measurements
+and detecting targets beyond the range covered by LiDAR. Combining the two sensors therefore
+extends the effective detection range of the tracking system.
 
 \subsubsection{Dallara AV-24}
 
@@ -460,17 +459,16 @@ frame rate. Their main strength is the semantic content of the images, since col
 and shape make them well suited to the detection and classification of the surrounding
 objects.
 
-Cameras are strongly affected by the environmental conditions. Being
-passive sensors, for example, they depend on the ambient light, so that the quality of the images
-changes with the brightness of the scene, as well as with the weather. Moreover, a camera projects the scene onto the image plane and does not measure the depth
-directly, so that the accuracy with which the distance of a target can be inferred degrades
-as the distance increases.
+Being passive, they depend on the ambient light, so that the quality of the images changes
+with the brightness of the scene, as well as with the weather. Moreover, the scene is
+projected onto the image plane and the depth is not measured directly, so that the accuracy
+with which the distance of a target can be inferred degrades as the distance increases.
 
 \subsubsection{Dallara AV-24}
 
-Six Allied Vision Mako G319C cameras are arranged as a front stereo pair, two side
-cameras oriented at $\pm\SI{100}{\degree}$ with respect to the longitudinal axis, and two
-cameras on the roll hoop facing forward and backward, so that together they cover the
+Six Allied Vision Mako G319C units are arranged as a front stereo pair, two side units
+oriented at $\pm\SI{100}{\degree}$ with respect to the longitudinal axis, and two units on
+the roll hoop facing forward and backward, so that together they cover the
 surroundings of the vehicle in every direction. The Mako G319C is based on the Sony IMX265
 global-shutter sensor, with a resolution of about 3.2 megapixels at up to \SI{37.6}{fps}.
 Its main characteristics are reported in Table~\ref{tab:cam_av24}.
@@ -493,8 +491,8 @@ Its main characteristics are reported in Table~\ref{tab:cam_av24}.
 
 \subsubsection{Dallara EAV-25}
 
-Seven Leopard Imaging cameras are arranged as a front stereo pair, two cameras facing the
-sides of the vehicle and three cameras covering the region behind it, two on the roll
+Seven Leopard Imaging units are arranged as a front stereo pair, two facing the sides of
+the vehicle and three covering the region behind it, two on the roll
 hoop and one at the rear end of the car, so that together they cover the surroundings of
 the vehicle in every direction. They are based on the Sony IMX728 automotive sensor, with a
 resolution of about 8.4 megapixels and high dynamic range, at up to \SI{45}{fps}. Their
@@ -533,12 +531,11 @@ main modules: estimation, perception, planning and control (Fig.~\ref{fig:sw_arc
     \label{fig:sw_arch}
 \end{figure}
 
-\paragraph{Estimation.} The estimation module estimates the state of the ego
-vehicle, i.e.\ its position, heading, velocity and acceleration, by
-using the measurements of both the proprioceptive sensors, i.e.\ the GNSS receivers, the
-inertial units and the wheel speed sensors, and the exteroceptive ones, i.e.\ cameras, LiDARs
-and RaDARs. Its output is used by the perception, planning and control
-modules.
+\paragraph{Estimation.} The estimation module reconstructs the current state of the ego
+vehicle, i.e.\ its position, velocity and acceleration, by combining the measurements of the
+GNSS receivers, the inertial units, the LiDARs and the wheel encoders with the feedback of
+the actuators, i.e.\ braking, steering and throttle. The resulting description of the ego
+state is then fed to the perception, planning and control modules.
 
 \paragraph{Perception.}The perception module turns the raw data of LiDARs, RaDARs and cameras into a description of the vehicles around the ego car. For each sensor, the raw data are processed into a list of detections, each containing the position of a vehicle and, for the RaDAR, also its range rate. The detections of the different sensors are then passed to
 the \emph{target tracking} module, which associates them over time with the vehicles
