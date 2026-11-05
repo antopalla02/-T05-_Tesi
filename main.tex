@@ -137,10 +137,19 @@ Non-causal estimation is then addressed through a Rauch--Tung--Striebel smoother
 The methods are evaluated using experimental racing data, comparing different tracking configurations and examining measurement uncertainty, state estimation accuracy, and the temporal reconstruction of maneuvers.
 
 \bigskip
-\noindent\textbf{Keywords:} target tracking; autonomous racing; adaptive covariance tuning; covariance matching; fixed-lag smoothing.
+\noindent\textbf{Keywords:} Target Tracking; Autonomous Racing; Covariance Matching; Non-Causal Estimation.
+
+% blank separation page between the two abstracts
+\clearpage
+\thispagestyle{empty}
+\mbox{}
+\clearpage
 
 % ABSTRACT IN ITALIAN
+\let\origcleardoublepage\cleardoublepage\let\cleardoublepage\clearpage
+\makeatletter\@openrightfalse\makeatother
 \chapter*{Abstract in lingua italiana}
+\makeatletter\@openrighttrue\makeatother\let\cleardoublepage\origcleardoublepage
 \begin{otherlanguage}{italian}
 Negli scenari di guida autonoma multi-veicolo, e in particolare nelle competizioni di guida autonoma, la stima dello stato degli avversari è fondamentale per pianificare interazioni sicure e manovre di gara. Questa stima è fornita dal target tracking, che ricostruisce nel tempo il moto di ciascun avversario associando i rilevamenti dei sensori e combinandoli con le predizioni di un modello di moto. Questa tesi sviluppa tecniche di taratura adattiva delle covarianze e di stima non causale all'interno dell'architettura di target tracking basata su Extended Kalman Filter (EKF) delle vetture Dallara AV-24 ed EAV-25, impiegate nell'Indy Autonomous Challenge e nell'Abu Dhabi Autonomous Racing League.
 
@@ -153,7 +162,7 @@ La stima non causale viene poi affrontata tramite uno smoother di Rauch--Tung--S
 I metodi sono valutati su dati sperimentali di gara, confrontando diverse configurazioni del tracker ed esaminando l'incertezza di misura, l'accuratezza della stima dello stato e la ricostruzione temporale delle manovre.
 
 \bigskip
-\noindent\textbf{Parole chiave:} target tracking; guida autonoma da competizione; taratura adattiva delle covarianze; covariance matching; smoothing a ritardo fisso.
+\noindent\textbf{Parole chiave:} \foreignlanguage{english}{Target Tracking; Autonomous Racing; Covariance Matching; Non-Causal Estimation}.
 \end{otherlanguage}
 
 %----------------------------------------------------------------------------
