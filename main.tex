@@ -24,7 +24,7 @@
 \usepackage{color}
 
 % PACKAGES FOR LANGUAGE AND FONT
-\usepackage[english]{babel} % The document is in English
+\usepackage[italian,english]{babel} % The document is in English
 \usepackage[utf8]{inputenc} % UTF8 encoding
 \usepackage[T1]{fontenc} % Font encoding
 \usepackage[11pt]{moresize} % Big fonts
@@ -104,6 +104,7 @@
 %----------------------------------------------------------------------------
 
 \pagestyle{empty} % No page numbers
+\hypersetup{pageanchor=false} % avoids duplicate page anchors with the title page
 \frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the preamble pages
 
 \puttitle{
@@ -120,21 +121,40 @@
 %	PREAMBLE PAGES: ABSTRACT (inglese e italiano)
 %----------------------------------------------------------------------------
 \startpreamble
+\hypersetup{pageanchor=true}
 \setcounter{page}{1} % Set page counter to 1
 
 % ABSTRACT IN ENGLISH
 \chapter*{Abstract}
-\TODO{}
-\\
-\\
-\textbf{Keywords:} \TODO{}
+In multi-vehicle autonomous driving scenarios, and in particular in autonomous racing, the estimation of the state of the opponents is fundamental to plan safe interactions and racing maneuvers. This estimate is provided by target tracking, which reconstructs the motion of each opponent over time by associating sensor detections and combining them with the predictions of a motion model. This thesis develops adaptive covariance tuning and non-causal estimation techniques within the Extended Kalman Filter (EKF) target tracking architecture of the Dallara AV-24 and EAV-25 racecars, employed in the Indy Autonomous Challenge and the Abu Dhabi Autonomous Racing League.
+
+The first part addresses the characterization of measurement noise and the tuning of its covariance, with the aim of weighting sensor observations consistently with their actual accuracy. A systematic procedure is developed for analyzing the measurements supplied by LiDAR Clustering, LiDAR PointPillars, RaDAR, and camera. Contributions associated with reference conventions, calibration, and observation geometry are examined before investigating the residuals in the time and frequency domains. A first-order Gauss--Markov model is used offline to characterize and separate the slowly varying component from the white contribution. Building on this analysis, innovation-based covariance matching is implemented for the two LiDAR pipelines to adapt measurement uncertainty to changing observation conditions. The procedure also supports subsequent revisions of the tuning as the detection pipelines evolve.
+
+The second part investigates adaptation of the process noise covariance during opponent maneuvers. An auxiliary EKF provides an acceleration estimate from which jerk is computed and used by a hysteresis-based detection logic. The resulting maneuver flag controls a feed-forward adjustment of the main filter's process noise, with the objective of combining responsiveness during abrupt transitions with smoother estimates during steady motion.
+
+Non-causal estimation is then addressed through a Rauch--Tung--Striebel smoother implemented over a sliding window of fixed duration. As new measurements arrive, the backward recursion refines past state estimates using the subsequent observations available within the window. The smoother is also combined with the feed-forward approach to investigate their joint application to the reconstruction of opponent dynamics.
+
+The methods are evaluated using experimental racing data, comparing different tracking configurations and examining measurement uncertainty, state estimation accuracy, and the temporal reconstruction of maneuvers.
+
+\bigskip
+\noindent\textbf{Keywords:} target tracking; autonomous racing; adaptive covariance tuning; covariance matching; fixed-lag smoothing.
 
 % ABSTRACT IN ITALIAN
 \chapter*{Abstract in lingua italiana}
-\TODO{}
-\\
-\\
-\textbf{Parole chiave:} \TODO{}
+\begin{otherlanguage}{italian}
+Negli scenari di guida autonoma multi-veicolo, e in particolare nelle competizioni di guida autonoma, la stima dello stato degli avversari è fondamentale per pianificare interazioni sicure e manovre di gara. Questa stima è fornita dal target tracking, che ricostruisce nel tempo il moto di ciascun avversario associando i rilevamenti dei sensori e combinandoli con le predizioni di un modello di moto. Questa tesi sviluppa tecniche di taratura adattiva delle covarianze e di stima non causale all'interno dell'architettura di target tracking basata su Extended Kalman Filter (EKF) delle vetture Dallara AV-24 ed EAV-25, impiegate nell'Indy Autonomous Challenge e nell'Abu Dhabi Autonomous Racing League.
+
+La prima parte affronta la caratterizzazione del rumore di misura e la taratura della sua covarianza, con l'obiettivo di pesare le osservazioni dei sensori in modo coerente con la loro effettiva accuratezza. Viene sviluppata una procedura sistematica per l'analisi delle misure fornite da LiDAR Clustering, LiDAR PointPillars, RaDAR e camera. I contributi legati alle convenzioni di riferimento, alla calibrazione e alla geometria di osservazione vengono esaminati prima di analizzare i residui nei domini del tempo e della frequenza. Un modello di Gauss--Markov del primo ordine viene utilizzato offline per caratterizzare e separare la componente lentamente variabile da quella bianca. Sulla base di questa analisi, per le due pipeline LiDAR viene implementato un covariance matching basato sulle innovazioni, che adatta l'incertezza di misura al variare delle condizioni di osservazione. La procedura consente inoltre di aggiornare la taratura man mano che le pipeline di rilevamento evolvono.
+
+La seconda parte studia l'adattamento della covarianza del rumore di processo durante le manovre dell'avversario. Un EKF ausiliario fornisce una stima dell'accelerazione, dalla quale viene calcolato il jerk utilizzato da una logica di rilevamento con isteresi. Il segnale di manovra risultante comanda una regolazione feed-forward del rumore di processo del filtro principale, con l'obiettivo di coniugare la prontezza di risposta durante le transizioni brusche con stime più regolari durante il moto a regime.
+
+La stima non causale viene poi affrontata tramite uno smoother di Rauch--Tung--Striebel implementato su una finestra mobile di durata fissa. All'arrivo di nuove misure, la ricorsione all'indietro affina le stime degli stati passati utilizzando le osservazioni successive disponibili all'interno della finestra. Lo smoother viene inoltre combinato con l'approccio feed-forward per studiarne l'applicazione congiunta alla ricostruzione della dinamica dell'avversario.
+
+I metodi sono valutati su dati sperimentali di gara, confrontando diverse configurazioni del tracker ed esaminando l'incertezza di misura, l'accuratezza della stima dello stato e la ricostruzione temporale delle manovre.
+
+\bigskip
+\noindent\textbf{Parole chiave:} target tracking; guida autonoma da competizione; taratura adattiva delle covarianze; covariance matching; smoothing a ritardo fisso.
+\end{otherlanguage}
 
 %----------------------------------------------------------------------------
 %	TABLE OF CONTENTS
