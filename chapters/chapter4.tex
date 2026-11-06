@@ -324,6 +324,18 @@ error of the camera does not depend on the range and shows the same bias as the 
     \label{tab:det_long}
 \end{table}
 
+To verify that the offset depends on the opponent and not on the single session, the same
+analysis is repeated on session 10/18\_TUM, recorded at Yas Marina North with the same
+opponent as session 07/26\_TUM, but on a different track. In nominal operating conditions,
+the mean longitudinal error is \SI{0.28}{m} for Clustering, \SI{0.20}{m} for PointPillars
+and \SI{0.31}{m} for the camera. These values are slightly lower than those of session
+07/26\_TUM, by about \SI{0.1}{m} for the LiDARs, but the difference is within the standard
+deviation of the sensors, \SI{0.14}{m} and \SI{0.12}{m} for the two LiDARs and
+\SI{0.34}{m} for the camera. A common component of the bias thus appears to persist for the
+same opponent on two different tracks. Although two sessions are not sufficient to establish
+its origin with certainty, this observation is consistent with a contribution related to the
+reference and lends further support to the hypothesis above.
+
 The RaDAR is not included in Table~\ref{tab:det_long}, since it does not show this
 behavior. The reason can be related to the working principle of its pipeline, in which the
 detection is not compensated for the dimensions of the vehicle, as is done, for instance, in
