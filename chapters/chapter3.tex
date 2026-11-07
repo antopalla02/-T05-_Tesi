@@ -520,8 +520,8 @@ $j$-th detection is assigned to the $i$-th track,
     \label{eq:tt_assignment}
 \end{equation}
 i.e.\ each track receives at most one detection and each detection is assigned to at
-most one track. The problem is solved with the Munkres algorithm, also known as Hungarian
-algorithm, which guarantees the globally optimal assignment in polynomial time. Compared,
+most one track. The problem is solved with the Munkres algorithm~\cite{munkres1957}, also known as Hungarian
+algorithm~\cite{kuhn1955}, which guarantees the globally optimal assignment in polynomial time. Compared,
 for instance, with a greedy nearest-neighbor strategy, in which each detection is
 assigned in sequence to its closest track, the global solution avoids locally optimal
 choices that lead to wrong associations.
