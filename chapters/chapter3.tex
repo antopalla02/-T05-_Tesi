@@ -43,10 +43,10 @@ managed.
 \section{Perception Output}
 \label{sec:tt_perception}
 
-This section briefly describes the data fed to the Target Tracking module. The perception
-module takes as input the raw data of all the sensors, i.e.\ the point clouds of the LiDARs,
-the reflection points of the RaDARs and the images of the cameras, and processes them into
-lists of detections, each one representing a possible opponent vehicle. All the detections
+This section summarises the inputs of the Target Tracking module, which are produced by the
+perception module. Starting from the raw data of all the sensors, i.e.\ the point clouds of
+the LiDARs, the reflection points of the RaDARs and the images of the cameras, the perception
+module generates lists of detections, each one representing a possible opponent vehicle. All the detections
 reach the tracker in the same reference frame and with the same structure, containing the
 acquisition time of the sensor data, the source that produced it, the position of the object
 and, when available, its heading and range rate. Thanks to this common interface, the tracker

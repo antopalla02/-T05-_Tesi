@@ -55,6 +55,9 @@
 \usepackage{tabularx}
 \usepackage{longtable} % Tables that can span several pages
 \usepackage{colortbl}
+\usepackage{etoolbox}
+\usepackage{pdflscape} % landscape pages for the wide tables of Appendix B
+\AtBeginEnvironment{tabular}{\setstretch{1.25}} % same row spacing for all the tables, floating or not
 
 % PACKAGES FOR ALGORITHMS (PSEUDO-CODE)
 \usepackage{algorithm}
@@ -62,7 +65,7 @@
 \renewcommand{\algorithmiccomment}[1]{\hfill$\triangleright$ #1}
 
 % PACKAGES FOR REFERENCES & BIBLIOGRAPHY
-\usepackage[colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=red,filecolor=black,menucolor=black,runcolor=black,urlcolor=black]{hyperref} % Adds clickable links at references
+\usepackage[colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=black,filecolor=black,menucolor=black,runcolor=black,urlcolor=black]{hyperref} % Adds clickable links at references
 \usepackage{cleveref}
 \usepackage[square, numbers, sort&compress]{natbib} % Square brackets, citing references with numbers, citations sorted by appearance in the text and compressed
 \bibliographystyle{abbrvnat} % You may use a different style adapted to your field
@@ -187,7 +190,10 @@ Infine, vengono studiate tecniche di filtraggio non causale. Uno smoother a rita
 %	BIBLIOGRAPHY (to be enabled when the first citations are added)
 %-------------------------------------------------------------------------
 \addtocontents{toc}{\vspace{2em}}
-\bibliography{Thesis_bibliography}
+{\interlinepenalty=10000
+\nocite{signori2024,cabiale2023} % listed in the bibliography without being cited in the text
+\bibliography{Thesis_bibliography}}
+\fancyhead[LO, RE]{\bfseries \textcolor{bluepoli}{|   } Bibliography} % keeps the header on the last page of the bibliography
 
 %-------------------------------------------------------------------------
 %	APPENDICES

@@ -5,10 +5,10 @@
 \chapter{Experimental Setup and Methodology}
 \label{ch:setup}
 
-This chapter provides an overview of the hardware and software platforms on which this research
-is based. Two autonomous racing vehicles are considered: the Dallara AV-24, used in the Indy
-Autonomous Challenge (IAC), and the Dallara EAV-25, adopted in the Abu Dhabi Autonomous Racing
-League (A2RL). Both vehicles are equipped with the sensing and computational infrastructure
+This chapter describes the vehicles, the sensors and the software on which this work is
+built. The research considers two autonomous racing cars: the Dallara AV-24, which competes in
+the Indy Autonomous Challenge (IAC), and the Dallara EAV-25, which races in the Abu Dhabi
+Autonomous Racing League (A2RL). Both vehicles are equipped with the sensing and computational infrastructure
 required to develop, implement, and evaluate the algorithms presented in the following chapters.
 
 Section~\ref{sec:operating_conditions} introduces the two competitions, their racing formats,
@@ -79,18 +79,18 @@ characteristics are collected in Table~\ref{tab:av24}.
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{p{0.3\textwidth}p{0.45\textwidth}}
-        \toprule
-        Item              & Specification \\
-        \midrule
-        Series            & Indy Autonomous Challenge (IAC) \\
-        Engine            & 4 Piston Racing K20C, \SI{2.0}{l} turbocharged four-cylinder \\
-        Power             & \SI{488}{hp} \\
-        Gearbox           & Ricardo, six-speed sequential \\
-        Top speed         & about \SI{300}{km/h} \\
-        Mass              & \SI{748}{kg} \\
-        Length / width / height & \SI{4.88}{m} / \SI{1.93}{m} / \SI{1.16}{m} \\
-        \bottomrule
+    \begin{tabular}{|p{0.3\textwidth}p{0.45\textwidth}|}
+        \hline
+        \rowcolor{bluepoli!40} \textbf{Item} & \textbf{Specification} \\
+        \hline\hline
+        \textbf{Series} & Indy Autonomous Challenge (IAC) \\
+        \textbf{Engine} & 4 Piston Racing K20C, \SI{2.0}{l} turbocharged four-cylinder \\
+        \textbf{Power} & \SI{488}{hp} \\
+        \textbf{Gearbox} & Ricardo, six-speed sequential \\
+        \textbf{Top speed} & about \SI{300}{km/h} \\
+        \textbf{Mass} & \SI{748}{kg} \\
+        \textbf{Length / width / height} & \SI{4.88}{m} / \SI{1.93}{m} / \SI{1.16}{m} \\
+        \hline
     \end{tabular}
     \caption{Main characteristics of the Dallara AV-24.}
     \label{tab:av24}
@@ -150,18 +150,18 @@ summarised in Table~\ref{tab:eav24}.
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{p{0.3\textwidth}p{0.45\textwidth}}
-        \toprule
-        Item              & Specification \\
-        \midrule
-        Series            & Abu Dhabi Autonomous Racing League (A2RL) \\
-        Engine            & 4 Piston Racing K20C1, \SI{2.0}{l} turbocharged four-cylinder \\
-        Power             & \SI{450}{hp} (\SI{550}{hp} with push-to-pass) \\
-        Gearbox           & 3MO, six-speed sequential \\
-        Top speed         & about \SI{250}{km/h} \\
-        Mass              & \SI{742}{kg} \\
-        Length / width / height & \SI{5.24}{m} / \SI{1.93}{m} / \SI{0.97}{m} \\
-        \bottomrule
+    \begin{tabular}{|p{0.3\textwidth}p{0.45\textwidth}|}
+        \hline
+        \rowcolor{bluepoli!40} \textbf{Item} & \textbf{Specification} \\
+        \hline\hline
+        \textbf{Series} & Abu Dhabi Autonomous Racing League (A2RL) \\
+        \textbf{Engine} & 4 Piston Racing K20C1, \SI{2.0}{l} turbocharged four-cylinder \\
+        \textbf{Power} & \SI{450}{hp} (\SI{550}{hp} with push-to-pass) \\
+        \textbf{Gearbox} & 3MO, six-speed sequential \\
+        \textbf{Top speed} & about \SI{250}{km/h} \\
+        \textbf{Mass} & \SI{742}{kg} \\
+        \textbf{Length / width / height} & \SI{5.24}{m} / \SI{1.93}{m} / \SI{0.97}{m} \\
+        \hline
     \end{tabular}
     \caption{Main characteristics of the Dallara EAV-25.}
     \label{tab:eav24}
@@ -226,18 +226,19 @@ Table~\ref{tab:lidar_av24}.
 \begin{table}[H]
     \centering
     \footnotesize
-    \begin{tabular}{>{\raggedright\arraybackslash}p{0.35\textwidth}>{\raggedright\arraybackslash}p{0.35\textwidth}}
-        \toprule
-        Model                             & Luminar Iris \\
-        Units                             & 3 \\
-        Wavelength                        & \SI{1550}{nm} \\
-        FoV (H $\times$ V)                & \SI{120}{\degree} $\times$ \SI{26}{\degree} (configurable) \\
-        Angular resolution (H $\times$ V) & \SI{0.12}{\degree} $\times$ \SI{0.05}{\degree} \\
-        Scan lines                        & 640 lines/s \\
-        Maximum range                     & \SI{200}{m} (10\% reflectivity) \\
-        Range precision                   & ${<}\SI{2}{cm}$ (\SI{50}{m}) \\
-        Update rate                       & \SI{20}{Hz} \\
-        \bottomrule
+    \begin{tabular}{|>{\raggedright\arraybackslash}p{0.35\textwidth}>{\raggedright\arraybackslash}p{0.35\textwidth}|}
+        \hline
+        \rowcolor{bluepoli!40} \textbf{Model} & \textbf{Luminar Iris} \\
+        \hline\hline
+        \textbf{Units} & 3 \\
+        \textbf{Wavelength} & \SI{1550}{nm} \\
+        \textbf{FoV (H $\times$ V)} & \SI{120}{\degree} $\times$ \SI{26}{\degree} (configurable) \\
+        \textbf{Angular resolution (H $\times$ V)} & \SI{0.12}{\degree} $\times$ \SI{0.05}{\degree} \\
+        \textbf{Scan lines} & 640 lines/s \\
+        \textbf{Maximum range} & \SI{200}{m} (10\% reflectivity) \\
+        \textbf{Range precision} & ${<}\SI{2}{cm}$ (\SI{50}{m}) \\
+        \textbf{Update rate} & \SI{20}{Hz} \\
+        \hline
     \end{tabular}
     \caption{Main characteristics of the LiDARs mounted on the Dallara AV-24.}
     \label{tab:lidar_av24}
@@ -288,18 +289,19 @@ Table~\ref{tab:lidar_eav24}.
 \begin{table}[H]
     \centering
     \footnotesize
-    \begin{tabular}{>{\raggedright\arraybackslash}p{0.35\textwidth}>{\raggedright\arraybackslash}p{0.35\textwidth}}
-        \toprule
-        Model                             & Innovusion Falcon Kinetic \\
-        Units                             & 3 \\
-        Wavelength                        & \SI{1550}{nm} \\
-        FoV (H $\times$ V)                & \SI{120}{\degree} $\times$ \SI{25}{\degree} \\
-        Angular resolution (H $\times$ V) & \SI{0.18}{\degree} $\times$ \SI{0.24}{\degree} \\
-        Angular resolution in the region of interest (H $\times$ V) & \SI{0.09}{\degree} $\times$ \SI{0.08}{\degree} (\SI{40}{\degree} $\times$ \SI{4.8}{\degree}) \\
-        Scan lines                        & up to 1500 lines/s \\
-        Maximum range                     & \SI{250}{m} (10\% reflectivity) \\
-        Update rate                       & \SI{10}{Hz} \\
-        \bottomrule
+    \begin{tabular}{|>{\raggedright\arraybackslash}p{0.35\textwidth}>{\raggedright\arraybackslash}p{0.35\textwidth}|}
+        \hline
+        \rowcolor{bluepoli!40} \textbf{Model} & \textbf{Innovusion Falcon Kinetic} \\
+        \hline\hline
+        \textbf{Units} & 3 \\
+        \textbf{Wavelength} & \SI{1550}{nm} \\
+        \textbf{FoV (H $\times$ V)} & \SI{120}{\degree} $\times$ \SI{25}{\degree} \\
+        \textbf{Angular resolution (H $\times$ V)} & \SI{0.18}{\degree} $\times$ \SI{0.24}{\degree} \\
+        \textbf{Angular resolution in the region of interest (H $\times$ V)} & \SI{0.09}{\degree} $\times$ \SI{0.08}{\degree} (\SI{40}{\degree} $\times$ \SI{4.8}{\degree}) \\
+        \textbf{Scan lines} & up to 1500 lines/s \\
+        \textbf{Maximum range} & \SI{250}{m} (10\% reflectivity) \\
+        \textbf{Update rate} & \SI{10}{Hz} \\
+        \hline
     \end{tabular}
     \caption{Main characteristics of the LiDARs mounted on the Dallara EAV-25.}
     \label{tab:lidar_eav24}
@@ -364,20 +366,20 @@ Their main characteristics are reported in Table~\ref{tab:radar_av24}.
     \centering
     \footnotesize
     \setlength{\tabcolsep}{4pt}
-    \begin{tabular}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}}
-        \toprule
-                                          & Front RaDAR                      & Rear RaDAR \\
-        \midrule
-        Model                             & Continental ARS548 RDI           & ZF ProWave \\
-        FoV (H $\times$ V)                & \SI{100}{\degree} $\times$ \SI{28}{\degree} (${<}\SI{100}{m}$) & \SI{90}{\degree} $\times$ \SI{30}{\degree} (\SI{150}{m}) \\
-        Angular resolution (H $\times$ V) & --                               & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
-        Angular accuracy (H $\times$ V)   & $\pm$0.1--\SI{0.5}{\degree} $\times$ $\pm\SI{0.1}{\degree}$ & 0.15--\SI{1}{\degree} $\times$ \SI{0.15}{\degree} \\
-        Maximum range                     & \SI{300}{m}                      & \SI{95}{m} / \SI{190}{m} / \SI{350}{m} \\
-        Range resolution                  & \SI{0.22}{m}                     & \SI{0.21}{m} / \SI{0.41}{m} / \SI{0.77}{m} \\
-        Relative speed range              & $-400$ to $+\SI{200}{km/h}$        & -- \\
-        Range rate resolution             & \SI{0.1}{m/s}                    & \SI{0.1}{m/s} \\
-        Update rate                       & \SI{20}{Hz}                       & \SI{16.7}{Hz} \\
-        \bottomrule
+    \begin{tabular}{|>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.3\textwidth}|}
+        \hline
+                                          \rowcolor{bluepoli!40} & \textbf{Front RaDAR} & \textbf{Rear RaDAR} \\
+        \hline\hline
+        \textbf{Model} & Continental ARS548 RDI           & ZF ProWave \\
+        \textbf{FoV (H $\times$ V)} & \SI{100}{\degree} $\times$ \SI{28}{\degree} (${<}\SI{100}{m}$) & \SI{90}{\degree} $\times$ \SI{30}{\degree} (\SI{150}{m}) \\
+        \textbf{Angular resolution (H $\times$ V)} & --                               & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
+        \textbf{Angular accuracy (H $\times$ V)} & $\pm$0.1--\SI{0.5}{\degree} $\times$ $\pm\SI{0.1}{\degree}$ & 0.15--\SI{1}{\degree} $\times$ \SI{0.15}{\degree} \\
+        \textbf{Maximum range} & \SI{300}{m}                      & \SI{95}{m} / \SI{190}{m} / \SI{350}{m} \\
+        \textbf{Range resolution} & \SI{0.22}{m}                     & \SI{0.21}{m} / \SI{0.41}{m} / \SI{0.77}{m} \\
+        \textbf{Relative speed range} & $-400$ to $+\SI{200}{km/h}$        & -- \\
+        \textbf{Range rate resolution} & \SI{0.1}{m/s}                    & \SI{0.1}{m/s} \\
+        \textbf{Update rate} & \SI{20}{Hz}                       & \SI{16.7}{Hz} \\
+        \hline
     \end{tabular}
     \caption{Main characteristics of the RaDARs mounted on the Dallara AV-24.}
     \label{tab:radar_av24}
@@ -417,17 +419,18 @@ reported in Table~\ref{tab:radar_eav24}.
 \begin{table}[H]
     \centering
     \footnotesize
-    \begin{tabular}{>{\raggedright\arraybackslash}p{0.35\textwidth}>{\raggedright\arraybackslash}p{0.4\textwidth}}
-        \toprule
-        Model                             & ZF ProWave \\
-        Units                             & 4 \\
-        FoV (H $\times$ V)                & \SI{120}{\degree} (\SI{80}{m}), \SI{90}{\degree} (\SI{150}{m}) $\times$ \SI{30}{\degree} \\
-        Angular resolution (H $\times$ V) & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
-        Maximum range                     & \SI{95}{m} / \SI{190}{m} / \SI{350}{m} \\
-        Range resolution                  & \SI{0.21}{m} / \SI{0.41}{m} / \SI{0.77}{m} \\
-        Range rate resolution             & \SI{0.1}{m/s} \\
-        Update rate                       & \SI{16.7}{Hz} \\
-        \bottomrule
+    \begin{tabular}{|>{\raggedright\arraybackslash}p{0.35\textwidth}>{\raggedright\arraybackslash}p{0.4\textwidth}|}
+        \hline
+        \rowcolor{bluepoli!40} \textbf{Model} & \textbf{ZF ProWave} \\
+        \hline\hline
+        \textbf{Units} & 4 \\
+        \textbf{FoV (H $\times$ V)} & \SI{120}{\degree} (\SI{80}{m}), \SI{90}{\degree} (\SI{150}{m}) $\times$ \SI{30}{\degree} \\
+        \textbf{Angular resolution (H $\times$ V)} & \SI{1.5}{\degree} $\times$ \SI{1.5}{\degree} \\
+        \textbf{Maximum range} & \SI{95}{m} / \SI{190}{m} / \SI{350}{m} \\
+        \textbf{Range resolution} & \SI{0.21}{m} / \SI{0.41}{m} / \SI{0.77}{m} \\
+        \textbf{Range rate resolution} & \SI{0.1}{m/s} \\
+        \textbf{Update rate} & \SI{16.7}{Hz} \\
+        \hline
     \end{tabular}
     \caption{Main characteristics of the RaDARs mounted on the Dallara EAV-25.}
     \label{tab:radar_eav24}
@@ -474,14 +477,15 @@ Its main characteristics are reported in Table~\ref{tab:cam_av24}.
 \begin{table}[H]
     \centering
     \footnotesize
-    \begin{tabular}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.55\textwidth}}
-        \toprule
-        Model              & Allied Vision Mako G319C \\
-        Units              & 6 \\
-        Image sensor       & Sony IMX265 \\
-        Resolution         & $2064 \times 1544$ pixels \\
-        Maximum frame rate & \SI{37.6}{fps} \\
-        \bottomrule
+    \begin{tabular}{|>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.55\textwidth}|}
+        \hline
+        \rowcolor{bluepoli!40} \textbf{Model} & \textbf{Allied Vision Mako G319C} \\
+        \hline\hline
+        \textbf{Units} & 6 \\
+        \textbf{Image sensor} & Sony IMX265 \\
+        \textbf{Resolution} & $2064 \times 1544$ pixels \\
+        \textbf{Maximum frame rate} & \SI{37.6}{fps} \\
+        \hline
     \end{tabular}
     \caption{Main characteristics of the cameras mounted on the Dallara AV-24.}
     \label{tab:cam_av24}
@@ -499,14 +503,15 @@ main characteristics are reported in Table~\ref{tab:cam_eav24}.
 \begin{table}[H]
     \centering
     \footnotesize
-    \begin{tabular}{>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.55\textwidth}}
-        \toprule
-        Model              & Leopard Imaging \\
-        Units              & 7 \\
-        Image sensor       & Sony IMX728 \\
-        Resolution         & $3857 \times 2177$ pixels \\
-        Maximum frame rate & \SI{45}{fps} \\
-        \bottomrule
+    \begin{tabular}{|>{\raggedright\arraybackslash}p{0.3\textwidth}>{\raggedright\arraybackslash}p{0.55\textwidth}|}
+        \hline
+        \rowcolor{bluepoli!40} \textbf{Model} & \textbf{Leopard Imaging} \\
+        \hline\hline
+        \textbf{Units} & 7 \\
+        \textbf{Image sensor} & Sony IMX728 \\
+        \textbf{Resolution} & $3857 \times 2177$ pixels \\
+        \textbf{Maximum frame rate} & \SI{45}{fps} \\
+        \hline
     \end{tabular}
     \caption{Main characteristics of the cameras mounted on the Dallara EAV-25.}
     \label{tab:cam_eav24}

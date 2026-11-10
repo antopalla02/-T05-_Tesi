@@ -183,20 +183,20 @@ Table~\ref{tab:sessions}.
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{lcc}
-        \toprule
-                                             & Session 07/26\_TUM            & Session 08/03\_Kinetiz            \\
-        \midrule
-        Date                                 & 26/07/2026              & 03/08/2026              \\
-        Opponent                             & TUM                     & Kinetiz                 \\
-        Distance covered by the opponent     & \SI{29.2}{km} (6 laps)  & \SI{43.3}{km} (9 laps)  \\
-        Median / maximum speed of the opponent & \SI{90}{} / \SI{163}{km/h} & \SI{91}{} / \SI{156}{km/h} \\
-        Opponent stationary                  & \SI{139}{s}             & \SI{74}{s}              \\
-        Opponent ahead of the ego vehicle    & \SI{72}{\percent}       & \SI{35}{\percent}       \\
-        Position swaps                       & 1                       & 7                       \\
-        Median range                         & \SI{48.5}{m}            & \SI{49.2}{m}            \\
-        Median lateral position $y_{\mathrm{rel}}$ & \SI{6.0}{m}       & \SI{-5.7}{m}            \\
-        \bottomrule
+    \begin{tabular}{|>{\raggedright\arraybackslash}p{0.36\textwidth}cc|}
+        \hline
+                                             \rowcolor{bluepoli!40} & \textbf{Session 07/26\_TUM} & \textbf{Session 08/03\_Kinetiz} \\
+        \hline\hline
+        \textbf{Date} & 26/07/2026              & 03/08/2026 \\
+        \textbf{Opponent} & TUM                     & Kinetiz \\
+        \textbf{Distance covered by the opponent} & \SI{29.2}{km} (6 laps)  & \SI{43.3}{km} (9 laps) \\
+        \textbf{Median / maximum speed of the opponent} & \SI{90}{} / \SI{163}{km/h} & \SI{91}{} / \SI{156}{km/h} \\
+        \textbf{Opponent stationary} & \SI{139}{s}             & \SI{74}{s} \\
+        \textbf{Opponent ahead of the ego vehicle} & \SI{72}{\percent}       & \SI{35}{\percent} \\
+        \textbf{Position swaps} & 1                       & 7 \\
+        \textbf{Median range} & \SI{48.5}{m}            & \SI{49.2}{m} \\
+        \textbf{Median lateral position $y_{\mathrm{rel}}$} & \SI{6.0}{m}       & \SI{-5.7}{m} \\
+        \hline
     \end{tabular}
     \caption{Main characteristics of the two sessions. }
     \label{tab:sessions}
@@ -258,7 +258,7 @@ is about \SI{0.2}{m} (Table~\ref{tab:det_long}).
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_long_time.pdf}
-    \caption[Longitudinal error of the LiDARs]{Longitudinal error of the LiDARs in a window of session 07/26\_TUM, with the mean
+    \caption{Longitudinal error of the LiDARs in a window of session 07/26\_TUM, with the mean
     in nominal conditions: \SI{0.40}{m} for Clustering and \SI{0.36}{m} for PointPillars.}
     \label{fig:det_long}
 \end{figure}
@@ -282,7 +282,7 @@ mean error of the sensor is compatible with the one of the LiDARs, within its la
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_cam_range.pdf}
-    \caption[Longitudinal error of the camera as a function of $x_{\mathrm{rel}}$]{Longitudinal error of the camera as a function of $x_{\mathrm{rel}}$ in session
+    \caption{Longitudinal error of the camera as a function of $x_{\mathrm{rel}}$ in session
     07/26\_TUM, compared with the LiDARs. In the shaded area, between 20 and \SI{60}{m}, the
 error of the camera does not depend on the range and shows the same bias as the LiDARs.}
     \label{fig:det_cam}
@@ -291,17 +291,17 @@ error of the camera does not depend on the range and shows the same bias as the 
 \begin{table}[H]
     \centering
     \small
-    \setlength{\tabcolsep}{5pt}
-    \begin{tabular}{lcccccc}
-        \toprule
-        & \multicolumn{2}{c}{Session 07/26\_TUM} & \multicolumn{2}{c}{Session 08/03\_Kinetiz} & \multicolumn{2}{c}{Session 10/14\_eva} \\
-        \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-        Sensor             & Mean [m] & Std [m] & Mean [m] & Std [m] & Mean [m] & Std [m] \\
-        \midrule
-        LiDAR Clustering   & $0.40$ & $0.16$ & $-0.04$ & $0.17$ & $0.23$ & $0.11$ \\
-        LiDAR PointPillars & $0.36$ & $0.12$ & $-0.07$ & $0.16$ & $0.17$ & $0.10$ \\
-        Camera             & $0.32$ & $0.51$ & $-0.06$ & $0.35$ & $0.30$ & $0.29$ \\
-        \bottomrule
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{|lcccccc|}
+        \hline
+        \rowcolor{bluepoli!40} &\multicolumn{2}{c}{\textbf{07/26\_TUM}}&\multicolumn{2}{c}{\textbf{08/03\_Kinetiz}}&\multicolumn{2}{c|}{\textbf{10/14\_eva}} \\
+        \cline{2-3}\cline{4-5}\cline{6-7}
+        \rowcolor{bluepoli!40} \textbf{Sensor} & \textbf{Mean [m]} & \textbf{Std [m]} & \textbf{Mean [m]} & \textbf{Std [m]} & \textbf{Mean [m]} & \textbf{Std [m]} \\
+        \hline\hline
+        \textbf{LiDAR Clustering} & $0.40$ & $0.16$ & $-0.04$ & $0.17$ & $0.23$ & $0.11$ \\
+        \textbf{LiDAR PointPillars} & $0.36$ & $0.12$ & $-0.07$ & $0.16$ & $0.17$ & $0.10$ \\
+        \textbf{Camera} & $0.32$ & $0.51$ & $-0.06$ & $0.35$ & $0.30$ & $0.29$ \\
+        \hline
     \end{tabular}
     \caption{Longitudinal error in nominal operating conditions, i.e.\ opponent ahead in 20--60\,m (10\,m bins).}
     \label{tab:det_long}
@@ -345,7 +345,7 @@ slope of \SI{0.60}{cm/m} for Clustering and \SI{0.58}{cm/m} for PointPillars.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_lat_xrel.pdf}
-    \caption[Lateral error of the LiDARs as a function of $x_{\mathrm{rel}}$]{Lateral error
+    \caption{Lateral error
     of the LiDARs as a function of $x_{\mathrm{rel}}$ in session 07/26\_TUM, with the least
     squares fit: slope of \SI{0.60}{cm/m} for Clustering and \SI{0.58}{cm/m} for
     PointPillars.}
@@ -370,7 +370,7 @@ $x_{\mathrm{rel}}$ is removed.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/det_lat_yas.pdf}
-    \caption[Lateral error of the LiDARs after the recalibration]{Lateral error of the LiDARs
+    \caption{Lateral error of the LiDARs
     as a function of $x_{\mathrm{rel}}$ in session 10/14\_eva, after the recalibration.}
     \label{fig:det_lat_yas}
 \end{figure}
@@ -558,7 +558,7 @@ behaviour, in order to compensate it.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/detrended_long_cam_radar_0726.pdf}
-    \caption[Longitudinal errors of camera and RaDAR after the removal of the trends]{Longitudinal
+    \caption{Longitudinal
     errors of the camera (top) and of the RaDAR (bottom) as a function of $x_{\mathrm{rel}}$
     in session 07/26\_TUM, after the removal of the trends of Section~\ref{sec:macro}, with
     mean and standard deviation in intervals of \SI{10}{m}.}
@@ -613,24 +613,24 @@ the smallest, with 45--\SI{64}{\percent} of the power below \SI{1}{Hz}.
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{llcccc}
-\toprule
- & & \multicolumn{2}{c}{$P_{<1\,\mathrm{Hz}}$ [\%]} & \multicolumn{2}{c}{$P_{<2\,\mathrm{Hz}}$ [\%]} \\
-\cmidrule(lr){3-4}\cmidrule(lr){5-6}
-Sensor & Axis & 07/26 & 10/14 & 07/26 & 10/14 \\
-\midrule
-LiDAR Clustering & Long. & 65 & 53 & 76 & 67 \\
+\begin{tabular}{|llcccc|}
+\hline
+ \rowcolor{bluepoli!40} & &\multicolumn{2}{c}{\textbf{$P_{<1\,\mathrm{Hz}}$ [\%]}}&\multicolumn{2}{c|}{\textbf{$P_{<2\,\mathrm{Hz}}$ [\%]}} \\
+\cline{3-4}\cline{5-6}
+\rowcolor{bluepoli!40} \textbf{Sensor} & \textbf{Axis} & \textbf{07/26} & \textbf{10/14} & \textbf{07/26} & \textbf{10/14} \\
+\hline\hline
+\textbf{LiDAR Clustering} & Long. & 65 & 53 & 76 & 67 \\
  & Lat. & 74 & 63 & 84 & 80 \\
-\midrule
-LiDAR PointPillars & Long. & 69 & 52 & 80 & 66 \\
+\hline
+\textbf{LiDAR PointPillars} & Long. & 69 & 52 & 80 & 66 \\
  & Lat. & 80 & 75 & 91 & 91 \\
-\midrule
-Camera & Long. & 65 & 44 & 78 & 62 \\
+\hline
+\textbf{Camera} & Long. & 65 & 44 & 78 & 62 \\
  & Lat. & 74 & 80 & 84 & 89 \\
-\midrule
-RaDAR & Long. & 45 & 48 & 68 & 72 \\
+\hline
+\textbf{RaDAR} & Long. & 45 & 48 & 68 & 72 \\
  & Lat. & 64 & 53 & 80 & 76 \\
-\bottomrule
+\hline
 \end{tabular}
 \caption{Fraction of the power of the residual errors below 1 and \SI{2}{Hz}.}
 \label{tab:psd_sessions}
@@ -662,25 +662,25 @@ shows on average a weaker and faster-decaying autocorrelation, of 0.28--0.42 at
 \begin{table}[H]
 \centering
 \small
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{llcccccccc}
-\toprule
- & & \multicolumn{2}{c}{$\ell=\SI{0.2}{s}$} & \multicolumn{2}{c}{$\ell=\SI{0.5}{s}$} & \multicolumn{2}{c}{$\ell=\SI{1}{s}$} & \multicolumn{2}{c}{$\ell=\SI{2}{s}$} \\
-\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}
-Sensor & Axis & 07/26 & 10/14 & 07/26 & 10/14 & 07/26 & 10/14 & 07/26 & 10/14 \\
-\midrule
-LiDAR Clustering & Long. & 0.58 & 0.40 & 0.40 & 0.31 & 0.21 & 0.17 & 0.05 & $-$0.02 \\
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{|llcccccccc|}
+\hline
+ \rowcolor{bluepoli!40} & &\multicolumn{2}{c}{\textbf{$\ell=\SI{0.2}{s}$}}&\multicolumn{2}{c}{\textbf{$\ell=\SI{0.5}{s}$}}&\multicolumn{2}{c}{\textbf{$\ell=\SI{1}{s}$}}&\multicolumn{2}{c|}{\textbf{$\ell=\SI{2}{s}$}} \\
+\cline{3-4}\cline{5-6}\cline{7-8}\cline{9-10}
+\rowcolor{bluepoli!40} \textbf{Sensor} & \textbf{Axis} & \textbf{07/26} & \textbf{10/14} & \textbf{07/26} & \textbf{10/14} & \textbf{07/26} & \textbf{10/14} & \textbf{07/26} & \textbf{10/14} \\
+\hline\hline
+\textbf{LiDAR Clustering} & Long. & 0.58 & 0.40 & 0.40 & 0.31 & 0.21 & 0.17 & 0.05 & $-$0.02 \\
  & Lat. & 0.62 & 0.56 & 0.40 & 0.34 & 0.15 & 0.26 & $-$0.04 & 0.18 \\
-\midrule
-LiDAR PointPillars & Long. & 0.64 & 0.44 & 0.53 & 0.35 & 0.38 & 0.19 & 0.17 & 0.05 \\
+\hline
+\textbf{LiDAR PointPillars} & Long. & 0.64 & 0.44 & 0.53 & 0.35 & 0.38 & 0.19 & 0.17 & 0.05 \\
  & Lat. & 0.71 & 0.69 & 0.45 & 0.40 & 0.22 & 0.34 & 0.09 & 0.19 \\
-\midrule
-Camera & Long. & 0.50 & 0.37 & 0.24 & 0.31 & 0.10 & 0.16 & 0.00 & 0.02 \\
+\hline
+\textbf{Camera} & Long. & 0.50 & 0.37 & 0.24 & 0.31 & 0.10 & 0.16 & 0.00 & 0.02 \\
  & Lat. & 0.73 & 0.72 & 0.52 & 0.56 & 0.23 & 0.35 & $-$0.03 & 0.10 \\
-\midrule
-RaDAR & Long. & 0.29 & 0.28 & 0.17 & 0.11 & 0.08 & 0.03 & 0.04 & $-$0.04 \\
+\hline
+\textbf{RaDAR} & Long. & 0.29 & 0.28 & 0.17 & 0.11 & 0.08 & 0.03 & 0.04 & $-$0.04 \\
  & Lat. & 0.42 & 0.35 & 0.28 & 0.13 & 0.10 & 0.06 & 0.04 & $-$0.01 \\
-\bottomrule
+\hline
 \end{tabular}
 \caption{Normalised autocorrelation $\rho_e(\ell)$ of the residual errors, opponent ahead.}
 \label{tab:acf_sessions}
@@ -727,22 +727,22 @@ as reported in Table~\ref{tab:acf_gm}.
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{llccc}
-\toprule
-Sensor & Axis & $\ell=\SI{0.2}{s}$ & $\ell=\SI{0.5}{s}$ & $\ell=\SI{1}{s}$ \\
-\midrule
-LiDAR Clustering & Long. & $[-0.05,\,+0.03]$ & $[-0.02,\,+0.04]$ & $[-0.02,\,+0.04]$ \\
+\begin{tabular}{|llccc|}
+\hline
+\rowcolor{bluepoli!40} \textbf{Sensor} & \textbf{Axis} & \textbf{$\ell=\SI{0.2}{s}$} & \textbf{$\ell=\SI{0.5}{s}$} & \textbf{$\ell=\SI{1}{s}$} \\
+\hline\hline
+\textbf{LiDAR Clustering} & Long. & $[-0.05,\,+0.03]$ & $[-0.02,\,+0.04]$ & $[-0.02,\,+0.04]$ \\
  & Lat. & $[-0.02,\,+0.04]$ & $[-0.06,\,+0.02]$ & $[-0.06,\,+0.05]$ \\
-\midrule
-LiDAR PointPillars & Long. & $[-0.04,\,+0.05]$ & $[-0.07,\,+0.04]$ & $[+0.00,\,+0.08]$ \\
+\hline
+\textbf{LiDAR PointPillars} & Long. & $[-0.04,\,+0.05]$ & $[-0.07,\,+0.04]$ & $[+0.00,\,+0.08]$ \\
  & Lat. & $[-0.07,\,+0.13]$ & $[-0.13,\,+0.00]$ & $[-0.09,\,+0.03]$ \\
-\midrule
-Camera & Long. & $[-0.05,\,+0.09]$ & $[-0.07,\,+0.07]$ & $[-0.02,\,+0.06]$ \\
+\hline
+\textbf{Camera} & Long. & $[-0.05,\,+0.09]$ & $[-0.07,\,+0.07]$ & $[-0.02,\,+0.06]$ \\
  & Lat. & $[-0.02,\,+0.11]$ & $[+0.00,\,+0.15]$ & $[+0.00,\,+0.07]$ \\
-\midrule
-RaDAR & Long. & $[-0.03,\,+0.03]$ & $[-0.07,\,-0.02]$ & $[-0.05,\,+0.07]$ \\
+\hline
+\textbf{RaDAR} & Long. & $[-0.03,\,+0.03]$ & $[-0.07,\,-0.02]$ & $[-0.05,\,+0.07]$ \\
  & Lat. & $[-0.08,\,+0.06]$ & $[-0.09,\,+0.02]$ & $[-0.06,\,+0.01]$ \\
-\bottomrule
+\hline
 \end{tabular}
 \caption{Normalised autocorrelation of the residual errors after the removal of the bias,
 opponent ahead, $\tau = \SI{1}{s}$. Range across the eight sessions.}
@@ -767,24 +767,24 @@ where $\phi_k$ is computed with the actual time between the two detections.
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{llcccc}
-\toprule
- & & \multicolumn{2}{c}{$\sigma_b$ [m]} & \multicolumn{2}{c}{$\sigma_w$ [m]} \\
-\cmidrule(lr){3-4}\cmidrule(lr){5-6}
-Sensor & Axis & 07/26 & 10/14 & 07/26 & 10/14 \\
-\midrule
-LiDAR Clustering & Long. & 0.12 & 0.08 & 0.08 & 0.08 \\
+\begin{tabular}{|llcccc|}
+\hline
+ \rowcolor{bluepoli!40} & &\multicolumn{2}{c}{\textbf{$\sigma_b$ [m]}}&\multicolumn{2}{c|}{\textbf{$\sigma_w$ [m]}} \\
+\cline{3-4}\cline{5-6}
+\rowcolor{bluepoli!40} \textbf{Sensor} & \textbf{Axis} & \textbf{07/26} & \textbf{10/14} & \textbf{07/26} & \textbf{10/14} \\
+\hline\hline
+\textbf{LiDAR Clustering} & Long. & 0.12 & 0.08 & 0.08 & 0.08 \\
  & Lat. & 0.19 & 0.12 & 0.09 & 0.08 \\
-\midrule
-LiDAR PointPillars & Long. & 0.10 & 0.08 & 0.05 & 0.07 \\
+\hline
+\textbf{LiDAR PointPillars} & Long. & 0.10 & 0.08 & 0.05 & 0.07 \\
  & Lat. & 0.13 & 0.12 & 0.04 & 0.04 \\
-\midrule
-Camera & Long. & 0.38 & 0.21 & 0.30 & 0.21 \\
+\hline
+\textbf{Camera} & Long. & 0.38 & 0.21 & 0.30 & 0.21 \\
  & Lat. & 0.47 & 0.27 & 0.23 & 0.12 \\
-\midrule
-RaDAR & Long. & 0.35 & 0.27 & 0.52 & 0.50 \\
+\hline
+\textbf{RaDAR} & Long. & 0.35 & 0.27 & 0.52 & 0.50 \\
  & Lat. & 0.29 & 0.16 & 0.30 & 0.23 \\
-\bottomrule
+\hline
 \end{tabular}
 \caption{Standard deviations of the bias and of the white component of the residual
 errors, opponent ahead, $\tau = \SI{1}{s}$.}
@@ -969,22 +969,22 @@ behind.
 \small
 \setlength{\tabcolsep}{3.5pt}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{llccccccccc}
-\toprule
-Sensor & Axis & 07/26 & 08/03 & 10/12 & 10/13 & 10/14 & 10/14-02 & 10/14-04 & 10/16 & \textbf{All} \\
-\midrule
-LiDAR Clustering & Long. & 0.22 & 0.22 & 0.13 & 0.16 & 0.21 & 0.29 & 0.15 & 0.17 & \textbf{0.21} \\
+\begin{tabular}{|llccccccccc|}
+\hline
+\rowcolor{bluepoli!40} \textbf{Sensor} & \textbf{Axis} & \textbf{07/26} & \textbf{08/03} & \textbf{10/12} & \textbf{10/13} & \textbf{10/14} & \textbf{10/14-02} & \textbf{10/14-04} & \textbf{10/16} & \textbf{All} \\
+\hline\hline
+\textbf{LiDAR Clustering} & Long. & 0.22 & 0.22 & 0.13 & 0.16 & 0.21 & 0.29 & 0.15 & 0.17 & \textbf{0.21} \\
  & Lat. & 0.24 & 0.22 & 0.21 & 0.27 & 0.21 & 0.20 & 0.21 & 0.27 & \textbf{0.23} \\
-\midrule
-LiDAR PointPillars & Long. & 0.13 & 0.15 & 0.08 & 0.09 & 0.10 & 0.09 & 0.08 & 0.10 & \textbf{0.11} \\
+\hline
+\textbf{LiDAR PointPillars} & Long. & 0.13 & 0.15 & 0.08 & 0.09 & 0.10 & 0.09 & 0.08 & 0.10 & \textbf{0.11} \\
  & Lat. & 0.14 & 0.11 & 0.13 & 0.17 & 0.13 & 0.15 & 0.13 & 0.13 & \textbf{0.14} \\
-\midrule
-Camera & Long. & 0.49 & 0.39 & 0.29 & 0.28 & 0.27 & 0.46 & 0.30 & 0.29 & \textbf{0.36} \\
+\hline
+\textbf{Camera} & Long. & 0.49 & 0.39 & 0.29 & 0.28 & 0.27 & 0.46 & 0.30 & 0.29 & \textbf{0.36} \\
  & Lat. & 0.52 & 0.56 & 0.34 & 0.39 & 0.32 & 0.32 & 0.51 & 0.35 & \textbf{0.40} \\
-\midrule
-RaDAR & Long. & 0.72 & 0.72 & 0.76 & 0.80 & 0.61 & 0.61 & 0.62 & 0.77 & \textbf{0.70} \\
+\hline
+\textbf{RaDAR} & Long. & 0.72 & 0.72 & 0.76 & 0.80 & 0.61 & 0.61 & 0.62 & 0.77 & \textbf{0.70} \\
  & Lat. & 0.40 & 0.38 & 0.35 & 0.46 & 0.29 & 0.22 & 0.24 & 0.30 & \textbf{0.34} \\
-\bottomrule
+\hline
 \end{tabular}}
 \caption{Standard deviation [m] of the residual errors, per session and with all the
 sessions gathered.}
@@ -1084,7 +1084,7 @@ chosen, since it represents a good trade-off between these two behaviours.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{figures/ch4/R_adapt_tuning_alpha.pdf}
-    \caption[Tuning of the mixing coefficient]{Whitened errors of LiDAR Clustering,
+    \caption{Whitened errors of LiDAR Clustering,
     longitudinal (top) and lateral (bottom), with the adaptive band
     $\pm\sqrt{\hat{R}_{k,i}}$ obtained with different time constants $\tau_\alpha$.}
     \label{fig:cm_alpha}
@@ -1124,7 +1124,7 @@ large.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/ch4/gm_distribution_lid_clust.pdf}
-    \caption[Whitened errors and adaptive covariance of LiDAR Clustering]{Distribution of
+    \caption{Distribution of
     the whitened errors of LiDAR Clustering, longitudinal (left) and lateral (right),
     compared with the Gaussian distributions of the nominal standard deviation and of
     $\sigma_w$ and with the average adaptive distribution.}
@@ -1140,7 +1140,7 @@ only slightly heavier tails, related to the few intervals in which the errors gr
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/ch4/gm_distribution_lid_pp.pdf}
-    \caption[Whitened errors and adaptive covariance of LiDAR PointPillars]{Distribution of
+    \caption{Distribution of
     the whitened errors of LiDAR PointPillars, longitudinal (left) and lateral (right),
     compared with the Gaussian distributions of the nominal standard deviation and of
     $\sigma_w$ and with the average adaptive distribution.}
@@ -1157,16 +1157,16 @@ less significant but still present.
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{llccc}
-        \toprule
-        Sensor & Component & Nominal & $\sigma_w$ & Adaptive \\
-        \midrule
-        LiDAR Clustering   & $e_x$ & \SI{54}{\percent} & \SI{76}{\percent} & \SI{92}{\percent} \\
+    \begin{tabular}{|llccc|}
+        \hline
+        \rowcolor{bluepoli!40} \textbf{Sensor} & \textbf{Component} & \textbf{Nominal} & \textbf{$\sigma_w$} & \textbf{Adaptive} \\
+        \hline\hline
+        \textbf{LiDAR Clustering} & $e_x$ & \SI{54}{\percent} & \SI{76}{\percent} & \SI{92}{\percent} \\
                            & $e_y$ & \SI{60}{\percent} & \SI{75}{\percent} & \SI{88}{\percent} \\
-        \midrule
-        LiDAR PointPillars & $e_x$ & \SI{53}{\percent} & \SI{85}{\percent} & \SI{90}{\percent} \\
+        \hline
+        \textbf{LiDAR PointPillars} & $e_x$ & \SI{53}{\percent} & \SI{85}{\percent} & \SI{90}{\percent} \\
                            & $e_y$ & \SI{51}{\percent} & \SI{84}{\percent} & \SI{90}{\percent} \\
-        \bottomrule
+        \hline
     \end{tabular}
     \caption{Coverage of the empirical distribution of the whitened errors by the
     distributions approximated with the nominal standard deviation, with $\sigma_w$ and with
@@ -1190,7 +1190,7 @@ approximates well its almost Gaussian distribution, but it still adapts locally.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/ch4/cm_timeseries_lid_clust.pdf}
-    \caption[Adaptive covariance of LiDAR Clustering over time]{Whitened errors of LiDAR
+    \caption{Whitened errors of LiDAR
     Clustering over time, with the adaptive, the nominal and the white standard
     deviations, segment of session 07/26\_TUM.}
     \label{fig:cm_ts_clust}
@@ -1199,7 +1199,7 @@ approximates well its almost Gaussian distribution, but it still adapts locally.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/ch4/cm_timeseries_lid_pp.pdf}
-    \caption[Adaptive covariance of LiDAR PointPillars over time]{Whitened errors of LiDAR
+    \caption{Whitened errors of LiDAR
     PointPillars over time, with the adaptive, the nominal and the white standard
     deviations, segment of session 07/26\_TUM.}
     \label{fig:cm_ts_pp}

@@ -221,19 +221,19 @@ the estimate.
 \centering
 \small
 \renewcommand{\arraystretch}{1.3}
-\begin{tabular}{lcc}
-\toprule
- & Kalman filter (correction) & RTS smoother (backward step) \\
-\midrule
-Corrected state & $\hat{\mathbf{x}}_{k+1|k}$ & $\hat{\mathbf{x}}_{k|k}$ \\
-Information & $\mathbf{z}_{k+1}$ & $\hat{\mathbf{x}}_{k+1|N}$ \\
-Relation with the state & $\mathbf{H}_{k+1}$ & $\mathbf{F}_k$ \\
-Uncertainty of the relation & $\mathbf{R}_{k+1}$ & $\mathbf{Q}_k$ \\
-Innovation & $\mathbf{z}_{k+1} - \mathbf{H}_{k+1}\hat{\mathbf{x}}_{k+1|k}$ & $\hat{\mathbf{x}}_{k+1|N} - \hat{\mathbf{x}}_{k+1|k}$ \\
-Gain & $\mathbf{K}_{k+1}$ & $\mathbf{C}_k$ \\
-Direction & forward, $k = 0, \dots, N$ & backward, $k = N-1, \dots, 0$ \\
-Initialisation & initial estimate & $\hat{\mathbf{x}}_{N|N}$, $\mathbf{P}_{N|N}$ \\
-\bottomrule
+\begin{tabular}{|lcc|}
+\hline
+ \rowcolor{bluepoli!40} & \textbf{Kalman filter (correction)} & \textbf{RTS smoother (backward step)} \\
+\hline\hline
+\textbf{Corrected state} & $\hat{\mathbf{x}}_{k+1|k}$ & $\hat{\mathbf{x}}_{k|k}$ \\
+\textbf{Information} & $\mathbf{z}_{k+1}$ & $\hat{\mathbf{x}}_{k+1|N}$ \\
+\textbf{Relation with the state} & $\mathbf{H}_{k+1}$ & $\mathbf{F}_k$ \\
+\textbf{Uncertainty of the relation} & $\mathbf{R}_{k+1}$ & $\mathbf{Q}_k$ \\
+\textbf{Innovation} & $\mathbf{z}_{k+1} - \mathbf{H}_{k+1}\hat{\mathbf{x}}_{k+1|k}$ & $\hat{\mathbf{x}}_{k+1|N} - \hat{\mathbf{x}}_{k+1|k}$ \\
+\textbf{Gain} & $\mathbf{K}_{k+1}$ & $\mathbf{C}_k$ \\
+\textbf{Direction} & forward, $k = 0, \dots, N$ & backward, $k = N-1, \dots, 0$ \\
+\textbf{Initialisation} & initial estimate & $\hat{\mathbf{x}}_{N|N}$, $\mathbf{P}_{N|N}$ \\
+\hline
 \end{tabular}
 \caption{Correspondence between the correction step of the Kalman filter and the backward
 step of the RTS smoother.}
@@ -392,12 +392,12 @@ while the later ones bring no further benefit.
 \begin{table}[!htbp]
 \centering
 \small
-\begin{tabular}{rccccc}
-\toprule
-Window & \multicolumn{2}{c}{Global RMSE} & \multicolumn{2}{c}{Local RMSE} & Manoeuvre delay \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-[ms] & [m/s] & $\Delta$ [\%] & [m/s] & $\Delta$ [\%] & [ms] \\
-\midrule
+\begin{tabular}{|rccccc|}
+\hline
+\rowcolor{bluepoli!40} \textbf{Window} &\multicolumn{2}{c}{\textbf{Global RMSE}}&\multicolumn{2}{c}{\textbf{Local RMSE}}& \textbf{Manoeuvre delay} \\
+\cline{2-3}\cline{4-5}
+\rowcolor{bluepoli!40} \textbf{[ms]} & \textbf{[m/s]} & \textbf{$\Delta$ [\%]} & \textbf{[m/s]} & \textbf{$\Delta$ [\%]} & \textbf{[ms]} \\
+\hline\hline
   $-98$ & 1.177 & $+25.5$ & 2.218 & $+28.7$ & $+99$ \\
       0 & 0.938 & -- & 1.724 & -- & $+19$ \\
      88 & 0.815 & $-13.1$ & 1.467 & $-14.9$ & $-19$ \\
@@ -408,7 +408,7 @@ Window & \multicolumn{2}{c}{Global RMSE} & \multicolumn{2}{c}{Local RMSE} & Mano
     499 & 0.648 & $-30.9$ & 1.113 & $-35.4$ & $-62$ \\
     697 & 0.648 & $-30.9$ & 1.103 & $-36.0$ & $-62$ \\
    1015 & 0.651 & $-30.6$ & 1.103 & $-36.0$ & $-62$ \\
-\bottomrule
+\hline
 \end{tabular}
 \caption{RMSE of the speed and median manoeuvre delay as a function of the window length, all the sensors. $\Delta$ is the variation with respect to the filtered estimate.}
 \label{tab:rts_radar}
@@ -429,7 +429,7 @@ the correction applied by the smoother to the causal state is considerably large
     \centering
     \subfloat[Braking]{\includegraphics[width=0.76\textwidth]{figures/ch6/rts_lag_noradar_braking.pdf}}\\
     \subfloat[Corner]{\includegraphics[width=0.76\textwidth]{figures/ch6/rts_lag_noradar_corner.pdf}}
-    \caption[Speed of the opponent estimated with different windows, without the RaDAR.]{Speed of the opponent estimated with different windows, without the RaDAR. Session of 5 September 2026, Imola.}
+    \caption{Speed of the opponent estimated with different windows, without the RaDAR. Session of 5 September 2026, Imola.}
     \label{fig:rts_lag_noradar}
 \end{figure}
 
@@ -482,12 +482,12 @@ the RaDAR the product decays rapidly and the anticipation remains limited.
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{rccccc}
-\toprule
-Window & \multicolumn{2}{c}{Global RMSE} & \multicolumn{2}{c}{Local RMSE} & Manoeuvre delay \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-[ms] & [m/s] & $\Delta$ [\%] & [m/s] & $\Delta$ [\%] & [ms] \\
-\midrule
+\begin{tabular}{|rccccc|}
+\hline
+\rowcolor{bluepoli!40} \textbf{Window} &\multicolumn{2}{c}{\textbf{Global RMSE}}&\multicolumn{2}{c}{\textbf{Local RMSE}}& \textbf{Manoeuvre delay} \\
+\cline{2-3}\cline{4-5}
+\rowcolor{bluepoli!40} \textbf{[ms]} & \textbf{[m/s]} & \textbf{$\Delta$ [\%]} & \textbf{[m/s]} & \textbf{$\Delta$ [\%]} & \textbf{[ms]} \\
+\hline\hline
  $-132$ & 2.056 & $+34.1$ & 3.585 & $+34.0$ & $+292$ \\
       0 & 1.533 & -- & 2.675 & -- & $+192$ \\
     105 & 1.164 & $-24.1$ & 2.017 & $-24.6$ & $+110$ \\
@@ -499,7 +499,7 @@ Window & \multicolumn{2}{c}{Global RMSE} & \multicolumn{2}{c}{Local RMSE} & Mano
     719 & 0.433 & $-71.8$ & 0.752 & $-71.9$ & $-94$ \\
     821 & 0.452 & $-70.5$ & 0.794 & $-70.3$ & $-89$ \\
     981 & 0.466 & $-69.6$ & 0.820 & $-69.3$ & $-93$ \\
-\bottomrule
+\hline
 \end{tabular}
 \caption{RMSE of the speed and median manoeuvre delay as a function of the window length, without the RaDAR. $\Delta$ is the variation with respect to the filtered estimate.}
 \label{tab:rts_noradar}
@@ -519,20 +519,20 @@ it. To limit this anticipation, the window is fixed at \SI{300}{ms} also in the 
 \begin{table}[!htbp]
 \centering
 \small
-\begin{tabular}{rcccccc}
-\toprule
-Window & \multicolumn{2}{c}{Global RMSE [m/s]} & \multicolumn{2}{c}{Local RMSE [m/s]} & \multicolumn{2}{c}{Manoeuvre delay [ms]} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-[ms] & RaDAR & No RaDAR & RaDAR & No RaDAR & RaDAR & No RaDAR \\
-\midrule
-$\approx -100$  & 1.177 & 2.056 & 2.218 & 3.585 & $+99$ & $+292$ \\
-0               & 0.938 & 1.533 & 1.724 & 2.675 & $+19$ & $+192$ \\
-$\approx 100$   & 0.815 & 1.164 & 1.467 & 2.017 & $-19$ & $+110$ \\
-$\approx 200$   & 0.671 & 0.858 & 1.164 & 1.455 & $-61$ & $+27$ \\
-$\approx 300$   & 0.646 & 0.625 & 1.114 & 1.022 & $-62$ & $-41$ \\
-$\approx 400$   & 0.647 & 0.476 & 1.113 & 0.754 & $-62$ & $-85$ \\
-$\approx 500$   & 0.648 & 0.414 & 1.113 & 0.669 & $-62$ & $-106$ \\
-\bottomrule
+\begin{tabular}{|rcccccc|}
+\hline
+\rowcolor{bluepoli!40} \textbf{Window} &\multicolumn{2}{c}{\textbf{Global RMSE [m/s]}}&\multicolumn{2}{c}{\textbf{Local RMSE [m/s]}}&\multicolumn{2}{c|}{\textbf{Manoeuvre delay [ms]}} \\
+\cline{2-3}\cline{4-5}\cline{6-7}
+\rowcolor{bluepoli!40} \textbf{[ms]} & \textbf{RaDAR} & \textbf{No RaDAR} & \textbf{RaDAR} & \textbf{No RaDAR} & \textbf{RaDAR} & \textbf{No RaDAR} \\
+\hline\hline
+$\approx -100$ & 1.177 & 2.056 & 2.218 & 3.585 & $+99$ & $+292$ \\
+0 & 0.938 & 1.533 & 1.724 & 2.675 & $+19$ & $+192$ \\
+$\approx 100$ & 0.815 & 1.164 & 1.467 & 2.017 & $-19$ & $+110$ \\
+$\approx 200$ & 0.671 & 0.858 & 1.164 & 1.455 & $-61$ & $+27$ \\
+$\approx 300$ & 0.646 & 0.625 & 1.114 & 1.022 & $-62$ & $-41$ \\
+$\approx 400$ & 0.647 & 0.476 & 1.113 & 0.754 & $-62$ & $-85$ \\
+$\approx 500$ & 0.648 & 0.414 & 1.113 & 0.669 & $-62$ & $-106$ \\
+\hline
 \end{tabular}
 \caption{RMSE of the speed and median manoeuvre delay as a function of the window length, with and
 without the RaDAR.}
@@ -591,16 +591,16 @@ These improvements are quantified in Table~\ref{tab:rts_qff}, which reports the 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{llcccc}
-\toprule
-& & \multicolumn{2}{c}{RMSE $v_x$} & \multicolumn{2}{c}{RMSE $a_x$} \\
-\cmidrule(lr){3-4}\cmidrule(lr){5-6}
-Filter & Estimate & [m/s] & $\Delta$ [\%] & [m/s$^2$] & $\Delta$ [\%] \\
-\midrule
-Feed-forward & causal & 1.069 & -- & 3.589 & -- \\
-Smoother & window \SI{300}{ms} & 0.634 & $-40.7$ & 1.869 & $-47.9$ \\
-Feed-forward + smoother & window \SI{300}{ms} & 0.356 & $-66.7$ & 1.786 & $-50.2$ \\
-\bottomrule
+\begin{tabular}{|llcccc|}
+\hline
+\rowcolor{bluepoli!40} & &\multicolumn{2}{c}{\textbf{RMSE $v_x$}}&\multicolumn{2}{c|}{\textbf{RMSE $a_x$}} \\
+\cline{3-4}\cline{5-6}
+\rowcolor{bluepoli!40} \textbf{Filter} & \textbf{Estimate} & \textbf{[m/s]} & \textbf{$\Delta$ [\%]} & \textbf{[m/s$^2$]} & \textbf{$\Delta$ [\%]} \\
+\hline\hline
+\textbf{Feed-forward} & causal & 1.069 & -- & 3.589 & -- \\
+\textbf{Smoother} & window \SI{300}{ms} & 0.634 & $-40.7$ & 1.869 & $-47.9$ \\
+\textbf{Feed-forward + smoother} & window \SI{300}{ms} & 0.356 & $-66.7$ & 1.786 & $-50.2$ \\
+\hline
 \end{tabular}
 \caption{RMSE of the speed and acceleration. $\Delta$ represents the variation with respect to the causal feed-forward estimate.}
 \label{tab:rts_qff}

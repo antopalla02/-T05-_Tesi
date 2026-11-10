@@ -5,104 +5,33 @@
 
 \begin{table}[H]
 \centering
-\setlength{\tabcolsep}{1.6pt}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccc|ccccccccc}
-\toprule
- & \multicolumn{5}{c|}{Rear, $|x_{\mathrm{rel}}|$ [m]} & \multicolumn{9}{c}{Front, $x_{\mathrm{rel}}$ [m]} \\
-Session & 60--50 & 50--40 & 40--30 & 30--20 & 20--10 & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 \\
-\midrule
-07/26\_TUM & -- & 0.67 & 0.48 & 0.20 & 0.08 & 0.06 & 0.19 & 0.11 & 0.13 & 0.22 & 0.19 & 0.22 & 0.24 & 0.27 \\
-08/03\_Kinetiz & 0.38 & 0.33 & 0.40 & 0.15 & 0.25 & 0.19 & 0.17 & 0.17 & 0.16 & 0.16 & 0.21 & 0.25 & 0.29 & 0.21 \\
-10/12 (EVA+LIVIA) & -- & 0.31 & 0.22 & 0.09 & 0.04 & 0.04 & 0.05 & 0.17 & 0.11 & 0.11 & 0.11 & 0.13 & 0.11 & 0.17 \\
-10/13 (EVA+LIVIA) & 0.23 & 0.33 & -- & -- & -- & -- & -- & 0.17 & 0.19 & 0.13 & 0.11 & 0.13 & 0.23 & 0.22 \\
-10/14\_eva & -- & 0.17 & 0.16 & 0.21 & 0.55$^{*}$ & 0.16 & 0.11 & 0.09 & 0.11 & 0.12 & 0.14 & 0.20 & 0.19 & 0.15 \\
-10/14-02 (EVA+LIVIA) & -- & 0.38 & 0.41 & 0.12 & 0.07 & 0.09 & 0.10 & 0.16 & 0.14 & 0.09 & 0.13 & 0.13 & -- & -- \\
-10/14-04 (EVA) & -- & -- & 0.21 & 0.17 & 0.09 & 0.08 & 0.14 & 0.18 & 0.19 & 0.15 & 0.14 & 0.15 & 0.11 & 0.10 \\
-10/16 (EVA+LIVIA) & -- & -- & 0.29 & 0.34 & 0.36 & 0.09 & 0.08 & 0.16 & 0.10 & 0.10 & 0.12 & 0.15 & 0.15 & 0.14 \\
-\bottomrule
-\end{tabular}}
-\par\vspace{2pt}{\footnotesize $^{*}$ 10/14\_eva: at 10--20\,m behind the opponent is almost on the ego axis (median $|y_{\mathrm{rel}}|\approx2$\,m, rear blind strip); without the samples with $|y_{\mathrm{rel}}|<2$\,m: $\sigma_x=0.14$\,m, $\sigma_y=0.19$\,m.}
-\caption{LiDAR Clustering: standard deviation of the longitudinal error $\sigma_x$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins).}
-\label{tab:clust_sx}
-\end{table}
-
-\begin{table}[H]
-\centering
-\setlength{\tabcolsep}{1.6pt}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccc|ccccccccc}
-\toprule
- & \multicolumn{5}{c|}{Rear, $|x_{\mathrm{rel}}|$ [m]} & \multicolumn{9}{c}{Front, $x_{\mathrm{rel}}$ [m]} \\
-Session & 60--50 & 50--40 & 40--30 & 30--20 & 20--10 & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 \\
-\midrule
-07/26\_TUM & -- & 0.69 & 0.41 & 0.20 & 0.08 & 0.11 & 0.25 & 0.16 & 0.18 & 0.24 & 0.28 & 0.27 & 0.33 & 0.43 \\
-08/03\_Kinetiz & 0.49 & 0.44 & 0.44 & 0.31 & 0.28 & 0.08 & 0.12 & 0.10 & 0.10 & 0.15 & 0.18 & 0.35 & 0.38 & 0.39 \\
-10/12 (EVA+LIVIA) & -- & 0.33 & 0.20 & 0.11 & 0.08 & 0.05 & 0.07 & 0.10 & 0.13 & 0.17 & 0.22 & 0.28 & 0.33 & 0.60 \\
-10/13 (EVA+LIVIA) & 0.51 & 0.51 & -- & -- & -- & -- & -- & 0.07 & 0.17 & 0.20 & 0.18 & 0.28 & 0.33 & 0.39 \\
-10/14\_eva & -- & 0.20 & 0.24 & 0.34 & 0.49$^{*}$ & 0.10 & 0.12 & 0.10 & 0.14 & 0.15 & 0.20 & 0.25 & 0.23 & 0.28 \\
-10/14-02 (EVA+LIVIA) & -- & 0.63 & 0.64 & 0.16 & 0.07 & 0.10 & 0.10 & 0.14 & 0.17 & 0.19 & 0.20 & 0.27 & -- & -- \\
-10/14-04 (EVA) & -- & -- & 0.37 & 0.23 & 0.12 & 0.05 & 0.13 & 0.21 & 0.11 & 0.17 & 0.26 & 0.25 & 0.23 & 0.29 \\
-10/16 (EVA+LIVIA) & -- & -- & 0.57 & 0.36 & 0.38 & 0.17 & 0.11 & 0.29 & 0.14 & 0.15 & 0.25 & 0.27 & 0.21 & 0.26 \\
-\bottomrule
-\end{tabular}}
-\par\vspace{2pt}{\footnotesize $^{*}$ 10/14\_eva: at 10--20\,m behind the opponent is almost on the ego axis (median $|y_{\mathrm{rel}}|\approx2$\,m, rear blind strip); without the samples with $|y_{\mathrm{rel}}|<2$\,m: $\sigma_x=0.14$\,m, $\sigma_y=0.19$\,m.}
-\caption{LiDAR Clustering: standard deviation of the lateral error $\sigma_y$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins).}
-\label{tab:clust_sy}
-\end{table}
-
-\begin{table}[H]
-\centering
-\setlength{\tabcolsep}{1.6pt}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccc|ccccccccc}
-\toprule
- & \multicolumn{5}{c|}{Rear, $|x_{\mathrm{rel}}|$ [m]} & \multicolumn{9}{c}{Front, $x_{\mathrm{rel}}$ [m]} \\
-Session & 60--50 & 50--40 & 40--30 & 30--20 & 20--10 & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 \\
-\midrule
-07/26\_TUM & -- & $+0.28$ & $+0.23$ & $+0.26$ & $+0.16$ & $+0.01$ & $0.00$ & $-0.01$ & $-0.04$ & $-0.08$ & $-0.09$ & $-0.08$ & $-0.12$ & $-0.18$ \\
-08/03\_Kinetiz & $+0.30$ & $+0.29$ & $+0.26$ & $+0.24$ & $+0.13$ & $-0.02$ & $-0.02$ & $-0.04$ & $-0.14$ & $-0.17$ & $-0.20$ & $-0.29$ & $-0.28$ & $-0.23$ \\
-10/12 (EVA+LIVIA) & -- & $+0.37$ & $+0.37$ & $+0.31$ & $+0.24$ & $+0.10$ & $+0.07$ & $+0.01$ & $+0.01$ & $-0.02$ & $-0.02$ & $0.00$ & $-0.05$ & $-0.06$ \\
-10/13 (EVA+LIVIA) & $+0.31$ & -- & -- & -- & -- & -- & -- & $+0.01$ & $+0.03$ & $-0.01$ & $-0.01$ & $-0.04$ & $-0.08$ & $-0.10$ \\
-10/14\_eva & $+0.34$ & $+0.36$ & $+0.31$ & $+0.26$ & $+0.24$ & $+0.05$ & $+0.02$ & $-0.01$ & $+0.01$ & $-0.01$ & $-0.01$ & $-0.05$ & $-0.09$ & $-0.10$ \\
-10/14-02 (EVA+LIVIA) & $+0.47$ & $+0.43$ & $+0.40$ & $+0.36$ & $+0.24$ & $+0.14$ & $+0.06$ & $0.00$ & $-0.01$ & $-0.03$ & $+0.09$ & $+0.08$ & $+0.06$ & -- \\
-10/14-04 (EVA) & -- & -- & $+0.30$ & $+0.29$ & $+0.24$ & $+0.07$ & $+0.02$ & $+0.03$ & $0.00$ & $-0.03$ & $-0.05$ & $-0.03$ & $-0.07$ & $-0.10$ \\
-10/16 (EVA+LIVIA) & $+0.43$ & $+0.40$ & $+0.37$ & $+0.33$ & $+0.28$ & $+0.04$ & $0.00$ & $+0.04$ & $-0.05$ & $-0.05$ & $-0.06$ & $-0.07$ & $-0.14$ & $-0.22$ \\
-\bottomrule
-\end{tabular}}
-\caption{LiDAR PointPillars: mean longitudinal error $e_x$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins).}
-\label{tab:pp_ex}
-\end{table}
-
-\begin{table}[H]
-\centering
-\setlength{\tabcolsep}{4pt}\small
-\begin{tabular}{lccccccccc}
-\toprule
-Session & \multicolumn{9}{c}{$|x_{\mathrm{rel}}|$ [m]} \\
-\cmidrule(l){2-10}
- & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 \\
-\midrule
-\multicolumn{10}{l}{\textit{Rear ($x_{\mathrm{rel}}<0$)}} \\
-07/26\_TUM & 0.46 & 0.62 & 0.70 & 0.78 & 0.90 & 0.76 & 0.92 & 0.92 & 1.12 \\
-08/03\_Kinetiz & 0.45 & 0.57 & 0.63 & 0.71 & 0.72 & 0.67 & 0.85 & 0.94 & 0.85 \\
-10/12 (EVA+LIVIA) & 0.41 & 0.67 & 0.65 & 0.68 & 0.77 & 0.79 & 0.81 & 0.97 & 0.77 \\
-10/13 (EVA+LIVIA) & -- & -- & 0.55 & 0.69 & 0.88 & 0.78 & 0.74 & 0.85 & 1.00 \\
-10/14\_eva & 0.45 & 0.56 & 0.67 & 0.69 & 0.65 & 0.69 & 0.60 & -- & -- \\
-10/14-02 (EVA+LIVIA) & 0.63 & 0.63 & 0.66 & 0.66 & 0.73 & 0.75 & 0.60 & 0.68 & 0.80 \\
-10/14-04 (EVA) & 0.48 & 0.63 & 0.68 & 0.60 & 0.76 & -- & -- & -- & -- \\
-10/16 (EVA+LIVIA) & 0.48 & 0.58 & 0.74 & 0.78 & 0.87 & 0.89 & 0.93 & 1.04 & 0.91 \\
-\midrule
-\multicolumn{10}{l}{\textit{Front ($x_{\mathrm{rel}}>0$)}} \\
-07/26\_TUM & 0.47 & 0.48 & 0.54 & 0.58 & 0.67 & 0.69 & 0.67 & 0.82 & 0.77 \\
-08/03\_Kinetiz & 0.51 & 0.55 & 0.56 & 0.54 & 0.58 & 0.58 & 0.72 & 0.89 & 0.82 \\
-10/12 (EVA+LIVIA) & 0.39 & 0.51 & 0.59 & 0.65 & 0.67 & 0.73 & 0.71 & 0.84 & 0.87 \\
-10/13 (EVA+LIVIA) & -- & -- & 0.64 & 0.60 & 0.67 & 0.78 & 0.71 & 0.84 & 0.75 \\
-10/14\_eva & 0.37 & 0.47 & 0.54 & 0.56 & 0.60 & 0.69 & 0.76 & 0.93 & 0.91 \\
-10/14-02 (EVA+LIVIA) & 0.47 & 0.54 & 0.51 & 0.57 & 0.50 & 0.53 & 0.55 & 0.79 & 0.71 \\
-10/14-04 (EVA) & -- & 0.35 & 0.54 & 0.52 & 0.57 & 0.47 & 0.55 & 0.78 & 0.76 \\
-10/16 (EVA+LIVIA) & 0.68 & 0.60 & 0.53 & 0.64 & 0.77 & 0.86 & 0.92 & 0.89 & 0.68 \\
-\bottomrule
+\setlength{\tabcolsep}{3pt}\footnotesize
+\begin{tabular}{|lccccccccc|}
+\hline
+\rowcolor{bluepoli!40} \textbf{Session} &\multicolumn{9}{c|}{\textbf{$|x_{\mathrm{rel}}|$ [m]}} \\
+\cline{2-10}
+ \rowcolor{bluepoli!40} & \textbf{10--20} & \textbf{20--30} & \textbf{30--40} & \textbf{40--50} & \textbf{50--60} & \textbf{60--70} & \textbf{70--80} & \textbf{80--90} & \textbf{90--100} \\
+\hline\hline
+\multicolumn{10}{|l|}{\textit{Rear ($x_{\mathrm{rel}}<0$)}} \\
+\textbf{07/26\_TUM} & 0.46 & 0.62 & 0.70 & 0.78 & 0.90 & 0.76 & 0.92 & 0.92 & 1.12 \\
+\textbf{08/03\_Kinetiz} & 0.45 & 0.57 & 0.63 & 0.71 & 0.72 & 0.67 & 0.85 & 0.94 & 0.85 \\
+\textbf{10/12 (EVA+LIVIA)} & 0.41 & 0.67 & 0.65 & 0.68 & 0.77 & 0.79 & 0.81 & 0.97 & 0.77 \\
+\textbf{10/13 (EVA+LIVIA)} & -- & -- & 0.55 & 0.69 & 0.88 & 0.78 & 0.74 & 0.85 & 1.00 \\
+\textbf{10/14\_eva} & 0.45 & 0.56 & 0.67 & 0.69 & 0.65 & 0.69 & 0.60 & -- & -- \\
+\textbf{10/14-02 (EVA+LIVIA)} & 0.63 & 0.63 & 0.66 & 0.66 & 0.73 & 0.75 & 0.60 & 0.68 & 0.80 \\
+\textbf{10/14-04 (EVA)} & 0.48 & 0.63 & 0.68 & 0.60 & 0.76 & -- & -- & -- & -- \\
+\textbf{10/16 (EVA+LIVIA)} & 0.48 & 0.58 & 0.74 & 0.78 & 0.87 & 0.89 & 0.93 & 1.04 & 0.91 \\
+\hline
+\multicolumn{10}{|l|}{\textit{Front ($x_{\mathrm{rel}}>0$)}} \\
+\textbf{07/26\_TUM} & 0.47 & 0.48 & 0.54 & 0.58 & 0.67 & 0.69 & 0.67 & 0.82 & 0.77 \\
+\textbf{08/03\_Kinetiz} & 0.51 & 0.55 & 0.56 & 0.54 & 0.58 & 0.58 & 0.72 & 0.89 & 0.82 \\
+\textbf{10/12 (EVA+LIVIA)} & 0.39 & 0.51 & 0.59 & 0.65 & 0.67 & 0.73 & 0.71 & 0.84 & 0.87 \\
+\textbf{10/13 (EVA+LIVIA)} & -- & -- & 0.64 & 0.60 & 0.67 & 0.78 & 0.71 & 0.84 & 0.75 \\
+\textbf{10/14\_eva} & 0.37 & 0.47 & 0.54 & 0.56 & 0.60 & 0.69 & 0.76 & 0.93 & 0.91 \\
+\textbf{10/14-02 (EVA+LIVIA)} & 0.47 & 0.54 & 0.51 & 0.57 & 0.50 & 0.53 & 0.55 & 0.79 & 0.71 \\
+\textbf{10/14-04 (EVA)} & -- & 0.35 & 0.54 & 0.52 & 0.57 & 0.47 & 0.55 & 0.78 & 0.76 \\
+\textbf{10/16 (EVA+LIVIA)} & 0.68 & 0.60 & 0.53 & 0.64 & 0.77 & 0.86 & 0.92 & 0.89 & 0.68 \\
+\hline
 \end{tabular}
 \caption{RaDAR: standard deviation of the longitudinal error $\sigma_x$ [m] vs $|x_{\mathrm{rel}}|$ (10\,m bins).}
 \label{tab:rad_sx}
@@ -110,61 +39,132 @@ Session & \multicolumn{9}{c}{$|x_{\mathrm{rel}}|$ [m]} \\
 
 \begin{table}[H]
 \centering
-\setlength{\tabcolsep}{4pt}\small
-\begin{tabular}{lccccccccc}
-\toprule
-Session & \multicolumn{9}{c}{$|x_{\mathrm{rel}}|$ [m]} \\
-\cmidrule(l){2-10}
- & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 \\
-\midrule
-\multicolumn{10}{l}{\textit{Rear ($x_{\mathrm{rel}}<0$)}} \\
-07/26\_TUM & $+0.29$ & $+0.02$ & $-0.19$ & $-0.18$ & $-0.16$ & $+0.13$ & $-0.14$ & $-0.06$ & $-0.11$ \\
-08/03\_Kinetiz & $+0.57$ & $+0.09$ & $+0.20$ & $+0.03$ & $+0.17$ & $+0.18$ & $+0.20$ & $+0.12$ & $+0.13$ \\
-10/12 (EVA+LIVIA) & $+0.30$ & $+0.12$ & $+0.24$ & $+0.19$ & $+0.48$ & $+0.38$ & $+0.32$ & $+0.45$ & $+0.16$ \\
-10/13 (EVA+LIVIA) & -- & -- & $+0.20$ & $+0.16$ & $+0.15$ & $+0.29$ & $+0.29$ & $+0.17$ & $+0.21$ \\
-10/14\_eva & $+0.57$ & $+0.24$ & $+0.11$ & $+0.15$ & $+0.23$ & $+0.48$ & $+0.14$ & -- & -- \\
-10/14-02 (EVA+LIVIA) & $+0.35$ & $+0.32$ & $+0.28$ & $+0.35$ & $+0.31$ & $+0.53$ & $+0.74$ & $+0.56$ & $+0.64$ \\
-10/14-04 (EVA) & $+0.81$ & $+0.57$ & $+0.33$ & $+0.51$ & $+0.49$ & -- & -- & -- & -- \\
-10/16 (EVA+LIVIA) & $+0.84$ & $+0.74$ & $+0.55$ & $+0.57$ & $+0.46$ & $+0.73$ & $+0.62$ & $+0.42$ & $+0.52$ \\
-\midrule
-\multicolumn{10}{l}{\textit{Front ($x_{\mathrm{rel}}>0$)}} \\
-07/26\_TUM & $-0.65$ & $-0.83$ & $-0.78$ & $-0.86$ & $-0.98$ & $-0.96$ & $-0.97$ & $-1.02$ & $-1.31$ \\
-08/03\_Kinetiz & $-0.43$ & $-0.45$ & $-0.54$ & $-0.82$ & $-0.74$ & $-0.75$ & $-0.89$ & $-0.88$ & $-1.06$ \\
-10/12 (EVA+LIVIA) & $-0.34$ & $-0.35$ & $-0.58$ & $-0.48$ & $-0.54$ & $-0.42$ & $-0.51$ & $-0.60$ & $-0.89$ \\
-10/13 (EVA+LIVIA) & -- & -- & $-0.72$ & $-0.61$ & $-0.48$ & $-0.44$ & $-0.59$ & $-0.76$ & $-0.93$ \\
-10/14\_eva & $-1.31$ & $-0.85$ & $-0.80$ & $-0.67$ & $-0.71$ & $-0.65$ & $-0.65$ & $-0.66$ & $-1.01$ \\
-10/14-02 (EVA+LIVIA) & $-0.49$ & $-0.34$ & $-0.61$ & $-0.66$ & $-0.75$ & $-0.53$ & $-0.41$ & $-0.53$ & $-0.81$ \\
-10/14-04 (EVA) & -- & $-1.02$ & $-1.11$ & $-1.23$ & $-1.34$ & $-1.11$ & $-0.91$ & $-1.41$ & $-1.64$ \\
-10/16 (EVA+LIVIA) & $-0.18$ & $-0.36$ & $-0.28$ & $-0.51$ & $-0.75$ & $-0.43$ & $-0.51$ & $-0.89$ & $-1.14$ \\
-\bottomrule
+\setlength{\tabcolsep}{3pt}\footnotesize
+\begin{tabular}{|lccccccccc|}
+\hline
+\rowcolor{bluepoli!40} \textbf{Session} &\multicolumn{9}{c|}{\textbf{$|x_{\mathrm{rel}}|$ [m]}} \\
+\cline{2-10}
+ \rowcolor{bluepoli!40} & \textbf{10--20} & \textbf{20--30} & \textbf{30--40} & \textbf{40--50} & \textbf{50--60} & \textbf{60--70} & \textbf{70--80} & \textbf{80--90} & \textbf{90--100} \\
+\hline\hline
+\multicolumn{10}{|l|}{\textit{Rear ($x_{\mathrm{rel}}<0$)}} \\
+\textbf{07/26\_TUM} & $+0.29$ & $+0.02$ & $-0.19$ & $-0.18$ & $-0.16$ & $+0.13$ & $-0.14$ & $-0.06$ & $-0.11$ \\
+\textbf{08/03\_Kinetiz} & $+0.57$ & $+0.09$ & $+0.20$ & $+0.03$ & $+0.17$ & $+0.18$ & $+0.20$ & $+0.12$ & $+0.13$ \\
+\textbf{10/12 (EVA+LIVIA)} & $+0.30$ & $+0.12$ & $+0.24$ & $+0.19$ & $+0.48$ & $+0.38$ & $+0.32$ & $+0.45$ & $+0.16$ \\
+\textbf{10/13 (EVA+LIVIA)} & -- & -- & $+0.20$ & $+0.16$ & $+0.15$ & $+0.29$ & $+0.29$ & $+0.17$ & $+0.21$ \\
+\textbf{10/14\_eva} & $+0.57$ & $+0.24$ & $+0.11$ & $+0.15$ & $+0.23$ & $+0.48$ & $+0.14$ & -- & -- \\
+\textbf{10/14-02 (EVA+LIVIA)} & $+0.35$ & $+0.32$ & $+0.28$ & $+0.35$ & $+0.31$ & $+0.53$ & $+0.74$ & $+0.56$ & $+0.64$ \\
+\textbf{10/14-04 (EVA)} & $+0.81$ & $+0.57$ & $+0.33$ & $+0.51$ & $+0.49$ & -- & -- & -- & -- \\
+\textbf{10/16 (EVA+LIVIA)} & $+0.84$ & $+0.74$ & $+0.55$ & $+0.57$ & $+0.46$ & $+0.73$ & $+0.62$ & $+0.42$ & $+0.52$ \\
+\hline
+\multicolumn{10}{|l|}{\textit{Front ($x_{\mathrm{rel}}>0$)}} \\
+\textbf{07/26\_TUM} & $-0.65$ & $-0.83$ & $-0.78$ & $-0.86$ & $-0.98$ & $-0.96$ & $-0.97$ & $-1.02$ & $-1.31$ \\
+\textbf{08/03\_Kinetiz} & $-0.43$ & $-0.45$ & $-0.54$ & $-0.82$ & $-0.74$ & $-0.75$ & $-0.89$ & $-0.88$ & $-1.06$ \\
+\textbf{10/12 (EVA+LIVIA)} & $-0.34$ & $-0.35$ & $-0.58$ & $-0.48$ & $-0.54$ & $-0.42$ & $-0.51$ & $-0.60$ & $-0.89$ \\
+\textbf{10/13 (EVA+LIVIA)} & -- & -- & $-0.72$ & $-0.61$ & $-0.48$ & $-0.44$ & $-0.59$ & $-0.76$ & $-0.93$ \\
+\textbf{10/14\_eva} & $-1.31$ & $-0.85$ & $-0.80$ & $-0.67$ & $-0.71$ & $-0.65$ & $-0.65$ & $-0.66$ & $-1.01$ \\
+\textbf{10/14-02 (EVA+LIVIA)} & $-0.49$ & $-0.34$ & $-0.61$ & $-0.66$ & $-0.75$ & $-0.53$ & $-0.41$ & $-0.53$ & $-0.81$ \\
+\textbf{10/14-04 (EVA)} & -- & $-1.02$ & $-1.11$ & $-1.23$ & $-1.34$ & $-1.11$ & $-0.91$ & $-1.41$ & $-1.64$ \\
+\textbf{10/16 (EVA+LIVIA)} & $-0.18$ & $-0.36$ & $-0.28$ & $-0.51$ & $-0.75$ & $-0.43$ & $-0.51$ & $-0.89$ & $-1.14$ \\
+\hline
 \end{tabular}
 \caption{RaDAR: mean longitudinal error $e_x$ [m] vs $|x_{\mathrm{rel}}|$ (10\,m bins).}
 \label{tab:rad_ex}
 \end{table}
 
+\begin{landscape}
 \begin{table}[H]
 \centering
-\setlength{\tabcolsep}{4pt}\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccccccc|c}
-\toprule
-Session & \multicolumn{9}{c|}{$x_{\mathrm{rel}}$ [m]} & Trend \\
-\cmidrule(lr){2-10}
- & 10--20 & 20--30 & 30--40 & 40--50 & 50--60 & 60--70 & 70--80 & 80--90 & 90--100 & [cm/m] \\
-\midrule
-07/26\_TUM & $+0.59$ & $-0.03$ & $-0.07$ & $-0.08$ & $+0.01$ & $+0.25$ & $+0.28$ & $+0.38$ & $+0.44$ & $+1.06$ \\
-08/03\_Kinetiz & $+0.64$ & $+0.09$ & $-0.12$ & $-0.09$ & $0.00$ & $+0.10$ & $+0.10$ & $+0.19$ & $+0.21$ & $+0.67$ \\
-10/12 (EVA) & -- & $-0.23$ & $-0.27$ & $-0.04$ & $+0.14$ & $+0.43$ & $+0.53$ & $+0.56$ & $+0.62$ & $+1.45$ \\
-10/13 (EVA) & -- & -- & $-0.19$ & $+0.11$ & $+0.22$ & $+0.38$ & $+0.46$ & $+0.46$ & $+0.53$ & $+0.80$ \\
-10/14\_eva & $+0.30$ & $+0.24$ & $0.00$ & $+0.09$ & $+0.19$ & $+0.34$ & $+0.38$ & $+0.47$ & $+0.60$ & $+1.15$ \\
-10/14-02 (EVA+LIVIA) & $+1.20$ & $-0.03$ & $-0.13$ & $+0.01$ & $+0.23$ & $+0.42$ & $+0.56$ & $+0.57$ & $+0.58$ & $+1.51$ \\
-10/14-04 (EVA) & $+0.70$ & $+0.23$ & $+0.05$ & $-0.11$ & $+0.12$ & $+0.49$ & $+0.56$ & $+0.52$ & $+0.59$ & $+1.24$ \\
-10/16 (EVA+LIVIA) & $+0.47$ & $+0.19$ & $+0.16$ & $+0.04$ & $+0.19$ & $+0.39$ & $+0.44$ & $+0.48$ & $+0.48$ & $+1.02$ \\
-\bottomrule
-\end{tabular}}
-\caption[Camera: mean longitudinal error as a function of the relative longitudinal position.]{Camera: mean longitudinal error $e_x$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins). Trend: slope~\eqref{eq:macro_slope} of $e_x$ between 40 and 100\,m.}
+\setlength{\tabcolsep}{2.6pt}\small\renewcommand{\arraystretch}{0.85}
+\begin{tabular}{|lccccc|ccccccccc|}
+\hline
+ \rowcolor{bluepoli!40} &\multicolumn{5}{c|}{\textbf{Rear, $|x_{\mathrm{rel}}|$ [m]}}&\multicolumn{9}{c|}{\textbf{Front, $x_{\mathrm{rel}}$ [m]}} \\
+\rowcolor{bluepoli!40} \textbf{Session} & \textbf{60--50} & \textbf{50--40} & \textbf{40--30} & \textbf{30--20} & \textbf{20--10} & \textbf{10--20} & \textbf{20--30} & \textbf{30--40} & \textbf{40--50} & \textbf{50--60} & \textbf{60--70} & \textbf{70--80} & \textbf{80--90} & \textbf{90--100} \\
+\hline\hline
+\textbf{07/26\_TUM} & -- & 0.67 & 0.48 & 0.20 & 0.08 & 0.06 & 0.19 & 0.11 & 0.13 & 0.22 & 0.19 & 0.22 & 0.24 & 0.27 \\
+\textbf{08/03\_Kinetiz} & 0.38 & 0.33 & 0.40 & 0.15 & 0.25 & 0.19 & 0.17 & 0.17 & 0.16 & 0.16 & 0.21 & 0.25 & 0.29 & 0.21 \\
+\textbf{10/12 (EVA+LIVIA)} & -- & 0.31 & 0.22 & 0.09 & 0.04 & 0.04 & 0.05 & 0.17 & 0.11 & 0.11 & 0.11 & 0.13 & 0.11 & 0.17 \\
+\textbf{10/13 (EVA+LIVIA)} & 0.23 & 0.33 & -- & -- & -- & -- & -- & 0.17 & 0.19 & 0.13 & 0.11 & 0.13 & 0.23 & 0.22 \\
+\textbf{10/14\_eva} & -- & 0.17 & 0.16 & 0.21 & 0.55$^{*}$ & 0.16 & 0.11 & 0.09 & 0.11 & 0.12 & 0.14 & 0.20 & 0.19 & 0.15 \\
+\textbf{10/14-02 (EVA+LIVIA)} & -- & 0.38 & 0.41 & 0.12 & 0.07 & 0.09 & 0.10 & 0.16 & 0.14 & 0.09 & 0.13 & 0.13 & -- & -- \\
+\textbf{10/14-04 (EVA)} & -- & -- & 0.21 & 0.17 & 0.09 & 0.08 & 0.14 & 0.18 & 0.19 & 0.15 & 0.14 & 0.15 & 0.11 & 0.10 \\
+\textbf{10/16 (EVA+LIVIA)} & -- & -- & 0.29 & 0.34 & 0.36 & 0.09 & 0.08 & 0.16 & 0.10 & 0.10 & 0.12 & 0.15 & 0.15 & 0.14 \\
+\hline
+\end{tabular}
+\par\vspace{2pt}{\footnotesize $^{*}$ 10/14\_eva: at 10--20\,m behind the opponent is almost on the ego axis (median $|y_{\mathrm{rel}}|\approx2$\,m, rear blind strip); without the samples with $|y_{\mathrm{rel}}|<2$\,m: $\sigma_x=0.14$\,m, $\sigma_y=0.19$\,m.}
+\caption{LiDAR Clustering: standard deviation of the longitudinal error $\sigma_x$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins).}
+\label{tab:clust_sx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{2.6pt}\small\renewcommand{\arraystretch}{0.85}
+\begin{tabular}{|lccccc|ccccccccc|}
+\hline
+ \rowcolor{bluepoli!40} &\multicolumn{5}{c|}{\textbf{Rear, $|x_{\mathrm{rel}}|$ [m]}}&\multicolumn{9}{c|}{\textbf{Front, $x_{\mathrm{rel}}$ [m]}} \\
+\rowcolor{bluepoli!40} \textbf{Session} & \textbf{60--50} & \textbf{50--40} & \textbf{40--30} & \textbf{30--20} & \textbf{20--10} & \textbf{10--20} & \textbf{20--30} & \textbf{30--40} & \textbf{40--50} & \textbf{50--60} & \textbf{60--70} & \textbf{70--80} & \textbf{80--90} & \textbf{90--100} \\
+\hline\hline
+\textbf{07/26\_TUM} & -- & 0.69 & 0.41 & 0.20 & 0.08 & 0.11 & 0.25 & 0.16 & 0.18 & 0.24 & 0.28 & 0.27 & 0.33 & 0.43 \\
+\textbf{08/03\_Kinetiz} & 0.49 & 0.44 & 0.44 & 0.31 & 0.28 & 0.08 & 0.12 & 0.10 & 0.10 & 0.15 & 0.18 & 0.35 & 0.38 & 0.39 \\
+\textbf{10/12 (EVA+LIVIA)} & -- & 0.33 & 0.20 & 0.11 & 0.08 & 0.05 & 0.07 & 0.10 & 0.13 & 0.17 & 0.22 & 0.28 & 0.33 & 0.60 \\
+\textbf{10/13 (EVA+LIVIA)} & 0.51 & 0.51 & -- & -- & -- & -- & -- & 0.07 & 0.17 & 0.20 & 0.18 & 0.28 & 0.33 & 0.39 \\
+\textbf{10/14\_eva} & -- & 0.20 & 0.24 & 0.34 & 0.49$^{*}$ & 0.10 & 0.12 & 0.10 & 0.14 & 0.15 & 0.20 & 0.25 & 0.23 & 0.28 \\
+\textbf{10/14-02 (EVA+LIVIA)} & -- & 0.63 & 0.64 & 0.16 & 0.07 & 0.10 & 0.10 & 0.14 & 0.17 & 0.19 & 0.20 & 0.27 & -- & -- \\
+\textbf{10/14-04 (EVA)} & -- & -- & 0.37 & 0.23 & 0.12 & 0.05 & 0.13 & 0.21 & 0.11 & 0.17 & 0.26 & 0.25 & 0.23 & 0.29 \\
+\textbf{10/16 (EVA+LIVIA)} & -- & -- & 0.57 & 0.36 & 0.38 & 0.17 & 0.11 & 0.29 & 0.14 & 0.15 & 0.25 & 0.27 & 0.21 & 0.26 \\
+\hline
+\end{tabular}
+\par\vspace{2pt}{\footnotesize $^{*}$ 10/14\_eva: at 10--20\,m behind the opponent is almost on the ego axis (median $|y_{\mathrm{rel}}|\approx2$\,m, rear blind strip); without the samples with $|y_{\mathrm{rel}}|<2$\,m: $\sigma_x=0.14$\,m, $\sigma_y=0.19$\,m.}
+\caption{LiDAR Clustering: standard deviation of the lateral error $\sigma_y$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins).}
+\label{tab:clust_sy}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{2.6pt}\small\renewcommand{\arraystretch}{0.85}
+\begin{tabular}{|lccccc|ccccccccc|}
+\hline
+ \rowcolor{bluepoli!40} &\multicolumn{5}{c|}{\textbf{Rear, $|x_{\mathrm{rel}}|$ [m]}}&\multicolumn{9}{c|}{\textbf{Front, $x_{\mathrm{rel}}$ [m]}} \\
+\rowcolor{bluepoli!40} \textbf{Session} & \textbf{60--50} & \textbf{50--40} & \textbf{40--30} & \textbf{30--20} & \textbf{20--10} & \textbf{10--20} & \textbf{20--30} & \textbf{30--40} & \textbf{40--50} & \textbf{50--60} & \textbf{60--70} & \textbf{70--80} & \textbf{80--90} & \textbf{90--100} \\
+\hline\hline
+\textbf{07/26\_TUM} & -- & $+0.28$ & $+0.23$ & $+0.26$ & $+0.16$ & $+0.01$ & $0.00$ & $-0.01$ & $-0.04$ & $-0.08$ & $-0.09$ & $-0.08$ & $-0.12$ & $-0.18$ \\
+\textbf{08/03\_Kinetiz} & $+0.30$ & $+0.29$ & $+0.26$ & $+0.24$ & $+0.13$ & $-0.02$ & $-0.02$ & $-0.04$ & $-0.14$ & $-0.17$ & $-0.20$ & $-0.29$ & $-0.28$ & $-0.23$ \\
+\textbf{10/12 (EVA+LIVIA)} & -- & $+0.37$ & $+0.37$ & $+0.31$ & $+0.24$ & $+0.10$ & $+0.07$ & $+0.01$ & $+0.01$ & $-0.02$ & $-0.02$ & $0.00$ & $-0.05$ & $-0.06$ \\
+\textbf{10/13 (EVA+LIVIA)} & $+0.31$ & -- & -- & -- & -- & -- & -- & $+0.01$ & $+0.03$ & $-0.01$ & $-0.01$ & $-0.04$ & $-0.08$ & $-0.10$ \\
+\textbf{10/14\_eva} & $+0.34$ & $+0.36$ & $+0.31$ & $+0.26$ & $+0.24$ & $+0.05$ & $+0.02$ & $-0.01$ & $+0.01$ & $-0.01$ & $-0.01$ & $-0.05$ & $-0.09$ & $-0.10$ \\
+\textbf{10/14-02 (EVA+LIVIA)} & $+0.47$ & $+0.43$ & $+0.40$ & $+0.36$ & $+0.24$ & $+0.14$ & $+0.06$ & $0.00$ & $-0.01$ & $-0.03$ & $+0.09$ & $+0.08$ & $+0.06$ & -- \\
+\textbf{10/14-04 (EVA)} & -- & -- & $+0.30$ & $+0.29$ & $+0.24$ & $+0.07$ & $+0.02$ & $+0.03$ & $0.00$ & $-0.03$ & $-0.05$ & $-0.03$ & $-0.07$ & $-0.10$ \\
+\textbf{10/16 (EVA+LIVIA)} & $+0.43$ & $+0.40$ & $+0.37$ & $+0.33$ & $+0.28$ & $+0.04$ & $0.00$ & $+0.04$ & $-0.05$ & $-0.05$ & $-0.06$ & $-0.07$ & $-0.14$ & $-0.22$ \\
+\hline
+\end{tabular}
+\caption{LiDAR PointPillars: mean longitudinal error $e_x$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins).}
+\label{tab:pp_ex}
+\end{table}
+
+\begin{table}[H]
+\centering
+\setlength{\tabcolsep}{2.6pt}\small\renewcommand{\arraystretch}{0.85}
+\begin{tabular}{|lccccccccc|c|}
+\hline
+\rowcolor{bluepoli!40} \textbf{Session} &\multicolumn{9}{c|}{\textbf{$x_{\mathrm{rel}}$ [m]}}& \textbf{Trend} \\
+\cline{2-10}
+ \rowcolor{bluepoli!40} & \textbf{10--20} & \textbf{20--30} & \textbf{30--40} & \textbf{40--50} & \textbf{50--60} & \textbf{60--70} & \textbf{70--80} & \textbf{80--90} & \textbf{90--100} & \textbf{[cm/m]} \\
+\hline\hline
+\textbf{07/26\_TUM} & $+0.59$ & $-0.03$ & $-0.07$ & $-0.08$ & $+0.01$ & $+0.25$ & $+0.28$ & $+0.38$ & $+0.44$ & $+1.06$ \\
+\textbf{08/03\_Kinetiz} & $+0.64$ & $+0.09$ & $-0.12$ & $-0.09$ & $0.00$ & $+0.10$ & $+0.10$ & $+0.19$ & $+0.21$ & $+0.67$ \\
+\textbf{10/12 (EVA)} & -- & $-0.23$ & $-0.27$ & $-0.04$ & $+0.14$ & $+0.43$ & $+0.53$ & $+0.56$ & $+0.62$ & $+1.45$ \\
+\textbf{10/13 (EVA)} & -- & -- & $-0.19$ & $+0.11$ & $+0.22$ & $+0.38$ & $+0.46$ & $+0.46$ & $+0.53$ & $+0.80$ \\
+\textbf{10/14\_eva} & $+0.30$ & $+0.24$ & $0.00$ & $+0.09$ & $+0.19$ & $+0.34$ & $+0.38$ & $+0.47$ & $+0.60$ & $+1.15$ \\
+\textbf{10/14-02 (EVA+LIVIA)} & $+1.20$ & $-0.03$ & $-0.13$ & $+0.01$ & $+0.23$ & $+0.42$ & $+0.56$ & $+0.57$ & $+0.58$ & $+1.51$ \\
+\textbf{10/14-04 (EVA)} & $+0.70$ & $+0.23$ & $+0.05$ & $-0.11$ & $+0.12$ & $+0.49$ & $+0.56$ & $+0.52$ & $+0.59$ & $+1.24$ \\
+\textbf{10/16 (EVA+LIVIA)} & $+0.47$ & $+0.19$ & $+0.16$ & $+0.04$ & $+0.19$ & $+0.39$ & $+0.44$ & $+0.48$ & $+0.48$ & $+1.02$ \\
+\hline
+\end{tabular}
+\caption{Camera: mean longitudinal error $e_x$ [m] vs $x_{\mathrm{rel}}$ (10\,m bins). Trend: slope~\eqref{eq:macro_slope} of $e_x$ between 40 and 100\,m.}
 \label{tab:cam_x}
 \end{table}
+\end{landscape}
 
 
 \begin{figure}[H]
@@ -242,7 +242,9 @@ Since all the eigenvalues of $\mathbf{F}_k$ are equal to one, for $\phi \neq 1$ 
 $\mathbf{F}_k - \phi\,\mathbf{I}_5$ is nonsingular and provides five independent rows, while
 $\mathbf{I}_2$ provides the remaining two, so that the rank is seven.
 
-For $\lambda = 1$, the matrix in~\eqref{eq:pbh} is
+\newpage
+\vspace*{\fill}
+\noindent For $\lambda = 1$, the matrix in~\eqref{eq:pbh} is
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}
     \left[
@@ -259,17 +261,21 @@ For $\lambda = 1$, the matrix in~\eqref{eq:pbh} is
         1 & 0 & 0 & 0 & 0 & 1 & 0 \\
         0 & 1 & 0 & 0 & 0 & 0 & 1
     \end{array}
-    \right],
+    \right].
 \end{equation}
-Reordering the rows and the columns and applying a series of algebraic operations on the rows
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
+\noindent Reordering the rows and the columns and applying a series of algebraic operations on the rows
 leads to the echelon form
 \begin{equation}
     \renewcommand{\arraystretch}{1.3}
+    \setlength{\arraycolsep}{9pt}
     \left[
     \begin{array}{ccccccc}
         1 & 0 & 0 & 0 & 0 & 0 & 0 \\
         0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & \Delta t & 0 & 0 & 0 & 0 \\
+        0 & 0 & \Delta t & 0 & 0 & 0 & 0 \\[1ex]
         0 & 0 & 0 & \Delta t\cos\psi_{k+1} & \dfrac{\cos\psi_{k+1} - \cos\psi_k}{\kappa} & 0 & 0 \\[1.5ex]
         0 & 0 & 0 & \Delta t\sin\psi_{k+1} & \dfrac{\sin\psi_{k+1} - \sin\psi_k}{\kappa} & 0 & 0 \\[1ex]
         0 & 0 & 0 & 0 & 0 & \phi - 1 & 0 \\
@@ -283,6 +289,6 @@ whose pivots are $1$, $1$, $\Delta t$ and the $2\times2$ block in the columns of
 $\psi$, associated with the CCA model, while the augmentation with the bias adds the pivots
 $\phi - 1$ and $\phi - 1$. Assuming the observability of the CCA model, the augmented model
 remains observable if and only if $\phi \neq 1$.
-
 The straight-line Jacobian~\eqref{eq:tt_F_straight} is a particular case of~\eqref{eq:tt_F}
 for $\kappa \to 0$, and the same reasoning applies.
+\vspace*{\fill}
