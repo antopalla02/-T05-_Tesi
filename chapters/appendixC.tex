@@ -3,7 +3,7 @@
 \markboth{Appendix C}{Appendix C}
 \label{app:rts}
 
-In this appendix the backward step of the RTS smoother of
+In this appendix the backward step of the RTS smoother~\cite{rauch1965,sarkka2013book} of
 Section~\ref{subsec:rts_backward} is derived for the linear Gaussian
 system~\eqref{eq:rts_linear}.
 
@@ -101,7 +101,7 @@ and therefore
     + \mathbf{C}_k\left(\mathbf{P}_{k+1|N} - \mathbf{P}_{k+1|k}\right)\mathbf{C}_k^\top.
 \end{equation}
 
-\subsection*{Initialization}
+\subsection*{Initialisation}
 
 The recursion starts from $\hat{\mathbf{x}}_{N|N}$ and $\mathbf{P}_{N|N}$ and runs for
 $k = N-1, \dots, 0$, using $\hat{\mathbf{x}}_{k|k}$, $\mathbf{P}_{k|k}$,

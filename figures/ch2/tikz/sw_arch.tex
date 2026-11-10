@@ -12,27 +12,23 @@
     line/.style={->, thick},
     dot/.style={circle, fill, inner sep=0pt, minimum size=2.2pt}
 ]
-% per-sensor processing
-\node[proc] (p1) {GNSS / IMU\\processing};
-\node[proc, below=3mm of p1] (p2) {Wheel speed\\processing};
-\node[proc, below=15mm of p2] (p3) {LiDAR\\processing};
+% per-sensor processing (perception)
+\node[proc] (p3) {LiDAR\\processing};
 \node[proc, below=3mm of p3] (p4) {RaDAR\\processing};
 \node[proc, below=3mm of p4] (p5) {Camera\\processing};
 
-% sensors
-\path ([xshift=-7mm]p1.north west) coordinate (s1) ([xshift=-21mm]p5.south west) coordinate (s2);
-\node[sens, fit=(s1)(s2), inner sep=0pt] (sens) {};
-\node[rotate=90, align=center] at (sens) {Exteroceptive and proprioceptive sensors};
-
-% estimation, right of GNSS/IMU and wheel speed
-\path ([xshift=18mm]p1.north east) coordinate (e1) ([xshift=36mm, yshift=-5mm]p2.south east) coordinate (e2);
-\node[mod, fit=(e1)(e2), inner sep=0pt] (est) {};
-\node at (est) {Estimation};
-
-% target tracking, right of LiDAR, RaDAR and camera, below estimation
+% target tracking, right of LiDAR, RaDAR and camera
 \path (p3.north east) -- (p5.south east) coordinate[pos=0.5] (tmid);
 \node[hl, anchor=west, minimum height=34mm] (trk) at ([xshift=18mm]tmid) {Target\\tracking};
 \node[grp, fit=(p3)(p5)(trk), label={[lab, anchor=south west, inner sep=1pt]north west:Perception}] (P) {};
+
+% estimation, above target tracking
+\node[mod, minimum height=12mm, anchor=south] (est) at ([yshift=16mm]trk.north) {Estimation};
+
+% sensors, from the height of estimation to the bottom of perception
+\path ([xshift=-7mm]p3.west |- est.north) coordinate (s1) ([xshift=-21mm]p5.south west) coordinate (s2);
+\node[sens, fit=(s1)(s2), inner sep=0pt] (sens) {};
+\node[rotate=90, align=center] at (sens) {Exteroceptive and\\proprioceptive sensors};
 
 % planning and control, aligned with tracking
 \node[mod, anchor=west] (plan) at ([xshift=14mm]trk.east) {Planning};
@@ -40,16 +36,10 @@
 \node[mod, fill=gray!8, below=7mm of plan] (db) {Track\\database};
 \node[sens, minimum width=18mm, below=7mm of ctrl] (act) {Actuators};
 
-% sensors to processing
-\foreach \p in {p1,p2,p3,p4,p5} \draw[line] (sens.east |- \p) -- (\p.west);
-
-% processing to estimation (all sources)
-\draw[line] (p1.east) -- (p1.east -| est.west);
-\draw[line] (p2.east) -- (p2.east -| est.west);
+% sensors to processing and to estimation
+\foreach \p in {p3,p4,p5} \draw[line] (sens.east |- \p) -- (\p.west);
+\draw[line] (sens.east |- est) -- (est.west);
 \coordinate (bus) at ([xshift=4mm]p5.east);
-\coordinate (busin) at ([yshift=-2.5mm]p2.south -| est.west);
-\draw[line] (bus) |- (busin);
-\foreach \p in {p3,p4,p5} \node[dot] at (bus |- \p) {};
 
 % processing to tracking (LiDAR, RaDAR, camera)
 \foreach \p in {p3,p4,p5} \draw[line] (\p.east) -- (\p.east -| trk.west);

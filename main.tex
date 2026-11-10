@@ -108,12 +108,12 @@
 \frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the preamble pages
 
 \puttitle{
-	title={\raggedright Adaptive Noise Modeling and Non-Causal State Estimation for Target Tracking in Autonomous Racing }, % Title of the thesis
+	title={\raggedright Adaptive Noise Modelling and Non-Causal State Estimation for Target Tracking in Autonomous Racing }, % Title of the thesis
 	name=Antonio Palladino, % Author Name and Surname
 	course=Automation and Control Engineering - Ingegneria dell'Automazione, % Study Programme
 	ID  = 273449,  % Student ID (matricola)
-	advisor= {Prof.~Matteo Corno}, % Supervisor name
-	coadvisor={Prof.~Sergio Matteo Savaresi,\\\hphantom{Co-advisors: }Dott.~Daniele Signori, Dott.~Riccardo Poli}, % Co-Supervisor names
+	advisor= {Prof.~Sergio Matteo Savaresi}, % Supervisor name
+	coadvisor={Prof.~Matteo Corno, Dott.~Daniele Signori}, % Co-Supervisor names
 	academicyear={2025-26},  % Academic Year
 }
 
@@ -126,15 +126,15 @@
 
 % ABSTRACT IN ENGLISH
 \chapter*{Abstract}
-In multi-vehicle autonomous driving scenarios, and in particular in autonomous racing, the estimation of the state of the opponents is fundamental to plan safe interactions and racing maneuvers. This estimate is provided by Target Tracking, which reconstructs the motion of each opponent over time by associating sensor detections and combining them with the predictions of a motion model. This thesis develops adaptive covariance tuning and non-causal estimation techniques within the Extended Kalman Filter (EKF) Target Tracking architecture of the Dallara AV-24 and EAV-25 racecars, employed in the Indy Autonomous Challenge and the Abu Dhabi Autonomous Racing League.
+In multi-vehicle autonomous driving scenarios, and in particular in autonomous racing, the estimation of the state of the opponents is fundamental to plan safe interactions and racing manoeuvres. This estimate is provided by Target Tracking, which reconstructs the motion of each opponent over time by associating sensor detections and combining them with the predictions of a motion model. This thesis develops adaptive covariance tuning and non-causal estimation techniques within the Extended Kalman Filter (EKF) Target Tracking architecture of the Dallara AV-24 and EAV-25 racing cars, employed in the Indy Autonomous Challenge and the Abu Dhabi Autonomous Racing League.
 
-The first part addresses the characterization of measurement noise and the tuning of its covariance, with the aim of weighting sensor observations consistently with their actual accuracy. A systematic procedure is developed for analyzing the measurements supplied by LiDAR Clustering, LiDAR PointPillars, RaDAR, and camera. Contributions associated with reference conventions, calibration, and observation geometry are examined before investigating the residuals in the time and frequency domains. A first-order Gauss--Markov model is used offline to characterize and separate the slowly varying component from the white contribution. Building on this analysis, innovation-based covariance matching is implemented for the two LiDAR pipelines to adapt measurement uncertainty to changing observation conditions.
+The first part addresses the characterisation of measurement noise and the tuning of its covariance, with the aim of weighting sensor observations consistently with their actual accuracy. A systematic procedure is developed for analysing the measurements supplied by LiDAR Clustering, LiDAR PointPillars, RaDAR, and camera. Contributions associated with reference conventions, calibration, and observation geometry are examined before investigating the residuals in the time and frequency domains. A first-order Gauss--Markov model is used offline to characterise and separate the slowly varying component from the white contribution. Building on this analysis, innovation-based covariance matching is implemented for the two LiDAR pipelines to adapt measurement uncertainty to changing observation conditions.
 
-The second part investigates adaptation of the process noise covariance during opponent maneuvers. An auxiliary EKF provides an acceleration estimate from which jerk is computed and used by a hysteresis-based detection logic. The resulting maneuver flag controls a feed-forward adjustment of the main filter's process noise, with the objective of combining responsiveness during abrupt transitions with smoother estimates during steady motion.
+The second part investigates adaptation of the process noise covariance during opponent manoeuvres. An auxiliary EKF provides an acceleration estimate from which jerk is computed and used by a hysteresis-based detection logic. The resulting manoeuvre flag controls a feed-forward adjustment of the main filter's process noise, with the objective of combining responsiveness during abrupt transitions with smoother estimates during steady motion.
 
 Non-causal estimation is then addressed through a Rauch--Tung--Striebel smoother implemented over a sliding window of fixed duration. As new measurements arrive, the backward recursion refines past state estimates using the subsequent observations available within the window. The smoother is also combined with the feed-forward approach to investigate their joint application to the reconstruction of opponent dynamics.
 
-The methods are evaluated using experimental racing data, comparing different tracking configurations and examining measurement uncertainty, state estimation accuracy, and the temporal reconstruction of maneuvers.
+The methods are evaluated using experimental racing data, comparing different tracking configurations and examining measurement uncertainty, state estimation accuracy, and the temporal reconstruction of manoeuvres.
 
 \bigskip
 \noindent\textbf{Keywords:} Target Tracking; Autonomous Racing; Covariance Matching; Non-Causal Estimation.

@@ -23,11 +23,11 @@ architecture.
 \label{sec:operating_conditions}
 
 The IAC and A2RL are autonomous racing competitions in which university teams from around the
-world develop the software that enables racecars to drive autonomously. These events bring
+world develop the software that enables racing cars to drive autonomously. These events bring
 autonomous driving into motorsport, subjecting the developed algorithms to particularly
 challenging conditions, with vehicles operating close to their dynamic limits and reaching
 speeds exceeding \SI{250}{km/h}. In multi-vehicle races, these demands are further increased by
-close interactions with opponents and the need to perform racing maneuvers at high speed. Both
+close interactions with opponents and the need to perform racing manoeuvres at high speed. Both
 competitions therefore provide a fertile environment for the development of autonomous driving
 technologies, enabling the exploration of scenarios that are difficult to reproduce in other
 applications.
@@ -37,9 +37,9 @@ applications.
 \label{subsec:iac}
 
 The Indy Autonomous Challenge (IAC)~\cite{iac_web} was among the first competitions to bring fully autonomous
-racecars to racing circuits. Launched in 2019 with a series of simulation-based
+racing cars to real circuits. Launched in 2019 with a series of simulation-based
 challenges, it held its first on-track event in 2021 at the Indianapolis Motor Speedway. All
-participating teams compete using an identical vehicle platform provided by the organizers, with
+participating teams compete using an identical vehicle platform provided by the organisers, with
 the competition focusing on the development of the autonomous driving software. Initially, IAC
 events were held primarily on oval circuits, including the Indianapolis Motor Speedway, Las Vegas
 Motor Speedway, and Texas Motor Speedway. In 2023, the competition expanded to road courses with
@@ -51,8 +51,8 @@ events, such as time trials and qualifying sessions, each car runs independently
 according to its fastest lap time. These formats primarily challenge the ability of the
 autonomous driving system to exploit the vehicle's dynamic capabilities while maintaining
 stability and control. Multi-vehicle formats introduce the additional complexity of interactions
-between competing vehicles, requiring the autonomous system to perceive and react to the behavior
-of other racecars.
+between competing vehicles, requiring the autonomous system to perceive and react to the behaviour
+of other racing cars.
 
 Among these formats, the passing competition, introduced in 2022, is specifically designed to
 challenge autonomous overtaking capabilities. It follows a single-elimination tournament
@@ -60,7 +60,7 @@ structure, with teams competing in head-to-head matches. During each match, the 
 alternate between the roles of attacker and defender: the defender maintains a prescribed speed
 and racing line, while the attacker attempts to complete an overtake within a designated passing
 zone. The difficulty progressively increases as the target speed is raised over successive
-rounds, until one of the competitors fails to complete the maneuver.
+rounds, until one of the competitors fails to complete the manoeuvre.
 
 \begin{figure}[H]
     \centering
@@ -70,7 +70,7 @@ rounds, until one of the competitors fails to complete the maneuver.
 \end{figure}
 
 \paragraph{Dallara AV-24.} The Dallara AV-24 (Fig.~\ref{fig:av24}) is the official vehicle
-of the IAC and the second generation of racecars adopted by the series, introduced in 2024
+of the IAC and the second generation of racing cars adopted by the series, introduced in 2024
 as the successor of the AV-21. It is built by Dallara on the chassis of the Indy NXT, and has
 been adapted to driverless operation while keeping the layout and the performance of the
 original car. The vehicle has been designed to compete mainly on oval tracks, and its main
@@ -87,7 +87,7 @@ characteristics are collected in Table~\ref{tab:av24}.
         Engine            & 4 Piston Racing K20C, \SI{2.0}{l} turbocharged four-cylinder \\
         Power             & \SI{488}{hp} \\
         Gearbox           & Ricardo, six-speed sequential \\
-        Top speed         & about \SI{250}{km/h} \\
+        Top speed         & about \SI{300}{km/h} \\
         Mass              & \SI{748}{kg} \\
         Length / width / height & \SI{4.88}{m} / \SI{1.93}{m} / \SI{1.16}{m} \\
         \bottomrule
@@ -115,7 +115,7 @@ control signals.
 \subsection{Abu Dhabi Autonomous Racing League}
 \label{subsec:a2rl}
 
-The Abu Dhabi Autonomous Racing League (A2RL)~\cite{a2rl_web} is an autonomous racing championship organized by
+The Abu Dhabi Autonomous Racing League (A2RL)~\cite{a2rl_web} is an autonomous racing championship organised by
 ASPIRE, which held its inaugural event in April 2024 at the Yas Marina Circuit, featuring a race
 between four fully autonomous vehicles. Unlike the IAC, which initially focused on oval tracks,
 the A2RL was conceived from the outset for road-course racing. After its first two editions in
@@ -127,7 +127,7 @@ Similarly to the IAC, the championship combines single-vehicle and multi-vehicle
 formats. The former include time trials and qualifying sessions, in which teams compete to
 achieve the fastest lap time, while the latter involve several vehicles racing simultaneously on
 the same track, introducing the additional challenges of opponent interactions and overtaking
-maneuvers.
+manoeuvres.
 
 \begin{figure}[H]
     \centering
@@ -145,7 +145,7 @@ dynamic conditions. The power unit is a turbocharged \SI{2.0}{l} four-cylinder e
 delivering about \SI{450}{hp}, which can be raised temporarily to about \SI{550}{hp} through
 the push-to-pass, coupled with a longitudinal six-speed sequential gearbox, which brings the
 car to a top speed of about \SI{250}{km/h}. The main characteristics of the vehicle are
-summarized in Table~\ref{tab:eav24}.
+summarised in Table~\ref{tab:eav24}.
 
 \begin{table}[H]
     \centering
@@ -184,7 +184,7 @@ other actuators, together with the radio system for the communication with race 
 
 This section focuses on the exteroceptive sensors mounted on the Dallara AV-24 and EAV-25,
 i.e.\ LiDARs, RaDARs and cameras, since they are the sensors on which the perception, and
-therefore the target tracking addressed in this work, is based. For each type of sensor, the
+therefore the Target Tracking addressed in this work, is based. For each type of sensor, the
 working principle and the main strengths and limitations are presented first, followed by the
 main characteristics and performance of the specific units mounted on each vehicle.
 
@@ -197,7 +197,7 @@ measures the distance of the surfaces that reflect them from the time of flight 
 pulse, $r = c\,\Delta t/2$. A scanning mechanism steers the beam in azimuth and
 elevation, and the high pulse repetition rate allows hundreds of thousands of points to
 be acquired every second. The output of each scan is a point cloud: a dense
-three-dimensional sampling of the surrounding surfaces, with centimeter-level range
+three-dimensional sampling of the surrounding surfaces, with centimetre-level range
 precision and an angular resolution of a few hundredths of a degree. From the point cloud
 the shape and the size of the objects around the vehicle can be reconstructed.
 
@@ -276,7 +276,7 @@ and more evident as the opponent aligns with the longitudinal axis of the ego ve
 The EAV-25 is equipped with three Innovusion Falcon Kinetic LiDARs: one at the front of
 the cockpit, facing forward, and two on the sides of the cockpit, oriented at
 $\pm\SI{120}{\degree}$ with respect to the longitudinal axis. The Falcon Kinetic operates at \SI{1550}{nm},  scanning up to 1500 lines
-per second and is used at \SI{20}{Hz}. Its angular resolution is
+per second and is used at \SI{10}{Hz}. Its angular resolution is
 \SI{0.18}{\degree} $\times$ \SI{0.24}{\degree} and can be increased to
 \SI{0.09}{\degree} $\times$ \SI{0.08}{\degree} in a specific region of interest of
 \SI{40}{\degree} $\times$ \SI{4.8}{\degree}, whose position within the field of view can be
@@ -298,7 +298,7 @@ Table~\ref{tab:lidar_eav24}.
         Angular resolution in the region of interest (H $\times$ V) & \SI{0.09}{\degree} $\times$ \SI{0.08}{\degree} (\SI{40}{\degree} $\times$ \SI{4.8}{\degree}) \\
         Scan lines                        & up to 1500 lines/s \\
         Maximum range                     & \SI{250}{m} (10\% reflectivity) \\
-        Update rate                       & \SI{20}{Hz} \\
+        Update rate                       & \SI{10}{Hz} \\
         \bottomrule
     \end{tabular}
     \caption{Main characteristics of the LiDARs mounted on the Dallara EAV-25.}
@@ -327,7 +327,7 @@ caused by the rear wing apply.
 \subsection{RaDAR}
 \label{subsec:radar}
 
-A RaDAR (Radio Detection and Ranging) is an active sensor that emits radio waves and analyzes
+A RaDAR (Radio Detection and Ranging) is an active sensor that emits radio waves and analyses
 the echoes reflected by surrounding objects to estimate their distance and direction. Through
 the Doppler effect, it also directly measures the range rate $\dot\rho$, i.e.\ the rate at which
 the distance between the sensor and the target changes. This quantity is related to the phase
@@ -350,8 +350,7 @@ laser light used by LiDAR and are less attenuated by dust, fog and rain, allowin
 operation in adverse weather conditions.
 
 Within a sensor fusion framework, RaDAR complements LiDAR by providing range-rate measurements
-and detecting targets beyond the range covered by LiDAR. Combining the two sensors therefore
-extends the effective detection range of the tracking system.
+and detecting targets beyond the range covered by LiDAR. Combining the two sensors can therefore improve the performance of the tracking system.
 
 \subsubsection{Dallara AV-24}
 
@@ -455,9 +454,8 @@ behind the car to be covered efficiently.
 \label{subsec:camera}
 
 Cameras are passive sensors that capture images of the scene at high resolution and
-frame rate. Their main strength is the semantic content of the images, since color, texture
-and shape make them well suited to the detection and classification of the surrounding
-objects.
+frame rate. Their main strength is the semantic content of the images, since colour, texture
+and shape make them well suited to the detection and classification of the surrounding objects.
 
 Being passive, they depend on the ambient light, so that the quality of the images changes
 with the brightness of the scene, as well as with the weather. Moreover, the scene is
@@ -520,7 +518,7 @@ main characteristics are reported in Table~\ref{tab:cam_eav24}.
 \section{Software Architecture}
 \label{sec:sw_arch}
 
-The autonomous driving software, shared by the two vehicles, is organized in four
+The autonomous driving software, shared by the two vehicles, is organised in four
 main modules: estimation, perception, planning and control (Fig.~\ref{fig:sw_arch}).
 
 \begin{figure}[H]
@@ -532,13 +530,13 @@ main modules: estimation, perception, planning and control (Fig.~\ref{fig:sw_arc
 \end{figure}
 
 \paragraph{Estimation.} The estimation module reconstructs the current state of the ego
-vehicle, i.e.\ its position, velocity and acceleration, by combining the measurements of the
-GNSS receivers, the inertial units, the LiDARs and the wheel encoders with the feedback of
+vehicle, i.e.\ its position, velocity and acceleration, by combining the measurements of
+GNSS receivers, inertial units, LiDARs, RaDARs and wheel encoders with the feedback of
 the actuators, i.e.\ braking, steering and throttle. The resulting description of the ego
 state is then fed to the perception, planning and control modules.
 
 \paragraph{Perception.}The perception module turns the raw data of LiDARs, RaDARs and cameras into a description of the vehicles around the ego car. For each sensor, the raw data are processed into a list of detections, each containing the position of a vehicle and, for the RaDAR, also its range rate. The detections of the different sensors are then passed to
-the \emph{target tracking} module, which associates them over time with the vehicles
+the \emph{Target Tracking} module, which associates them over time with the vehicles
 already known, fuses the information coming from the different sensors and estimates
 the state of each opponent. The result is
 the list of the opponents with their estimated state, which is the output of perception towards planning. The target
