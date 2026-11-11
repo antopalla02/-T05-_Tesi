@@ -604,7 +604,9 @@ the discrete Fourier transform,
     P_i(f) = \frac{\Delta t}{N\,U}
     \left|\sum_{n=0}^{N-1} w_n\, e_{i,n}\, e^{-j 2\pi f n \Delta t}\right|^2,
     \qquad
-    U = \frac{1}{N}\sum_{n=0}^{N-1} w_n^2.
+    U = \frac{1}{N}\sum_{n=0}^{N-1} w_n^2,
+    \qquad
+    |f| \leq \frac{1}{2\Delta t}.
     \label{eq:periodogram}
 \end{equation}
 To obtain a more robust estimator, the PSD is obtained by averaging the periodograms of the
@@ -613,7 +615,8 @@ windows,
     S_e(f) = \frac{1}{K}\sum_{i=1}^{K} P_i(f).
     \label{eq:welch}
 \end{equation}
-The PSD is one-sided and it is expressed in \si{m^2/Hz}. A Hann window of $N = 128$ samples is adopted with overlap between consecutive
+The figures and the tables report the PSD in its one-sided version, expressed in
+\si{m^2/Hz}. A Hann window of $N = 128$ samples is adopted with overlap between consecutive
 windows of \SI{50}{\percent}, to increase the number of periodograms to be averaged.
 
 The analysis is limited to the segments in which the opponent is ahead.
@@ -632,7 +635,7 @@ the smallest, with 45--\SI{64}{\percent} of the power below \SI{1}{Hz}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{figures/ch4/error_psd.pdf}
-    \caption{PSD of the residual errors, opponent ahead, sessions 07/26\_TUM and
+    \caption{One-sided PSD of the residual errors, opponent ahead, sessions 07/26\_TUM and
     10/14\_eva.}
     \label{fig:psd}
 \end{figure}
@@ -664,10 +667,10 @@ the smallest, with 45--\SI{64}{\percent} of the power below \SI{1}{Hz}.
 \label{tab:psd_sessions}
 \end{table}
 
-Transposing the PSD into the time domain through the Wiener--Khinchin theorem, the
+Transposing the two-sided PSD $S_e$ into the time domain through the Wiener--Khinchin theorem, the
 autocorrelation of the residual errors is obtained,
 \begin{equation}
-    R_e(\ell) = \int_{-\infty}^{+\infty} S_e(f)\, e^{\,j 2\pi f \ell}\, df,
+    R_e(\ell) = \int_{-1/(2\Delta t)}^{1/(2\Delta t)} S_e(f)\, e^{\,j 2\pi f \ell}\, df,
     \qquad
     \rho_e(\ell) = \frac{R_e(\ell)}{R_e(0)},
     \label{eq:wiener_khinchin}
@@ -839,13 +842,14 @@ sensor, the measurement at instant $k$ is then
 \begin{equation}
     \mathbf{z}_k = \mathbf{p}_k + \mathbf{b}_k + \mathbf{w}_k,
     \qquad
-    \mathbf{w}_k \sim \mathcal{N}\!\left(\mathbf{0},\, \sigma_w^2\,\mathbf{I}\right),
+    \mathbf{w}_k \sim \mathcal{N}\!\left(\mathbf{0},\,
+    \operatorname{diag}\!\left(\sigma_{w,x}^2,\, \sigma_{w,y}^2\right)\right),
     \label{eq:gm_augmented}
 \end{equation}
 where $\mathbf{p}_k = \mathbf{H}\mathbf{x}_k$ is the position of the opponent,
 $\mathbf{b}_k$ is the bias of the sensor and $\mathbf{w}_k$ is the white noise component of
-the sensor, isolated with the Gauss-Markov model, whose standard deviation $\sigma_w$ is
-reported in Table~\ref{tab:gm_sigmas}.
+the sensor, isolated with the Gauss-Markov model, whose longitudinal and lateral standard
+deviations $\sigma_{w,x}$ and $\sigma_{w,y}$ are reported in Table~\ref{tab:gm_sigmas}.
 
 Before its implementation, the observability of the augmented model is examined. The
 mathematical observability is demonstrated for the case of a single sensor, i.e.\ a single
@@ -1029,12 +1033,13 @@ conditions in which the opponent is observed in the best way and the sensor work
 while the tails collect the instants in which the quality of the measurement degrades. This
 behaviour is evident above all for LiDAR Clustering, which, as discussed in
 Section~\ref{subsec:macro_lidar}, is very precise but has a standard deviation that
-depends strongly on the working conditions. Rather than a single Gaussian distribution, the
-errors are therefore better described by a mixture of Gaussians with different variances.
-Since the sample standard deviation weights the squared deviations, the fitted value is
-dominated by the tails, so that the resulting normal distribution is wider than the core and a
-static value of $\mathbf{R}$ underestimates the accuracy of the sensor in most of the
-instants. From these considerations comes the idea of investigating an adaptive approach,
+depends strongly on the working conditions. These observations suggest that a mixture of
+Gaussians with different variances may provide a more suitable approximation than a single
+Gaussian distribution, a hypothesis that is verified in Section~\ref{sec:adaptive_r_results}.
+Since the sample standard deviation weights the squared deviations, the fitted value can be
+strongly influenced by the tails, so that the resulting normal distribution may be wider than
+the core and a static value of $\mathbf{R}$ may underestimate the accuracy of the sensor when
+it works in favourable conditions. From these considerations comes the idea of investigating an adaptive approach,
 with the aim of reconstructing the leptokurtic distribution of the errors and of weighting
 each detection according to its accuracy, so as to trust the sensor more when it works well
 and less when its measurements degrade. Such an approach, based on covariance matching, is
@@ -1042,8 +1047,8 @@ proposed in Section~\ref{sec:adaptive_r}.
 
 The values in Table~\ref{tab:sensor_noise} show that the standard deviation of the measurement errors varies slightly across sessions. This may be attributed to several factors. One possible source of variability is the difference in the operating conditions across the sessions. For instance, as shown in the previous sections, the standard deviation of LiDAR Clustering increases with the range and when the opponent is behind the ego vehicle, leading to potentially larger values in sessions characterised by greater average distances or a higher proportion of observations with the opponent behind. Moreover, the measurement errors also include contributions from the perception pipelines and the opponent state estimation used as reference, and therefore depend on their respective characteristics. In particular, the quality of the reference may differ across teams, as each opponent relies on its own state estimation system, as discussed in Section~\ref{sec:gt}. Similarly, the perception pipelines may undergo modifications between sessions, as different implementations or updates are tested during development, potentially affecting their error characteristics and contributing to the observed variability. Nevertheless, since the filter receives exactly these measurements and has to weight them
 against the prediction, the obtained values are representative of the uncertainty that the
-filter sees on average, and therefore provide a correct tuning of the measurement noise
-covariance matrix.
+filter sees on average, and therefore provide a reasonable static baseline for tuning the
+measurement noise covariance matrix.
 
 Overall, the analysis has provided a physically meaningful characterisation of the
 measurement errors, identifying both systematic contributions and trends associated with the
@@ -1248,8 +1253,11 @@ approximates well its almost Gaussian distribution, but it still adapts locally.
 
 Overall, the adaptive covariance is more consistent than the nominal value, and it
 reconstructs the distribution of the measurement error from the innovations and from the
-covariance of the filter. Being estimated from the innovations, however, it describes only
-the white component of the error and is blind to the slow one, which in practice cannot be separated from the motion of the opponent (Section~\ref{subsec:gauss_markov_model}).
+covariance of the filter. Being estimated from the innovations, however, in the configuration
+analysed it mainly describes the white component of the error. The filter, in fact, partly
+follows the slow component, which in practice cannot be separated from the motion of the
+opponent (Section~\ref{subsec:gauss_markov_model}), so that this component is only partially
+reflected in the innovations and, therefore, in the adaptive covariance.
 
 % =====================================================================
 \section{Future Work}
@@ -1296,7 +1304,6 @@ holds, and the estimated relative term can be interpreted as an estimate of the 
 
 In general, this framework is applicable only in a sensor fusion context, where measurements
 of the same opponent from multiple pipelines provide the independent constraints needed to
-separate the relative bias from the motion. If sensor fusion is not performed, because only
-one sensor observes the opponent or because one of the sensors is much more accurate than
-the others, the tracker cannot distinguish the bias from the motion and ends up following
-it, as discussed in Section~\ref{sec:gauss_markov}.
+separate the relative bias from the motion. If only one sensor observes the opponent, or if
+one of the sensors is much more accurate than the others, the tracker cannot effectively distinguish the bias from the motion and ends
+up following it, as discussed in Section~\ref{sec:gauss_markov}.
