@@ -129,15 +129,22 @@
 
 % ABSTRACT IN ENGLISH
 \chapter*{Abstract}
-In multi-vehicle autonomous driving scenarios, and in particular in autonomous racing, estimating the state of the opponents is fundamental to plan safe interactions and racing manoeuvres. Target Tracking provides this estimate by combining sensor detections with the predictions of a motion model. This thesis develops adaptive covariance tuning and non-causal estimation techniques within the Extended Kalman Filter (EKF) Target Tracking architecture of the Dallara AV-24 and EAV-25 racing cars, employed in the Indy Autonomous Challenge and the Abu Dhabi Autonomous Racing League, with the aim of improving the characterisation of the measurement noise and the reconstruction of the opponent state under fast-changing dynamic conditions.
+\begingroup\setlength{\parskip}{4pt}% tighter spacing so that the abstract fits on one page
 
-The first part focuses on the detection errors, to tune EKF covariances consistently with sensor accuracy. A systematic procedure analyses LiDAR Clustering, LiDAR PointPillars, RaDAR and camera measurements, compensating reference, calibration and sensor-specific effects before examining the residuals in the time and frequency domains. Innovation-based covariance matching then adapts the measurement noise covariance of the two LiDAR pipelines to account for the variability in the quality of the detections.
+In multi-vehicle autonomous driving scenarios, and in particular in autonomous racing, estimating the state of the opponents is fundamental to plan safe interactions and racing manoeuvres. Target Tracking provides this estimate by combining sensor detections with the predictions of a motion model. This thesis develops adaptive covariance tuning and non-causal estimation techniques within the Extended Kalman Filter (EKF) Target Tracking module of the autonomous driving software architecture of the Dallara AV-24 and EAV-25 racing cars, which in 2026 competed, respectively, in the Indy Autonomous Challenge (IAC), at WeatherTech Raceway Laguna Seca, and in the Abu Dhabi Autonomous Racing League (A2RL), at the Autodromo Enzo e Dino Ferrari in Imola.
 
-The second part implements a feed-forward strategy that increases the process noise covariance when a manoeuvre is detected, improving responsiveness while preserving smooth estimates during steady motion. Detection relies on a hysteresis-based flag driven by the jerk derived from an auxiliary EKF. Finally, a non-causal filter, namely a fixed-lag Rauch--Tung--Striebel smoother, refines past state estimates by exploiting information from future estimates within a sliding window, and its combination with feed-forward adaptation is also investigated.
+The objective of this work is to improve estimation in a strongly non-stationary environment, where measurement quality and opponent dynamics change rapidly. Under these conditions, adaptive noise modelling is used to extend the classical Kalman filtering formulation and improve the filter's consistency and performance.
 
-The approaches are tested on data collected on track, and the results show a measurement uncertainty more consistent with the actual detection errors and a more accurate estimate of the speed and acceleration of the opponent.
+In the characterisation of measurement noise, covariance matching uses the innovations to capture changes in detection quality, adjusting the confidence that the filter assigns to the observations accordingly.
 
-\bigskip
+A more representative model of the process noise is also obtained through a feed-forward approach that adapts its covariance when a manoeuvre is detected. This addresses the mismatch between the motion model and the actual vehicle dynamics during abrupt braking and acceleration, improving the filter's responsiveness while retaining nominal behaviour during steady motion.
+
+Finally, the benefits of incorporating future information are assessed by moving from the classical causal formulation to a non-causal estimation framework. To this end, a Rauch--Tung--Striebel smoother is implemented in its fixed-lag formulation.
+
+All the proposed algorithms are evaluated on experimental data collected during track sessions.
+
+\endgroup
+\medskip
 \noindent\textbf{Keywords:} Target Tracking; Autonomous Racing; Covariance Matching; Adaptive Noise Modelling; Non-Causal Estimation.
 
 % blank separation page between the two abstracts
@@ -152,15 +159,21 @@ The approaches are tested on data collected on track, and the results show a mea
 \chapter*{Abstract in lingua italiana}
 \makeatletter\@openrighttrue\makeatother\let\cleardoublepage\origcleardoublepage
 \begin{otherlanguage}{italian}
-Nella guida autonoma multi-veicolo, e in particolare nelle competizioni di guida autonoma, stimare lo stato degli avversari è essenziale per pianificare manovre di gara e interazioni con le altre autovetture. Tale stima è fornita dal Target Tracking, che combina gli output dei sensori con le predizioni di un modello di moto. Questa tesi sviluppa tecniche di taratura adattiva delle covarianze e di stima non causale per il modulo di Target Tracking, basato su un Extended Kalman Filter (EKF), delle vetture Dallara AV-24 ed EAV-25, impiegate nell'Indy Autonomous Challenge e nell'Abu Dhabi Autonomous Racing League, con l'obiettivo di migliorare la caratterizzazione del rumore di misura e la ricostruzione dello stato dell'avversario in condizioni dinamiche rapidamente variabili.
+\setlength{\parskip}{4pt}% tighter spacing so that the abstract fits on one page
 
-La prima parte del lavoro di ricerca si concentra sugli errori delle detection, per definire covarianze coerenti con l'accuratezza delle osservazioni. Una procedura sistematica analizza le misure di LiDAR Clustering, LiDAR PointPillars, RaDAR e camera: compensati gli effetti di riferimento, calibrazioni e sensore, i residui vengono studiati nel tempo e in frequenza. Per le pipeline LiDAR, il covariance matching basato sulle innovazioni adatta infine la covarianza di misura alla variabilità della qualità delle detection.
+Nella guida autonoma con più veicoli, e in particolare nelle gare a guida autonoma, stimare lo stato degli avversari è fondamentale per pianificare interazioni sicure e manovre di gara. Il Target Tracking fornisce questa stima combinando i rilevamenti dei sensori con le predizioni di un modello di moto. La tesi sviluppa tecniche di taratura adattiva delle covarianze e di stima non causale nel modulo di Target Tracking, basato su un filtro di Kalman esteso (EKF), dell'architettura software delle vetture autonome Dallara AV-24 ed EAV-25. Nel 2026 hanno gareggiato rispettivamente nell'Indy Autonomous Challenge (IAC), al WeatherTech Raceway Laguna Seca, e nell'Abu Dhabi Autonomous Racing League (A2RL), all'Autodromo Enzo e Dino Ferrari di Imola.
 
-La seconda parte propone una strategia feed-forward che aumenta la covarianza del rumore di processo quando viene rilevata una manovra, rendendo il filtro più reattivo senza modificarne il funzionamento a regime. La manovra è individuata tramite una logica con isteresi sul jerk, ottenuto dall'accelerazione stimata da un EKF ausiliario. Infine, un filtro non causale, uno smoother di Rauch--Tung--Striebel a ritardo fisso, corregge le stime degli stati passati sfruttando l'informazione degli stati futuri entro una finestra mobile, e ne viene studiata anche la combinazione con il feed-forward.
+L'obiettivo è migliorare la stima in un contesto fortemente non stazionario, in cui la qualità delle misure e la dinamica degli avversari cambiano rapidamente. Per affrontare queste condizioni, la formulazione classica del filtro di Kalman viene estesa attraverso una modellazione adattiva del rumore, volta a migliorarne consistenza e prestazioni.
 
-I metodi proposti sono testati su dati raccolti in pista, e i risultati mostrano un'incertezza di misura più coerente con gli errori reali delle detection e una stima più accurata di velocità e accelerazione dell'avversario.
+Nella caratterizzazione del rumore di misura, il covariance matching sfrutta le innovazioni per individuare le variazioni nella qualità dei rilevamenti e adeguare di conseguenza la fiducia attribuita dal filtro alle osservazioni.
 
-\bigskip
+Un modello più rappresentativo del rumore di processo viene inoltre ottenuto mediante un approccio feed-forward, che ne adatta la covarianza quando viene rilevata una manovra. L'adattamento tiene conto dello scostamento tra il modello di moto e la dinamica effettiva del veicolo durante frenate e accelerazioni brusche, rendendo il filtro più reattivo e preservandone il comportamento nominale a regime.
+
+Infine, si valuta il beneficio dell'utilizzo di informazioni future passando dalla formulazione causale classica a un contesto di stima non causale. A questo scopo viene implementato uno smoother di Rauch--Tung--Striebel a ritardo fisso.
+
+Tutti gli algoritmi proposti sono valutati su dati sperimentali raccolti durante sessioni in pista.
+
+\medskip
 \noindent\textbf{Parole chiave:} \foreignlanguage{english}{Target Tracking; Autonomous Racing; Covariance Matching; Adaptive Noise Modelling; Non-Causal Estimation}.
 \end{otherlanguage}
 

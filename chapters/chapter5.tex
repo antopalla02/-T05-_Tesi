@@ -245,8 +245,24 @@ limits false detections and chattering.
 
 The thresholds are chosen on the jerk of the ground truth, by comparing its values on the
 straights, where the dynamics varies slowly, with those at the beginning and at the end of the
-manoeuvres, so that the latter exceed the upper threshold while the former remain mostly below
-the lower one. This leads to $j_{\mathrm{on}} = \SI{15}{m/s^3}$ and $j_{\mathrm{off}} = \SI{5}{m/s^3}$.
+manoeuvres. Fig.~\ref{fig:qff_jerk_tuning} shows this comparison for a braking manoeuvre.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/ch5/jerk_0905_braking.pdf}
+    \caption{Longitudinal acceleration and magnitude of the jerk of the ground truth during a
+    braking manoeuvre, with the activation and deactivation thresholds and the intervals in
+    which the flag is active. Session of 5 September 2026, Imola.}
+    \label{fig:qff_jerk_tuning}
+\end{figure}
+
+When the acceleration is approximately constant, the magnitude of the jerk remains below about
+\SI{10}{m/s^3}, so that an activation threshold of \SI{15}{m/s^3} lies above these peaks and is
+robust to them. Yet, at the onset of the braking, the jerk grows steeply and exceeds this value
+almost immediately, so that the activation of the flag is not delayed with respect to the
+beginning of the manoeuvre. For these reasons, $j_{\mathrm{on}} = \SI{15}{m/s^3}$ is adopted.
+The deactivation threshold is instead tuned so that the flag switches off at the end of the
+manoeuvre, which leads to $j_{\mathrm{off}} = \SI{5}{m/s^3}$.
 \subsection{Implementation}
 \label{subsec:qff_implementation}
 \label{sec:qff_implementation}
