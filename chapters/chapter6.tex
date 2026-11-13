@@ -1,22 +1,32 @@
 \chapter{Non-Causal Filtering}
 \label{ch:rts}
 
-This chapter presents a non-causal approach to improve the estimate of the speed of the
-opponent. Unlike the classical formulation of the Kalman filter~\cite{kalman1960}, in which the estimate
-$\hat{\mathbf{x}}_{k|k}$ at instant $k$ is computed only from the measurements acquired up to
-that instant, the approach prescribes the use of future information, i.e.\ of the
-measurements acquired after instant $k$ up to a later instant $N > k$, to compute the
-smoothed estimate $\hat{\mathbf{x}}_{k|N}$. The main advantage is that, by exploiting the information carried
-by the future measurements, the estimate becomes robust to possible mismatches between the
-motion model prescribed by the filter and the actual dynamics of the opponent. The drawback, however, is that the real-time estimate is given up, since the
-refined state refers to a past instant. In our application this is acceptable, since the
-estimate of the opponent is mainly used by the gap control of the planning module, which
-regulates the distance from the opponent in terms of time and does not strictly require the
-state at the current instant, so that an estimate referred to a past instant but more
-accurate can be used instead.
+This chapter presents a non-causal approach to improve the estimate of the opponent's state.
+Unlike the classical formulation of the Kalman filter~\cite{kalman1960}, in which the
+estimate $\hat{\mathbf{x}}_{k|k}$ at instant $k$ is computed only from the measurements
+acquired up to that instant, this approach also uses future information, i.e.\ measurements
+acquired after instant $k$ up to a later instant $N > k$, to compute the smoothed estimate
+$\hat{\mathbf{x}}_{k|N}$. This is achieved through the Rauch--Tung--Striebel (RTS) smoother,
+which, for linear Gaussian systems, provides the optimal smoothed state estimate in the
+minimum mean square error sense, given all the measurements up to instant
+$N$~\cite{rauch1965,sarkka2013book}. By incorporating future measurements into the estimates
+of past states, the smoother can mitigate the effects of a mismatch between the filter's
+motion model and the actual dynamics of the opponent. During a braking manoeuvre, for
+instance, the causal filter may initially continue to predict the opponent's motion
+according to the dynamics estimated before braking, detecting the deceleration only as new
+measurements arrive. The smoother propagates the information carried by these subsequent
+measurements backward in time, correcting the speed and acceleration estimates at instants
+when the causal filter had not yet fully captured the change in motion. This can reduce the
+lag of the reconstructed braking response and attenuate fluctuations in the estimated state.
+The drawback, however, is that the refined estimate refers to a past instant and requires
+the acquisition of subsequent measurements before it becomes available. In our application,
+this is acceptable because the planning module uses the opponent's state history for gap
+control, which regulates the distance from the opponent in terms of time. The smoothed
+estimates can therefore refine this history at their corresponding timestamps, while the
+most recent state prediction remains causal.
 
 Section~\ref{sec:rts_problem} introduces the smoothing problem and
-Section~\ref{sec:rts_formulation} derives the Rauch--Tung--Striebel (RTS) smoother, 
+Section~\ref{sec:rts_formulation} derives the RTS smoother, 
 Sections~\ref{sec:rts_implementation} and~\ref{sec:rts_sensitivity} describe its
 implementation and present the results. Finally, Section~\ref{sec:rts_qff} proposes its
 combination with the feed-forward process noise approach introduced in the previous chapter.
@@ -78,8 +88,11 @@ under the following assumptions:
     \item \textbf{Gaussian white noises.} The process and the measurement noises are
     zero-mean, Gaussian, uncorrelated in time and mutually independent, with covariances
     $\mathbf{Q}_k$ and $\mathbf{R}_k$.
-    \item \textbf{Markov property.} Given the current state, the next state does not depend
-    on the past ones, and each measurement depends only on the state at the same instant.
+    \item \textbf{Markov property.} The state sequence follows a first-order Markov process:
+    given the current state $\mathbf{x}_k$, the next state $\mathbf{x}_{k+1}$ is conditionally
+    independent of all previous states,
+    $p(\mathbf{x}_{k+1} \mid \mathbf{x}_1, \dots, \mathbf{x}_k) =
+    p(\mathbf{x}_{k+1} \mid \mathbf{x}_k)$.
 \end{itemize}
 
 The structure of the smoother is shown in Fig.~\ref{fig:rts_scheme}. The forward pass is the
@@ -138,9 +151,7 @@ maximise the logarithm of their conditional density given all the measurements,
 which, since $p(\mathbf{Y}_N)$ does not depend on the states, is equivalent to maximising the
 joint density $p(\mathbf{x}_k, \mathbf{x}_{k+1}, \mathbf{Y}_N)$. Splitting the measurements
 into those up to instant $k$ and the future ones, and applying the definition of conditional
-probability together with the Markov property of the model, for which the future
-measurements depend only on $\mathbf{x}_{k+1}$ and the transition to $\mathbf{x}_{k+1}$
-depends only on $\mathbf{x}_k$, the joint density factorises as
+probability together with the Markov property of the model, the joint density factorises as
 \begin{equation}
     p(\mathbf{x}_k, \mathbf{x}_{k+1}, \mathbf{Y}_N) =
     p(\mathbf{z}_{k+1}, \dots, \mathbf{z}_N \mid \mathbf{x}_{k+1})\;
@@ -370,15 +381,24 @@ the global and the local RMSE by \SI{31}{\percent} and \SI{35}{\percent}, respec
 same overlap observed in Fig.~\ref{fig:rts_lag_radar} is evident here, since the reduction of
 the RMSE grows with the window up to about \SI{300}{ms} and then saturates.
 
-This behaviour depends on the fact that, in the backward step~\eqref{eq:rts_backward}, the
-correction of each state is weighted by the gain
-$\mathbf{C}_k = \mathbf{P}_{k|k}\mathbf{F}_k^\top\mathbf{P}_{k+1|k}^{-1}$, which depends on the
-ratio between the filtered and the predicted covariance. With the range rate of the RaDAR, the
-speed is directly observed and its filtered variance is small compared with the process noise
-accumulated in the prediction, so that the gain is small and the contribution of each future
-measurement is rapidly attenuated as it is propagated backward. As a consequence, only the
-measurements acquired within about \SI{300}{ms} after each instant affect the smoothed state,
-while the later ones bring no further benefit.
+This saturation follows from how the information of the future measurements reaches the
+state at instant $k$. From the backward step~\eqref{eq:rts_backward}, a variation of the
+smoothed state at $k+1$ is transferred to the one at $k$ through the gain,
+$\partial\hat{\mathbf{x}}_{k|N}/\partial\hat{\mathbf{x}}_{k+1|N} = \mathbf{C}_k$. Applying
+the step recursively, a variation of the state at $k+m$, such as the one produced by a new
+measurement, reaches the state at $k$ through the product of the gains,
+\begin{equation}
+    \frac{\partial\hat{\mathbf{x}}_{k|N}}{\partial\hat{\mathbf{x}}_{k+m|N}}
+    = \mathbf{C}_k\mathbf{C}_{k+1}\cdots\mathbf{C}_{k+m-1}.
+    \label{eq:rts_gain_product}
+\end{equation}
+Each gain $\mathbf{C}_k = \mathbf{P}_{k|k}\mathbf{F}_k^\top\mathbf{P}_{k+1|k}^{-1}$ compares
+the filtered covariance $\mathbf{P}_{k|k}$ with the predicted one $\mathbf{P}_{k+1|k}$. With
+the range rate of the RaDAR, the speed is measured directly and enters every correction step,
+lowering its variance in $\mathbf{P}_{k|k}$, which is therefore much smaller than in
+$\mathbf{P}_{k+1|k}$. The gain on this component is therefore small, and the
+product~\eqref{eq:rts_gain_product} decreases rapidly, vanishing within about \SI{300}{ms}. Measurements acquired beyond this horizon no
+longer reach the state at $k$, so widening the window brings no further reduction of the RMSE.
 
 \begin{figure}[!htbp]
     \centering
@@ -418,12 +438,23 @@ while the later ones bring no further benefit.
 \subsection*{Sensitivity Analysis without Speed Measurements}
 \label{subsec:rts_radar}
 
-The analysis is then repeated without the RaDAR, so that the speed is no longer measured and
-is reconstructed by the forward filter from the position measurements only.
+Given how the RTS incorporates future information into the estimate it corrects, it is also
+of interest to investigate the case in which only position measurements are available, i.e.\
+without the RaDAR. This is the worst case for the estimation of the derived dynamics, since
+speed and acceleration are no longer measured and must be reconstructed by the forward filter
+as the first and second time derivatives of the position provided by the LiDARs and the
+camera. The forward filter is therefore expected to be more uncertain on these components.
+Based on~\eqref{eq:rts_backward} and~\eqref{eq:rts_gain_product}, the hypothesis is that the
+larger entries of $\mathbf{P}_{k|k}$ increase the gain $\mathbf{C}_k$, so that future
+information is weighted more and, through the product of the gains, propagated further back
+in time. The analysis is carried out to verify this
+hypothesis and to quantify whether, and to what extent, the use of future estimates is
+beneficial in this configuration.
+
 Fig.~\ref{fig:rts_lag_noradar} shows that, in this case, the one-step-ahead prediction and
 the causal state lag behind the ground truth more markedly than in the previous case, and
-that the smoothed estimates obtained with the different windows are clearly separated, i.e.\
-the correction applied by the smoother to the causal state is considerably larger.
+that the RTS estimates obtained with the different windows are clearly separated, i.e.\ the
+correction applied by the RTS to the causal state is considerably larger.
 
 \begin{figure}[H]
     \centering
@@ -458,26 +489,15 @@ up to about \SI{500}{ms}, where it saturates at about \SI{-106}{ms}. The same be
 local RMSE, computed on the braking manoeuvres, which reaches its minimum of \SI{0.669}{m/s} at
 about \SI{500}{ms} and then increases, up to \SI{0.820}{m/s} at \SI{981}{ms}.
 
-This behaviour is a direct consequence of how the future information is propagated backward by
-the smoother. From the backward step~\eqref{eq:rts_backward}, a variation of the smoothed
-state at $k+1$ is transferred to the one at $k$ through the gain,
-$\partial\hat{\mathbf{x}}_{k|N}/\partial\hat{\mathbf{x}}_{k+1|N} = \mathbf{C}_k$, and applying
-the step recursively, a variation of the state at $k+m$ reaches the state at $k$ through the
-product of the gains,
-\begin{equation}
-    \frac{\partial \hat{\mathbf{x}}_{k|N}}{\partial \hat{\mathbf{x}}_{k+m|N}} =
-    \mathbf{C}_k\,\mathbf{C}_{k+1} \cdots \mathbf{C}_{k+m-1}.
-    \label{eq:rts_memory}
-\end{equation}
-The information carried by a measurement is therefore not confined to the state that
-immediately precedes it, but it is propagated backward to all the earlier states of the
-window, attenuated at each step by the gain. When the opponent starts braking, the first
-measurements that reveal the deceleration correct not only the preceding state but, through
-the product~\eqref{eq:rts_memory}, also the earlier ones, which start to decelerate before
-the opponent actually does, so that the onset of the braking is anticipated. The extent of
-this anticipation is set by how slowly the product of the gains decays. Without the range
-rate the gains are larger and the deceleration is propagated further back in time, while with
-the RaDAR the product decays rapidly and the anticipation remains limited.
+This behaviour is explained by~\eqref{eq:rts_gain_product}. Without the measurement of the
+range rate of the RaDAR, the filtered covariance $\mathbf{P}_{k|k}$ is no longer corrected by
+a direct observation of the speed, and the forward filter remains more uncertain on the speed and
+the acceleration. The gains $\mathbf{C}_k$ are therefore larger, their product decays more
+slowly and, as a consequence, the effect of the measurements is propagated further back in
+time. During braking, this backward propagation carries information about the deceleration to
+states preceding the actual onset of the manoeuvre. The corresponding speed estimates are
+therefore corrected downwards, causing the reconstructed braking response to begin earlier
+than in the ground truth.
 
 \begin{table}[H]
 \centering
@@ -562,21 +582,19 @@ both for the speed and for the acceleration.
 
 As a final step, the RTS smoother is combined with the feed-forward process noise approach introduced in Chapter~\ref{ch:qff}. As discussed at the end of that chapter, although the feed-forward strategy improves the responsiveness of the filter during manoeuvres, its effectiveness is limited by the quality of the jerk estimate used for detection. In particular, the delay inherited from the causal acceleration estimate and the noise introduced by differentiation can lead to late or spurious activations of the manoeuvre flag.
 
-The RTS smoother provides a complementary way to address these limitations. By exploiting measurements acquired after the instant being estimated, it can compensate for the lag accumulated by the causal filter before the manoeuvre is detected. At the same time, the backward recursion attenuates the fluctuations and possible overshoots introduced by the increased process noise, including those associated with spurious activations. The two approaches therefore act on different aspects of the estimation problem: the feed-forward improves the response of the causal filter to changes in the opponent's dynamics, while the smoother refines the resulting estimate using subsequent measurements.
+The RTS smoother provides a complementary way to address these limitations. By exploiting measurements acquired after the instant being estimated, it can compensate for the lag accumulated by the causal filter before the manoeuvre is detected. At the same time, the backward recursion attenuates the fluctuations and possible overshoots introduced by the increased process noise, including those associated with spurious activations. Lower manoeuvre detection thresholds than those selected in Chapter~\ref{ch:qff} can therefore be used, enabling earlier detection and process noise inflation, and providing the smoother with a causal estimate that better represents the vehicle's dynamics.
 
 Their combination is also straightforward from an implementation perspective. As described in Section~\ref{sec:rts_implementation}, the smoother operates on the history of the causal filter, which already contains the estimates obtained with the feed-forward process noise. The two algorithms can therefore be combined without modifying either the manoeuvre detection logic or the backward recursion.
 
-The combined approach is evaluated using the parameters selected in the previous chapters: a smoothing window of \SI{300}{ms}, manoeuvre detection thresholds $j_{\mathrm{on}} = \SI{15}{m/s^3}$ and $j_{\mathrm{off}} = \SI{5}{m/s^3}$, and a process noise inflation factor $\lambda = 100$. Figs.~\ref{fig:rts_qff_2} and~\ref{fig:rts_qff_4} compare three estimates over two sequences of corners: the causal estimate with feed-forward process noise, the RTS smoother applied to the nominal filter, and the RTS smoother combined with the feed-forward process noise.
+The combined approach is evaluated using the smoothing window of \SI{300}{ms} and the process noise inflation factor $\lambda = 100$ selected in the previous chapters, while, for the reasons discussed above, a more aggressive tuning of the manoeuvre detection is adopted, with $j_{\mathrm{on}} = \SI{7}{m/s^3}$ and $j_{\mathrm{off}} = \SI{3}{m/s^3}$. Figs.~\ref{fig:rts_qff_2} and~\ref{fig:rts_qff_4} compare three estimates over two sequences of corners: the causal estimate with feed-forward process noise, with the nominal tuning of Chapter~\ref{ch:qff}, the RTS smoother applied to the nominal filter, with the nominal window selected in Section~\ref{sec:rts_sensitivity}, and the RTS smoother combined with the feed-forward process noise, with the tuning described above.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/ch6/rts_qff_2.pdf}
 \caption{Feed-forward process noise, RTS smoother and their combination, first sequence of corners. Session of 5 September 2026, Imola.}
 \label{fig:rts_qff_2}
-\end{figure}
 
-\begin{figure}[H]
-\centering
+\vspace{0.6cm}
 \includegraphics[width=\textwidth]{figures/ch6/rts_qff_4.pdf}
 \caption{Feed-forward process noise, RTS smoother and their combination, second sequence of corners. Session of 5 September 2026, Imola.}
 \label{fig:rts_qff_4}
