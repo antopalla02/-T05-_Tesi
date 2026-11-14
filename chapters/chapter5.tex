@@ -4,7 +4,7 @@
 The motion model of the tracker, introduced in Section~\ref{subsec:tt_cca}, assumes that
 the opponent moves with constant curvature and constant longitudinal acceleration over
 each prediction interval. This assumption holds well when the dynamics of the opponent
-changes slowly, e.g.\ on a straight, but it is violated during breaking and traction phased. In these, the model is not describing the real behaviour of the opponent and, therefore, the quality of the estimate degrades.
+changes slowly, e.g.\ on a straight, but it is violated during braking and traction phases. In these, the model is not describing the real behaviour of the opponent and, therefore, the quality of the estimate degrades.
 
 This phenomenon is shown in Fig.~\ref{fig:qff_cca_baseline}, which compares the speed and the
 acceleration estimated by the filter with the CCA model with the
@@ -15,7 +15,7 @@ braking and underestimated at its end.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/ch5/cca_baseline.pdf}
+    \includegraphics[width=0.7\textwidth]{figures/ch5/cca_baseline.pdf}
     \caption{Speed and acceleration estimated with the CCA model and the nominal process
     noise. Session of 5 September 2026, Imola.}
     \label{fig:qff_cca_baseline}
@@ -86,14 +86,14 @@ remains small and the corrected estimate stays close to the predicted one.
 \end{figure}
 
 Fig.~\ref{fig:qff_highq} shows this behaviour, comparing over two braking manoeuvres two
-different tunings of the filter, the first with an increased process noise, $q_a = 500$, and the
-second with the nominal one of Section~\ref{sec:qff_nominal}. During the manoeuvres, the larger
+different tunings of the filter, the first with the acceleration noise spectral density increased to $100\,q_a$, where $q_a$ is
+the nominal value of Section~\ref{sec:qff_nominal}, and the second with the nominal one. During the manoeuvres, the larger
 gain of the first tuning makes the filter more reactive, so that its estimate follows the
 braking phases more closely, whereas in the phases at constant acceleration the nominal tuning
 is more representative, since it filters the noise of the measurements through a prediction in
 which it is more confident and therefore returns a considerably smoother estimate. The two
 tunings thus turn out to be complementary, the first capturing the changes of manoeuvre well at
-the price of a noisy estimate, and the second providing a more stable estimate at the price of
+the price of a noisy estimate, and the second providing an estimate with smaller fluctuations at the price of
 a larger delay.
 
 Overall, what emerges is that a fixed tuning of the process noise cannot adequately describe a
@@ -114,40 +114,66 @@ suitable compromise between the responsiveness of the filter to changes in the o
 dynamics and the smoothness of its estimate, as discussed in Section~\ref{sec:qff_idea}.
 
 The tuning is performed by comparing the estimates obtained with different values of the
-acceleration noise spectral density $q_a$, while keeping $q_\kappa$ fixed.
-Figs.~\ref{fig:qff_tuning_braking} and~\ref{fig:qff_tuning_straight} show the estimated speed
-and acceleration for three representative values, $q_a = 1$, $5$ and $50$, during a braking
-manoeuvre and on a straight, respectively.
+acceleration noise spectral density, expressed as multiples of the value finally adopted, $q_a$,
+while keeping $q_\kappa$ fixed. The tuning is restricted to $q_a$ since the degradation addressed
+in this chapter concerns the longitudinal dynamics of the opponent, which in the CCA model is
+driven by the acceleration, whereas $q_\kappa$ acts on the curvature and therefore mainly on the
+lateral dynamics. Fig.~\ref{fig:qff_tuning_sweep} shows the
+estimated speed and acceleration for some of these values over two braking manoeuvres, while
+Table~\ref{tab:qa_tuning} reports, for each of them, the RMSE of the speed and of the acceleration
+and the variability of the estimated acceleration on the straights, which quantifies the noise
+propagated into the estimate when the dynamics of the opponent varies slowly.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/ch5/cca_tuning_braking.pdf}
-    \caption{Speed and acceleration estimated with different values of $q_a$ during a braking.
+    \includegraphics[width=0.85\textwidth]{figures/ch5/cca_tuning_sweep.pdf}
+    \caption{Speed and acceleration estimated with different values of the acceleration noise
+    spectral density, expressed as multiples of the nominal value $q_a$.
     Session of 5 September 2026, Imola.}
-    \label{fig:qff_tuning_braking}
+    \label{fig:qff_tuning_sweep}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/ch5/cca_tuning_straight.pdf}
-    \caption{Speed and acceleration estimated with different values of $q_a$ on a straight.
-    Session of 5 September 2026, Imola.}
-    \label{fig:qff_tuning_straight}
-\end{figure}
+\begin{table}[!htbp]
+\centering
+\small
+\begin{tabular}{|rcccccc|}
+\hline
+\rowcolor{bluepoli!40} & \multicolumn{2}{c}{\textbf{RMSE of $v_x$}} & \multicolumn{2}{c}{\textbf{RMSE of $a_x$}} & \multicolumn{2}{c|}{\textbf{Variability of $a_x$ on straights}} \\
+\cline{2-3}\cline{4-5}\cline{6-7}
+\rowcolor{bluepoli!40} \textbf{Process noise} & \textbf{[m/s]} & \textbf{$\Delta$ [\%]} & \textbf{[m/s$^2$]} & \textbf{$\Delta$ [\%]} & \textbf{[m/s$^2$]} & \textbf{$\Delta$ [\%]} \\
+\hline\hline
+  $0.2\,q_a$ & 1.794 & $+55.1$ & 4.464 & $+21.1$ & 0.123 & $-35.2$ \\
+  $0.4\,q_a$ & 1.489 & $+28.7$ & 4.120 & $+11.8$ & 0.146 & $-23.0$ \\
+  \textbf{$q_a$} & \textbf{1.157} & -- & \textbf{3.686} & -- & \textbf{0.190} & -- \\
+  $10\,q_a$ & 0.685 & $-40.8$ & 2.810 & $-23.8$ & 0.424 & $+123.2$ \\
+  $20\,q_a$ & 0.656 & $-43.3$ & 2.706 & $-26.6$ & 0.558 & $+193.5$ \\
+  $40\,q_a$ & 0.663 & $-42.7$ & 2.694 & $-26.9$ & 0.738 & $+288.4$ \\
+  $100\,q_a$ & 0.707 & $-38.9$ & 2.807 & $-23.8$ & 1.071 & $+463.9$ \\
+\hline
+\end{tabular}
+\caption{RMSE of the speed and of the acceleration and variability of the estimated acceleration
+on the straights for different values of the acceleration noise spectral density, expressed as
+multiples of the nominal value $q_a$. $\Delta$ is the variation with respect to
+the nominal value. Session of 5 September 2026, Imola.}
+\label{tab:qa_tuning}
+\end{table}
 
 Consistently with the considerations of Section~\ref{sec:qff_idea}, increasing $q_a$ improves
-the responsiveness of the filter at the expense of a noisier estimate. During the braking, the
-acceleration estimated with $q_a = 50$ follows the ground truth with the smallest delay,
-whereas with $q_a = 1$ the slower response leads to an accumulated error in the speed, which is
-underestimated at the end of the manoeuvre. On the straight, however, the larger Kalman gain
-associated with $q_a = 50$ makes the acceleration estimate considerably noisier, with
-pronounced spikes, while the estimates obtained with $q_a = 1$ and $q_a = 5$ remain smooth and
-nearly coincident.
+the responsiveness of the filter at the expense of a noisier estimate. In
+Fig.~\ref{fig:qff_tuning_sweep}, the larger values follow the onset of the braking with a smaller
+delay, whereas with $0.2\,q_a$ the slower response leads to an accumulated error in the speed,
+which is underestimated at the end of the manoeuvres. On the straight, instead, the acceleration
+estimated with the larger values exhibits pronounced spikes, as shown in the detail of the figure.
+Table~\ref{tab:qa_tuning} quantifies this trade-off. Reducing $q_a$ below the nominal value
+decreases the variability of the acceleration on the straights by at most \SI{35}{\percent}, but
+increases the RMSE of the speed by up to \SI{55}{\percent}. Increasing it reduces the RMSE of the
+speed by about \SI{40}{\percent}, but the variability of the acceleration more than doubles
+already at $10\,q_a$ and keeps growing with $q_a$, up to more than five times the nominal value
+at $100\,q_a$.
 
-The value $q_a = 5$ is therefore selected as the nominal tuning, as it provides a suitable
-compromise between the two operating conditions: it improves the response to changes in
-acceleration compared with $q_a = 1$, while avoiding the pronounced fluctuations observed with
-$q_a = 50$ during steady-state motion.
+The adopted value of $q_a$ therefore represents a suitable choice for the nominal tuning, since
+it provides a reasonable compromise between the RMSE and the variability of the estimated
+acceleration on the straights.
 
 % =====================================================================
 \section{Feed-Forward Formulation}
@@ -220,13 +246,29 @@ The Bode diagrams of the two transfer functions are shown in Fig.~\ref{fig:qff_b
 behave as a differentiator below the cutoff frequency, whereas above it $|H_1|$ tends to the
 constant $1/\tau$ and $|H_2|$ decreases by \SI{20}{dB} per decade. Being of the second order,
 the Butterworth filter therefore guarantees a better roll-off, i.e.\ a stronger attenuation of
-the disturbances above the cutoff frequency, and it is for this reason adopted to estimate the jerk.
+the disturbances above the cutoff frequency.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{figures/ch5/jerk_filters_bode.pdf}
     \caption{Bode diagrams of the dirty derivative $H_1$ and of the Butterworth filter $H_2$.}
     \label{fig:qff_bode}
+\end{figure}
+
+This is confirmed by the implementation in the tracker. Fig.~\ref{fig:qff_jerk_filters} compares
+the jerk obtained by applying the two filters to the estimated acceleration during a braking
+manoeuvre. The dirty derivative passes the high-frequency content of the acceleration, which
+results in spikes that reach about \SI{100}{m/s^3} in magnitude, whereas the Butterworth filter
+returns a smoother estimate. The
+Butterworth filter is therefore adopted to estimate the jerk.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/ch5/jerk_filters_comparison.pdf}
+    \caption{Jerk obtained with the dirty derivative $H_1$ and with the Butterworth filter $H_2$
+    during a braking manoeuvre, compared with the ground truth. Session of 5 September 2026,
+    Imola.}
+    \label{fig:qff_jerk_filters}
 \end{figure}
 
 Once the jerk is estimated, the manoeuvre is detected through a hysteresis logic on its
@@ -256,13 +298,19 @@ manoeuvres. Fig.~\ref{fig:qff_jerk_tuning} shows this comparison for a braking m
     \label{fig:qff_jerk_tuning}
 \end{figure}
 
-When the acceleration is approximately constant, the magnitude of the jerk remains below about
-\SI{10}{m/s^3}, so that an activation threshold of \SI{15}{m/s^3} lies above these peaks and is
-robust to them. Yet, at the onset of the braking, the jerk grows steeply and exceeds this value
-almost immediately, so that the activation of the flag is not delayed with respect to the
-beginning of the manoeuvre. For these reasons, $j_{\mathrm{on}} = \SI{15}{m/s^3}$ is adopted.
+The jerk of the ground truth is used for this purpose since it describes the actual dynamics of
+the opponent, so that the thresholds can be set directly on the manoeuvres to be detected. When the acceleration is approximately
+constant, the magnitude of the jerk of the ground truth remains below about \SI{10}{m/s^3}, so
+that an activation threshold of \SI{15}{m/s^3} lies above these fluctuations, whereas at the
+onset of the braking it grows steeply and crosses this threshold as soon as the manoeuvre begins.
 The deactivation threshold is instead tuned so that the flag switches off at the end of the
-manoeuvre, which leads to $j_{\mathrm{off}} = \SI{5}{m/s^3}$.
+manoeuvre. With $j_{\mathrm{on}} = \SI{15}{m/s^3}$ and $j_{\mathrm{off}} = \SI{5}{m/s^3}$, the
+flag computed on the jerk of the ground truth is active in correspondence of the variations of
+the acceleration, i.e.\ at the onset of the braking and during the transition back to traction,
+and inactive when the acceleration is approximately constant, as shown in
+Fig.~\ref{fig:qff_jerk_tuning}. These values are therefore adopted. In the tracker, the flag is
+then driven by the estimated jerk.
+
 \subsection{Implementation}
 \label{subsec:qff_implementation}
 \label{sec:qff_implementation}
@@ -278,29 +326,59 @@ module.
 \end{figure}
 
 Two filters run in parallel for each track, both based on the same motion model, i.e.\ the EKF
-with the CCA model of Chapter~\ref{ch:tracking}. The first, main filter publishes the state of
+with the CCA model of Chapter~\ref{ch:tracking}. The main filter publishes the state of
 the opponent on the history passed to the planning module, and its process noise is switched
-by the hysteresis logic. The second has a constant and increased process noise, and it is
+by the hysteresis logic. The auxiliary filter has a constant and increased process noise, and it is
 introduced only to estimate the jerk and to manage the manoeuvre flag.
 
-The reasons for introducing a second filter, rather than using the main one, are mainly two.
-The first is that, if the jerk were estimated from the main filter, the reactivity of the
-estimate could not be recovered. Since the jerk is derived from the acceleration, any delay of
-the latter is directly transferred to the former, so that the flag would be activated late,
-when the manoeuvre is already in progress. The second filter, instead, is tuned with the
-increased process noise, which, as shown in Fig.~\ref{fig:qff_highq}, makes its acceleration
-more reactive at the changes of manoeuvre and therefore provides a less delayed derivative. The
-second reason is the feedback loop that would arise if the flag were driven by the same filter
-whose process noise it switches. Once the flag is activated, the process noise of the main
-filter is inflated and its acceleration becomes noisier, so that the jerk tends to remain
-above the thresholds and the flag is kept active by its own effect on the estimate, regardless
-of the actual dynamics of the opponent. Since the process noise of the second filter is
-constant, the detection is independent of the state of the flag and decoupled from the
-switching, and the process noise of the main filter is set in feed-forward.
+The auxiliary filter is introduced, rather than estimating the jerk from the main one, for two
+reasons. The first concerns the delay of the detection. Since the jerk is obtained by
+differentiating the estimated acceleration, any delay of the latter is transferred to the former.
+With the nominal process noise, the acceleration of the main filter reacts late to the onset of a
+manoeuvre, as shown in Fig.~\ref{fig:qff_cca_baseline}, so that the flag would be activated when
+the manoeuvre is already in progress. The auxiliary filter, tuned with the increased process
+noise, provides instead a more reactive acceleration, as shown in Fig.~\ref{fig:qff_highq}, and
+therefore a less delayed jerk.
 
-The inflation factor is set to $\lambda = 100$. Since the nominal spectral density of the
-acceleration is $q_a = 5$, during the manoeuvres the main filter adopts the same process noise used by the auxiliary filter,  i.e.\ the increased process noise of
-Fig.~\ref{fig:qff_highq}.
+The second reason concerns the interaction between the flag and the filter whose process noise
+it switches. If the jerk were estimated from the main filter, the flag would depend on the
+process noise of this filter, which in turn depends on the flag. Once the flag is activated, the
+inflated process noise makes the acceleration of the main filter noisier, as shown in
+Fig.~\ref{fig:qff_highq}, and the jerk derived from it would exhibit larger fluctuations, which
+could keep its magnitude above the deactivation threshold even after the end of the manoeuvre.
+The flag would then be sustained by the noise introduced by its own activation, rather than by
+the dynamics of the opponent. Since the process noise of the auxiliary filter does not depend on
+the flag, the jerk used for the detection is not affected by the switching, and the process
+noise of the main filter is adapted in feed-forward, i.e.\ without any feedback from its own
+estimate.
+
+The inflation factor $\lambda$ is tuned so that, starting from the nominal tuning, the filter is
+as responsive as possible during the manoeuvres. In view of the results of
+Table~\ref{tab:qa_tuning} and Fig.~\ref{fig:qff_tuning_sweep}, the factor has to be large enough
+to recover the performance of the most responsive tunings. Fig.~\ref{fig:qff_lambda} compares
+the acceleration estimated during a braking manoeuvre with $\lambda = 100$, $200$, $300$ and
+$400$, i.e.\ with an acceleration noise spectral density between $100\,q_a$ and $400\,q_a$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/ch5/lambda_tuning.pdf}
+    \caption{Acceleration estimated during a braking manoeuvre with different values of the
+    inflation factor $\lambda$. Session of 5 September 2026, Imola.}
+    \label{fig:qff_lambda}
+\end{figure}
+
+Already for $\lambda = 100$, the estimates are practically coincident. This behaviour is explained
+by the saturation of the Kalman gain. As discussed in Section~\ref{sec:qff_idea}, as the process
+noise increases, the filter becomes more uncertain about its prediction and therefore relies
+more on the measurement in the correction step. However, the gain~\eqref{eq:qff_gain_scalar} is
+bounded between zero and one and, once the uncertainty of the prediction becomes much larger
+than that of the measurement, it saturates, so that the correction brings the estimate onto the
+measurement. Beyond this point, a further increase of the process noise leaves the gain, and
+thus the estimate, practically unchanged, as observed in Fig.~\ref{fig:qff_lambda}.
+
+The value $\lambda = 100$ therefore represents a reasonable choice, since it is sufficient to
+saturate the gain and thus to provide the most responsive behaviour of the filter during the
+manoeuvres.
 
 % =====================================================================
 \section{Results}
@@ -347,20 +425,17 @@ the ground truth by a few tenths of a second, which accounts for the delayed swi
 in Fig.~\ref{fig:qff_overview}. A spurious activation also occurs at about \SI{739}{s}, where
 the estimate crosses the thresholds without a corresponding variation of the ground truth.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/ch5/qff_braking_detail.pdf}
-    \caption{Detail of a braking phase. Session of 5 September 2026, Imola.}
-    \label{fig:qff_braking_detail}
-\end{figure}
-
 Analysing another braking, shown in Fig.~\ref{fig:qff_braking_detail}, the same behaviour is
 observed. During the manoeuvre, the feed-forward estimate is bounded by the two references and
 anticipates the onset of the deceleration with respect to the nominal filter.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=\textwidth]{figures/ch5/qff_jerk.pdf}
+    \includegraphics[width=0.9\textwidth]{figures/ch5/qff_braking_detail.pdf}
+    \caption{Detail of a braking phase. Session of 5 September 2026, Imola.}
+    \label{fig:qff_braking_detail}
+    \vspace{0.6cm}
+    \includegraphics[width=0.9\textwidth]{figures/ch5/qff_jerk.pdf}
     \caption{Acceleration and estimated jerk, with the activation thresholds of the flag, for the braking of Fig.~\ref{fig:qff_braking_detail}. Session of 5 September 2026, Imola.}
     \label{fig:qff_jerk}
 \end{figure}
@@ -369,8 +444,8 @@ In Fig.~\ref{fig:qff_jerk}, the estimate is consistent with the ground truth but
 slightly, and it crosses the activation threshold also in the absence of a manoeuvre, causing
 spurious switching, e.g.\ at about \SI{868}{s}.
 
-The results confirm the effectiveness of the proposed approach in adapting the filter to changes
-in the opponent's dynamics. When a manoeuvre is detected, the increase in process noise allows
+The results show that the filter behaves as intended, adapting its response to the changes in
+the opponent's dynamics. When a manoeuvre is detected, the increase in process noise allows
 the filter to respond more rapidly, whereas, in the absence of an activation, its behaviour
 remains equivalent to that of the nominal configuration. However, the main limitation lies in
 the reactive nature of the strategy: the filter can only adapt once the manoeuvre has been
@@ -389,9 +464,10 @@ noise rejection and detection responsiveness.
 These limitations are reflected in the experimental results. The combined delay of the
 acceleration estimation and jerk filtering postpones manoeuvre detection, as observed around
 \SI{760}{s}, while residual noise can lead to spurious activations even when the opponent's
-dynamics is not significantly excited. In this context, the detection threshold represents the
-main tuning parameter governing the trade-off between responsiveness and robustness. Lowering
+dynamics is not significantly excited. In this context, the performance of the approach is
+highly sensitive to the detection threshold, which represents the main tuning parameter governing the trade-off between responsiveness and robustness and makes the tuning of the approach complex. Lowering
 the threshold enables earlier detection and improves the filter's ability to react at the onset
 of a manoeuvre, but also increases its sensitivity to noise, leading to more frequent false
 activations. Conversely, a higher threshold reduces spurious detections at the cost of a delayed
-response to changes in the opponent's dynamics.
+response to changes in the opponent's dynamics. More generally, the performance is strongly tied to
+the manoeuvre detection, which represents the first major challenge for this type of approach.
